@@ -30,6 +30,38 @@ http://czl-api.code4.ro/document
 }
 ```
 
+## Lista
+**Minister**|**URL**
+:-----:|-----
+Ministerul Justiţiei|http://www.just.ro/transparenta-decizionala/acte-normative/proiecte-in-dezbatere/
+Ministerul Sănătăţii|http://www.ms.ro/acte-normative-in-transparenta/
+Ministerul Comunicaţiilor şi pentru Societatea Informaţională|https://www.comunicatii.gov.ro/?page\_id=3517
+Ministerul Mediului, Apelor și Pădurilor|http://www.mmediu.ro/categorie/transparenta/10
+Ministerul Afacerilor Externe|http://www.mae.ro/node/2011
+Ministerul Afacerilor Interne|http://www.mai.gov.ro/index05\_1.html
+Ministerul Agriculturii Şi Dezvoltării Rurale|http://www.madr.gov.ro/transparenta-decizionala/proiecte-de-acte-normative.html
+Ministerul Apărării Naţionale|http://dlaj.mapn.ro
+Ministerul Culturii|http://www.cultura.ro/proiecte-acte-normative
+Ministerul Dezvoltării Regionale Și Administrației Publice|http://www.mdrap.gov.ro/transparenta/consultari-publice
+Ministerul pentru Mediul de Afaceri, Comerț și Antreprenoriat|http://www.antreprenoriat.gov.ro/categorie/transparenta-decizionala/proiecte-in-dezbatere-publica/
+Ministerul Economiei, Comerțului și Relațiilor cu Mediul de Afaceri|http://economie.gov.ro/transparenta-decizionala/proiecte-in-dezbatere-publica
+Ministerul Energiei|http://energie.gov.ro/transparenta-si-integritate/transparenta-decizionala-2/
+Ministerul Educaţiei Naţionale și Cercetării Științifice|http://www.edu.ro/proiecte-acte-normative-0
+Ministerul Finanţelor Publice|http://www.mfinante.gov.ro/transparent.html?method=transparenta&pagina=acasa&locale=ro
+Ministerul Fondurilor Europene (RIP)|http://www.fonduri-ue.ro/proiecte-legislative
+Ministerul Muncii, Familiei, Protecţiei Sociale și Persoanelor Vârstnice|http://www.mmuncii.ro/j33/index.php/ro/transparenta/proiecte-in-dezbatere
+Ministerul Tineretului și Sportului|http://mts.ro/proiecte-legislative-in-dezbatere-publica/
+Ministerul Transporturilor|http://mt.gov.ro/web14/transparenta-decizionala/consultare-publica/acte-normative-in-avizare
+Ministerul Turismului|http://turism.gov.ro/transparenta-decizionala-2/
+Ministerul pentru Consultare Publică și Dialog Civic|http://dialogcivic.gov.ro/categorie/proiecte-de-acte-normative/
+Departamentul pentru Relaţia cu Parlamentul|http://mrp.gov.ro/web/category/consultare-publica/?future=false
+Departamentul de Politici pentru Relațiile cu Românii de Pretutindeni|http://www.dprp.gov.ro/documente-in-consultare-publica/
+Ministerul Cercetării și Inovării|http://www.research.gov.ro/ro/articol/1029/despre-ancs-legislatie-proiecte-de-acte-normative
+Secretariatul General al Guvernului |http://www.sgg.ro/legislativ/
+Camera Deputatilor|www.cdep.ro/pls/proiecte/upl\_pck.home
+Senatul|https://www.senat.ro/LegiProiect.aspx
+Presedintia|http://www.presidency.ro/ro/presedinte/decrete-si-acte-oficiale
+
 ## Duminica
 Am vrea sa avem o baza de date populata cu tool-uri care pot fi rulate regulat pentru a identifica ulterior statusul oricarei propuneri legislative.
 
