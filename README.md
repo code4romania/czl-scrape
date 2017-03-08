@@ -31,8 +31,8 @@ http://czl-api.code4.ro/document
 ```
 
 ## Lista
-**Minister**|**URL**
-:-----:|-----
+Minister|URL
+-----|-----
 Ministerul Justiţiei|http://www.just.ro/transparenta-decizionala/acte-normative/proiecte-in-dezbatere/
 Ministerul Sănătăţii|http://www.ms.ro/acte-normative-in-transparenta/
 Ministerul Comunicaţiilor şi pentru Societatea Informaţională|https://www.comunicatii.gov.ro/?page\_id=3517
