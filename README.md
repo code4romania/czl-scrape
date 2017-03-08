@@ -2,7 +2,7 @@
 
 Bine ai venit in repo-ul scrapeathon-ului CZL. Prima etapa a aplicatiei "Ce zice legea", un proiect Code for Romania care isi propune sa ofere urmarirea la zi a tuturor schimbarilor legislative din Romania.
 
-Etapa consta in crearea unor mecanisme care sa preia informatii la un interval regulat din platformele institutiilor statului. Impreuna cu alinierea acestora in procesul legislativ putem prezenta oricarui cetatean interesat de o anumita categorie de legi, sau mai multe, informatiile necesare unei informari transparente.
+Etapa consta in crearea unor mecanisme care sa preia informatii la un interval regulat din platformele institutiilor statului. Impreuna cu alinierea acestora in procesul legislativ putem prezenta informatiile necesare oricarui cetatean interesat de o anumita categorie de legi, sau mai multe.
 
 ## Unelte
 Fiecare echipa este libera sa-si aleaga tehnologiile si approach-urile asupra scraper-ului. Dorim insa sa incurajam o aliniere a modelelor de date. Am creat un API valabil pe perioada evenimentului in care se poate face POST cu urmatoarele modele:
@@ -39,6 +39,7 @@ Am vrea sa avem o baza de date populata cu tool-uri care pot fi rulate regulat p
 - code review in echipa ta
 - documentatie + notat exceptii
 
-## Program
+## Alta intrebare?
+Orice interbare are un raspuns la colegii cu stickere code4. Primesti si tu la finalul zilei.
 
 
