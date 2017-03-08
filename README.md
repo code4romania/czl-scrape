@@ -11,7 +11,7 @@ http://czl-api.code4.ro/publication
 
 ```
 {
-	id: "UNIX_TIME-lawproposal-slug"
+	id: "UNIX_TIME-lawproposal-first-document-name-slug"
     title: "Proiectul de ordin al ministrului justiției pentru aprobarea Regulamentului privind organizarea și desfășurarea activităților și programelor educative, de asistență psihologică și asistență socială din locurile de deținere aflate în subordinea Aministrației Naționale a Penitenciarelor" // titlul actului legislativ propus
     type: "HG", // HG, OUG, PROIECT, OG
     issuer: "MINISTERUL_CERCETARII", // platforma din care provine actul legislativ
@@ -25,14 +25,13 @@ http://czl-api.code4.ro/document
 
 ```
 {
-    publication: "UNIX_TIME-lawproposal-slug",
+    publication: "UNIX_TIME-lawproposal-first-document-name-slug",
     url: "http://www.just.ro/wp-content/uploads/2017/02/Proiect.docx" // da, este un link catre un document oficial de la MJ
 }
 ```
 
 ## Duminica
 Am vrea sa avem o baza de date populata cu tool-uri care pot fi rulate regulat pentru a identifica ulterior statusul oricarei propuneri legislative.
-
 
 
 ## Reguli
