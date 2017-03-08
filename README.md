@@ -30,6 +30,12 @@ http://czl-api.code4.ro/document
 }
 ```
 
+POST-ul catre API va fi autentificat cu o cheie-token, trimisa cu un header HTTP `Authorization`. Cheia va primi ca prefix string-ul literal "Token", de care este separata printr-un spatiu:
+
+```
+Authorization: Token am-un-token-si-fac-ce-vreau-cu-el
+```
+
 ## Lista
 Minister|URL
 -----|-----
