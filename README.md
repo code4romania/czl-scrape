@@ -9,7 +9,7 @@ Fiecare echipa este libera sa-si aleaga tehnologiile si approach-urile asupra sc
 
 http://czl-api.code4.ro/publication
 
-```json
+```js
 {
   "id": "ISO-8601:lawproposal-first-document-name-slug",
   "title": "Proiectul de ordin al ministrului justiției pentru aprobarea Regulamentului privind organizarea și desfășurarea activităților și programelor educative, de asistență psihologică și asistență socială din locurile de deținere aflate în subordinea Aministrației Naționale a Penitenciarelor", // titlul actului legislativ propus
@@ -23,7 +23,7 @@ http://czl-api.code4.ro/publication
 
 http://czl-api.code4.ro/document
 
-```json
+```js
 {
   "publication": "ISO-8601:lawproposal-first-document-name-slug",
   "url": "http://www.just.ro/wp-content/uploads/2017/02/Proiect.docx" // da, este un link catre un document oficial de la MJ
@@ -71,6 +71,6 @@ Am vrea sa avem o baza de date populata cu tool-uri care pot fi rulate regulat p
 - documentatie + notat exceptii
 
 ## Alta intrebare?
-Orice interbare are un raspuns la colegii cu stickere code4. Primesti si tu la finalul zilei.
+Orice intrebare are un raspuns la colegii cu stickere code4. Primesti si tu la finalul zilei.
 
 
