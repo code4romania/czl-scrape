@@ -9,24 +9,24 @@ Fiecare echipa este libera sa-si aleaga tehnologiile si approach-urile asupra sc
 
 http://czl-api.code4.ro/publication
 
-```
+```json
 {
-	id: "UNIX_TIME-lawproposal-first-document-name-slug"
-    title: "Proiectul de ordin al ministrului justiției pentru aprobarea Regulamentului privind organizarea și desfășurarea activităților și programelor educative, de asistență psihologică și asistență socială din locurile de deținere aflate în subordinea Aministrației Naționale a Penitenciarelor" // titlul actului legislativ propus
-    type: "HG", // HG, OUG, PROIECT, OG
-    issuer: "MINISTERUL_CERCETARII", // platforma din care provine actul legislativ
-    date: 1488990972814 // unix time
-    description: "Cookie jelly-o sesame snaps donut sesame snaps sweet roll chocolate. Tootsie roll pie bonbon tart chocolate cake. Gummi bears gummies chupa chups ice cream croissant donut marzipan. Macaroon bear claw halvah carrot cake liquorice powder."
-    feedback_days: 12, // numarul zilelor necesare pentru feedback
+  "id": "ISO-8601:lawproposal-first-document-name-slug",
+  "title": "Proiectul de ordin al ministrului justiției pentru aprobarea Regulamentului privind organizarea și desfășurarea activităților și programelor educative, de asistență psihologică și asistență socială din locurile de deținere aflate în subordinea Aministrației Naționale a Penitenciarelor", // titlul actului legislativ propus
+  "type": "HG", // HG, OUG, PROIECT, OG
+  "issuer": "MINISTERUL_CERCETARII", // platforma din care provine actul legislativ
+  "date": "2017-03-08", // ISO 8601
+  "description": "Cookie jelly-o sesame snaps donut sesame snaps sweet roll chocolate. Tootsie roll pie bonbon tart chocolate cake. Gummi bears gummies chupa chups ice cream croissant donut marzipan. Macaroon bear claw halvah carrot cake liquorice powder.",
+  "feedback_days": 12 // numarul zilelor disponibile pentru feedback
 }
 ```
 
 http://czl-api.code4.ro/document
 
-```
+```json
 {
-    publication: "UNIX_TIME-lawproposal-first-document-name-slug",
-    url: "http://www.just.ro/wp-content/uploads/2017/02/Proiect.docx" // da, este un link catre un document oficial de la MJ
+  "publication": "ISO-8601:lawproposal-first-document-name-slug",
+  "url": "http://www.just.ro/wp-content/uploads/2017/02/Proiect.docx" // da, este un link catre un document oficial de la MJ
 }
 ```
 
