@@ -41,7 +41,7 @@ Minister|URL
 -----|-----
 Ministerul Justiţiei|http://www.just.ro/transparenta-decizionala/acte-normative/proiecte-in-dezbatere/
 Ministerul Sănătăţii|http://www.ms.ro/acte-normative-in-transparenta/
-Ministerul Comunicaţiilor şi pentru Societatea Informaţională|https://www.comunicatii.gov.ro/?page\_id=3517
+Ministerul Comunicaţiilor şi pentru Societatea Informaţională|https://www.comunicatii.gov.ro/?page_id=3517
 Ministerul Mediului, Apelor și Pădurilor|http://www.mmediu.ro/categorie/transparenta/10
 Ministerul Afacerilor Externe|http://www.mae.ro/node/2011
 Ministerul Afacerilor Interne|http://www.mai.gov.ro/index05\_1.html
