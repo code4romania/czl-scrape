@@ -36,7 +36,7 @@ POST-ul catre API va fi autentificat cu o cheie-token, trimisa cu un header HTTP
 Authorization: Token am-un-token-si-fac-ce-vreau-cu-el
 ```
 
-## Lista de entitati
+## Instituții publice
 Nume|URL
 -----|-----
 Ministerul Justiţiei|http://www.just.ro/transparenta-decizionala/acte-normative/proiecte-in-dezbatere/
