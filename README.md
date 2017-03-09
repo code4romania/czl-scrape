@@ -59,7 +59,7 @@ Ministerul Muncii, Familiei, Protecţiei Sociale și Persoanelor Vârstnice|http
 Ministerul Tineretului și Sportului|http://mts.ro/proiecte-legislative-in-dezbatere-publica/
 Ministerul Transporturilor|http://mt.gov.ro/web14/transparenta-decizionala/consultare-publica/acte-normative-in-avizare
 Ministerul Turismului|http://turism.gov.ro/transparenta-decizionala-2/
-Ministerul pentru Consultare Publică și Dialog Civic|http://dialogcivic.gov.ro/categorie/proiecte-de-acte-normative/
+Ministerul Consultărilor Publice și Dialogului Social|http://dialogsocial.gov.ro/categorie/proiecte-de-acte-normative/
 Departamentul pentru Relaţia cu Parlamentul|http://mrp.gov.ro/web/category/consultare-publica/?future=false
 Departamentul de Politici pentru Relațiile cu Românii de Pretutindeni|http://www.dprp.gov.ro/documente-in-consultare-publica/
 Ministerul Cercetării și Inovării|http://www.research.gov.ro/ro/articol/1029/despre-ancs-legislatie-proiecte-de-acte-normative
