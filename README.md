@@ -48,13 +48,12 @@ Ministerul Afacerilor Interne|http://www.mai.gov.ro/index05_1.html
 Ministerul Agriculturii Şi Dezvoltării Rurale|http://www.madr.gov.ro/transparenta-decizionala/proiecte-de-acte-normative.html
 Ministerul Apărării Naţionale|http://dlaj.mapn.ro
 Ministerul Culturii|http://www.cultura.ro/proiecte-acte-normative
-Ministerul Dezvoltării Regionale Și Administrației Publice|http://www.mdrap.gov.ro/transparenta/consultari-publice
+Ministerul Dezvoltării Regionale, Administrației Publice și Fondurilor Europene|http://www.mdrap.gov.ro/transparenta/consultari-publice
 Ministerul pentru Mediul de Afaceri, Comerț și Antreprenoriat|http://www.antreprenoriat.gov.ro/categorie/transparenta-decizionala/proiecte-in-dezbatere-publica/
 Ministerul Economiei, Comerțului și Relațiilor cu Mediul de Afaceri|http://economie.gov.ro/transparenta-decizionala/proiecte-in-dezbatere-publica
 Ministerul Energiei|http://energie.gov.ro/transparenta-si-integritate/transparenta-decizionala-2/
 Ministerul Educaţiei Naţionale și Cercetării Științifice|http://www.edu.ro/proiecte-acte-normative-0
 Ministerul Finanţelor Publice|http://www.mfinante.gov.ro/transparent.html?method=transparenta&pagina=acasa&locale=ro
-Ministerul Fondurilor Europene (RIP)|http://www.fonduri-ue.ro/proiecte-legislative
 Ministerul Muncii, Familiei, Protecţiei Sociale și Persoanelor Vârstnice|http://www.mmuncii.ro/j33/index.php/ro/transparenta/proiecte-in-dezbatere
 Ministerul Tineretului și Sportului|http://mts.ro/proiecte-legislative-in-dezbatere-publica/
 Ministerul Transporturilor|http://mt.gov.ro/web14/transparenta-decizionala/consultare-publica/acte-normative-in-avizare
