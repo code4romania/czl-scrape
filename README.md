@@ -44,7 +44,7 @@ Ministerul Sănătăţii|http://www.ms.ro/acte-normative-in-transparenta/
 Ministerul Comunicaţiilor şi pentru Societatea Informaţională|https://www.comunicatii.gov.ro/?page_id=3517
 Ministerul Mediului, Apelor și Pădurilor|http://www.mmediu.ro/categorie/transparenta/10
 Ministerul Afacerilor Externe|http://www.mae.ro/node/2011
-Ministerul Afacerilor Interne|http://www.mai.gov.ro/index05\_1.html
+Ministerul Afacerilor Interne|http://www.mai.gov.ro/index05_1.html
 Ministerul Agriculturii Şi Dezvoltării Rurale|http://www.madr.gov.ro/transparenta-decizionala/proiecte-de-acte-normative.html
 Ministerul Apărării Naţionale|http://dlaj.mapn.ro
 Ministerul Culturii|http://www.cultura.ro/proiecte-acte-normative
@@ -64,7 +64,7 @@ Departamentul pentru Relaţia cu Parlamentul|http://mrp.gov.ro/web/category/cons
 Departamentul de Politici pentru Relațiile cu Românii de Pretutindeni|http://www.dprp.gov.ro/documente-in-consultare-publica/
 Ministerul Cercetării și Inovării|http://www.research.gov.ro/ro/articol/1029/despre-ancs-legislatie-proiecte-de-acte-normative
 Secretariatul General al Guvernului |http://www.sgg.ro/legislativ/
-Camera Deputatilor|www.cdep.ro/pls/proiecte/upl\_pck.home
+Camera Deputatilor|www.cdep.ro/pls/proiecte/upl_pck.home
 Senatul|https://www.senat.ro/LegiProiect.aspx
 Presedintia|http://www.presidency.ro/ro/presedinte/decrete-si-acte-oficiale
 
