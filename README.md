@@ -35,7 +35,7 @@ POST-ul catre API va fi autentificat cu o cheie-token, trimisa cu un header HTTP
 ```
 Authorization: Token am-un-token-si-fac-ce-vreau-cu-el
 ```
-*Token-urile vor fi distribuite pe parcursul evenimentului. API-ul este hostat pe AWS, va rugam sa nu le distribuiti in afara echipei in care lucrati. Avem logs.*
+*Token-urile vor fi distribuite pe parcursul evenimentului. API-ul este hostat pe AWS, va rugam sa nu le distribuiti in afara echipei in care lucrati.*
 
 ## Instituții publice
 Institutiile de la care vom trage datele necesare dezvoltarii aplicatiei le gasesti in tabelul de mai jos si in [endpoint-ul de aici](http://czl-api.code4.ro/api/institutions/). Iti recomandam sa-l folosesti, are cateva informatii in plus pentru mentinerea standardelor in date.
