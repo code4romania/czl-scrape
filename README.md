@@ -11,22 +11,20 @@ http://czl-api.code4.ro/api/publications/
 
 ```js
 {
-  "id": "ISO-8601:lawproposal-first-document-name-slug",
+  "identifier": "lawproposal-first-document-name-slug-or-something", // un identificator unic, predictibil (repetabil), pereferabil human-readable
   "title": "Proiectul de ordin al ministrului justiției pentru aprobarea Regulamentului privind organizarea și desfășurarea activităților și programelor educative, de asistență psihologică și asistență socială din locurile de deținere aflate în subordinea Aministrației Naționale a Penitenciarelor", // titlul actului legislativ propus
-  "type": "HG", // HG, OUG, PROIECT, OG
-  "issuer": "MINISTERUL_CERCETARII", // platforma din care provine actul legislativ
+  "type": "HG", // HG, OG, OUG, PROIECT
+  "institution": "justitie", // ID-ul platformei din care provine actul legislativ
   "date": "2017-03-08", // ISO 8601
   "description": "Cookie jelly-o sesame snaps donut sesame snaps sweet roll chocolate. Tootsie roll pie bonbon tart chocolate cake. Gummi bears gummies chupa chups ice cream croissant donut marzipan. Macaroon bear claw halvah carrot cake liquorice powder.",
-  "feedback_days": 12 // numarul zilelor disponibile pentru feedback
-}
-```
-
-http://czl-api.code4.ro/api/documents/
-
-```js
-{
-  "publication": "ISO-8601:lawproposal-first-document-name-slug",
-  "url": "http://www.just.ro/wp-content/uploads/2017/02/Proiect.docx" // da, este un link catre un document oficial de la MJ
+  "feedback_days": 12, // numarul zilelor disponibile pentru feedback
+  "contact": {"tel": "12345", "email": "feedback@example.org"}, // dictionar cu datale de contact. chei sugerate: "tel", "email", "addr"
+  "documents": [ // array de dictionare
+    {
+      "type": "anexa", // free text momentan
+      "url": "http://www.just.ro/wp-content/uploads/2017/02/Proiect.docx" // da, este un link catre un document oficial de la MJ
+    }
+  ]
 }
 ```
 
