@@ -1,0 +1,7 @@
+# Senat
+
+## Tehnologie
+
+## Instructiuni
+
+## Exceptii

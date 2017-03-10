@@ -7,7 +7,7 @@ Etapa consta in crearea unor mecanisme care sa preia informatii la un interval r
 ## Unelte
 Fiecare echipa este libera sa-si aleaga tehnologiile si approach-urile asupra scraper-ului. Dorim insa sa incurajam o aliniere a modelelor de date. Am creat un API valabil pe perioada evenimentului in care se poate face POST cu urmatoarele modele:
 
-http://czl-api.code4.ro/publication
+http://czl-api.code4.ro/api/publications/
 
 ```js
 {
@@ -21,7 +21,7 @@ http://czl-api.code4.ro/publication
 }
 ```
 
-http://czl-api.code4.ro/document
+http://czl-api.code4.ro/api/documents/
 
 ```js
 {
@@ -37,6 +37,8 @@ Authorization: Token am-un-token-si-fac-ce-vreau-cu-el
 ```
 
 ## Instituții publice
+Institutiile de la care vom trage datele necesare dezvoltarii aplicatiei le gasesti in tabelul de mai jos si in [endpoint-ul de aici](http://czl-api.code4.ro/api/institutions/). Iti recomandam sa-l folosesti, are cateva informatii in plus pentru mentinerea standardelor in date.
+
 Nume|URL
 -----|-----
 Ministerul Justiţiei|http://www.just.ro/transparenta-decizionala/acte-normative/proiecte-in-dezbatere/
