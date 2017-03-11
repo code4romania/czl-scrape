@@ -1,19 +1,13 @@
 # -*- coding: utf-8 -*-
 import scrapy
-
-# temporary remove whitespace function
-def rws(str):
-    if str:
-        return ' '.join(str.split())
-    else:
-        return None
+import scrapy_proj.items
 
 class SanatateSpider(scrapy.Spider):
     name = "sanatate"
 
     def start_requests(self):
         urls = [
-            'http://www.ms.ro/acte-normative-in-transparenta/',
+            'http://www.ms.ro/acte-normative-in-transparenta/?vpage=1',
         ]
 
         for url in urls:
@@ -21,8 +15,19 @@ class SanatateSpider(scrapy.Spider):
 
     def parse(self, response):
 
-        for title in response.css('.panel-group div.panel-heading a::text').extract():
-            yield {'title': rws(title)}
+        for item in response.css('.panel'):
+            heading = item.css('div.panel-heading')
+            body = item.css('div.panel-body')
+
+            title = item.css('a.panel-title::text').extract_first()
+            contact = {
+                'name': body.xpath('//p[contains(text(), "Contact")]/text()').re_first(r'Contact:\s*(.*)')
+            }
+
+            yield scrapy_proj.items.ActItem(
+                title = title,
+                contact = contact
+            )
 
         next_pages = response.css('.pt-cv-pagination a::attr(href)').extract()
         next_pages.reverse()

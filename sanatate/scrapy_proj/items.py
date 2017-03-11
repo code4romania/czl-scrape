@@ -7,8 +7,13 @@
 
 import scrapy
 
-
-class ScrapyProjItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class ActItem(scrapy.Item):
+    identifier = scrapy.Field()
+    title = scrapy.Field(serializer=str)
+    type = scrapy.Field()
+    institution = scrapy.Field()
+    date = scrapy.Field()
+    description = scrapy.Field()
+    feedback_days = scrapy.Field()
+    contact = scrapy.Field()
+    documents = scrapy.Field()
