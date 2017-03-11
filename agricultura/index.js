@@ -24,10 +24,10 @@ function guessType(text) {
         text = text.replace(orig, repl);
     }
 
-    if (text.match(/^ordonanta de urgenta /)) return 'OUG';
-    if (text.match(/^ordonanta /)) return 'OG';
-    if (text.match(/^hotarare /)) return 'HG';
-    if (text.match(/^ordin /)) return 'OM';
+    if (text.match(/^o\s?r\s?d\s?o\s?n\s?a\s?n\s?t\s?a\s+d\s?e\s+u\s?r\s?g\s?e\s?n\s?t\s?a /)) return 'OUG';
+    if (text.match(/^o\s?r\s?d\s?o\s?n\s?a\s?n\s?t\s?a /)) return 'OG';
+    if (text.match(/^h\s?o\s?t\s?a\s?r\s?a\s?r\s?e /)) return 'HG';
+    if (text.match(/^o\s?r\s?d\s?i\s?n /)) return 'OM';
     return 'LEGE';
 }
 
