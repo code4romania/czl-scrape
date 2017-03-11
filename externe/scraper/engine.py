@@ -19,7 +19,7 @@ class Extractor:
     return bs(page.text, 'html.parser')
 
   def extract_all_entries(self):
-    for article in self.extract_entry(self.content):
+    for article in self.extract_entry():
       pass
 
   def extract_entry(self):
@@ -112,7 +112,7 @@ class Article:
     """
     desc_paragraph = self._extract_desc_paragraph(row)
     match = re.search(self.DATE_REGX, desc_paragraph)
-    # self.published_at = .split(' ')[1].replace('\xa0', ' ')
+    # TODO
 
   def _extract_desc_paragraph(self, row):
     return row[2].select('td')[0].select('p')[1].text
