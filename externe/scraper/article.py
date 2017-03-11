@@ -24,19 +24,17 @@ class Article:
     :param table: the table.
     :return: the current object.
     """
-    try:
-      tr = table.select('tr')
-      self._build_contact(tr)
-      self._build_documents(tr)
-      self._extract_article_type(tr)
-      self._extract_title(tr)
-      # published_at should be
-      self._extract_published_at(tr)
-      self._extract_feedback_days(tr)
-    except Exception:
-      print('Unable to build article from table')
+    tr = table.select('tr')
+    self._build_contact(tr)
+    self._build_documents(tr)
+    self._extract_article_type(tr)
+    self._extract_title(tr)
+    # published_at should be
+    self._extract_published_at(tr)
+    self._extract_feedback_days(tr)
 
-  article_type = None # HG, OG, OUG, PROIECT
+  # HG, OG, OUG, PROIECT
+  article_type = None
   title = None
   documents = None
   published_at = None
@@ -49,7 +47,7 @@ class Article:
     :param table: the given table row
     :return: None
     """
-    contact_paragraph = row[2].select('p')[0].text
+    contact_paragraph = row[-1].select('p')[0].text
     self.contact = dict()
     for field in self.CONTACT_REGX.keys():
       aux = re.search(self.CONTACT_REGX[field], contact_paragraph)
@@ -84,13 +82,13 @@ class Article:
     :param row: the given table row
     :return: String
     """
-    type = row[0].find_all('a')[0].text
-    if type in settings.TYPES:
-      self.article_type = settings.TYPES[type]
+    article_type = row[0].find_all('a')[0].text.strip()
+    if article_type in settings.TYPES:
+      self.article_type = settings.TYPES.get(article_type)
     else:
       # TODO: logger
-      print("%s not defined as article type" % type)
-    return type
+      print("%s not defined as article type" % article_type)
+    return article_type
 
   def _extract_title(self, row):
     """
@@ -119,6 +117,7 @@ class Article:
     :param row: the given table row
     :return: None
     """
+    feedback_date = None
     desc_text = row[-1].find_all('p')[0].text
     match = re.search(self.DATE_REGX, desc_text)
     if match:
@@ -126,9 +125,11 @@ class Article:
       # In case no direct date is provided, try timedelta.
     else:
       delta_match = re.search(self.TIMEDELTA_REGX, desc_text)
-      delta = delta_match.group(2)
-      feedback_date = self.published_at + timedelta(days=int(delta))
-    self.feedback_days = (feedback_date - self.published_at).days
+      if delta_match:
+        delta = delta_match.group(2)
+        feedback_date = self.published_at + timedelta(days=int(delta))
+    if feedback_date:
+      self.feedback_days = (feedback_date - self.published_at).days
 
   def _build_date_from_match(self, match):
     month = settings.MONTHS.get(match.group(2).strip())
