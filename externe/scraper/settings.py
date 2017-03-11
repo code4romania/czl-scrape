@@ -38,6 +38,7 @@ TYPES = {
   'ORDONANŢĂ': 'OG',
   'ORDONANŢĂ DE URGENŢĂ': 'OUG',
   'PROIECT DE LEGE': 'PROIECT',
+  'LEGE': 'LEGE',
 }
 
 MONTHS = dict(
