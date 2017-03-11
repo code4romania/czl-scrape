@@ -1,6 +1,6 @@
 import requests
 import re
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 from bs4 import BeautifulSoup as bs
 import scraper.settings as settings
 
@@ -26,8 +26,9 @@ class Extractor:
     tables = self.content.select_one('div.art').select('table')
     for table in tables:
       article = Article(table)
-      print('title: %s \n urls: %s \n published: %s \n\n'
-            % (article.article_type, article.documents, article.published_at))
+      print('\n title: %s \n description: %s \n urls: %s \n published: %s \n'
+            % (article.article_type, article.description,
+               article.documents, article.published_at))
       yield article
 
 
@@ -35,7 +36,7 @@ class Article:
   """
   Defines an article object as found on the MAE site.
   """
-  DATE_REGX = '[0-9]{2}(.*)[0-9]{4}'
+  DATE_REGX = '([0-9]{2})(.*?)([0-9]{4})'
   DESCRIPTION_FMT = '{0} {1}'
 
   def __init__(self, table):
@@ -112,7 +113,14 @@ class Article:
     """
     desc_paragraph = self._extract_desc_paragraph(row)
     match = re.search(self.DATE_REGX, desc_paragraph)
-    # TODO
+    month = settings.MONTHS.get(match.group(2).strip())
+    if not month:
+      print('Unable to match month for date: %s' % match.group(0))
+    else:
+      self.published_at = date(
+        int(match.group(3)), int(month), int(match.group(1))
+      )
+
 
   def _extract_desc_paragraph(self, row):
     return row[2].select('td')[0].select('p')[1].text

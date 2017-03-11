@@ -40,4 +40,19 @@ TYPES = {
   'PROIECT DE LEGE': 'PROIECT',
 }
 
+MONTHS = dict(
+  ianuarie='01',
+  februarie='02',
+  martie='03',
+  aprilie='04',
+  mai='05',
+  iunie='06',
+  iulie='07',
+  august='08',
+  septembrie='09',
+  octombrie='10',
+  noiembrie='11',
+  decembrie='12'
+)
+
 INSTITUTION = 'externe'
