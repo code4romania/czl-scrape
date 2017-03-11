@@ -4,35 +4,32 @@ from bs4 import BeautifulSoup as bs
 import scraper.settings as settings
 
 
-def fetch_page(page_url):
-  page = requests.get(page_url, headers=settings.HEADERS)
-  return bs(page.text, 'html.parser')
+class Extractor():
 
+  url = None
+  
+  def __init__(url):
+    self.url = url
 
-def extract_all_entries(content):
-  for article in extract_entry(content):
-    pass
+  def fetch_page():
+    page = requests.get(self.url, headers=settings.HEADERS)
+    return bs(page.text, 'html.parser')
 
+  def parse_page():
+    content = fetch_page()
+    extract_all_entries(content)
 
-def parse_page(page_url):
-  content = fetch_page(page_url)
-  extract_all_entries(content)
+  def extract_all_entries(content):
+    for article in extract_entry(content):
+      pass
 
-
-def extract_entry(content):
-  tables = content.select_one('div.art').select('table')
-  for table in tables:
-    '''
-    "identifier": "lawproposal-first-document-name-slug-or-something",
-    // un identificator unic, predictibil (repetabil), pereferabil
-    human-readable
-    '''
-    # contact
-
-    article = Article(table)
-    print('title: %s \n url: %s \n published: %s \n\n'
-          % (article.article_type, article.documents, article.published_at))
-    yield article
+  def extract_entry(content):
+    tables = content.select_one('div.art').select('table')
+    for table in tables:
+      article = Article(table)
+      print('title: %s \n urls: %s \n published: %s \n\n'
+            % (article.article_type, article.documents, article.published_at))
+      yield article
 
 
 class Article:
@@ -51,12 +48,25 @@ class Article:
     self._extract_description(table)
     self._extract_published_at(table)
 
-  # HG, OG, OUG, PROIECT
-  article_type = None
+  article_type = None # HG, OG, OUG, PROIECT
   description = None
   documents = None
   published_at = None
   contact = None
+  institution = settings.INSTITUTION
+
+
+  def _extract_type(self, table):
+    """
+    extracts and process the type from a given HTML table.
+    :param table: the given table
+    :return: None
+    """
+    type = t.select('tr')[0].select('td > p')[0].text
+    if type in settings.TYPES:
+      self.article_type = settings.TYPES['type']
+    else:
+      print("Type is not annotated")
 
   def _build_contact(self, table):
     """
