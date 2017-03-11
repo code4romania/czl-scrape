@@ -13,7 +13,7 @@ function parseParagraph(paragraph) {
     var projects = [];
     var projectsCounter = 0;
     for(var i = 0; i < paragraphs.length; i++) {
-        if(paragraphs[i].innerHTML == '—————–') {
+        if($(paragraphs[i]).text() == '—————–') {
             projectsCounter++;
         } else {
             if(!projects[projectsCounter]) projects[projectsCounter] = [];
