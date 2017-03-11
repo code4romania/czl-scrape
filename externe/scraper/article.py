@@ -36,7 +36,6 @@ class Article:
     self._extract_feedback_days(tr)
     self._generate_id()
 
-
   # HG, OG, OUG, PROIECT
   identifier = None
   article_type = None
@@ -55,7 +54,7 @@ class Article:
   def _generate_id(self):
     # externe-tip-data-hashTitlu
     if self.article_type and self.title:
-      self.identifier = '%s-%s-%s-%s' % (
+      self.identifier = '%s-%s' % (
         self.article_type,
         hashlib.md5(self.title.encode()).hexdigest()
       )
@@ -80,7 +79,6 @@ class Article:
         print(
           'Unable to match %s for paragraph: %s' % (field, contact_paragraph)
         )
-
 
   def _build_documents(self, row):
     """
