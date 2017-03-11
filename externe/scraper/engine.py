@@ -16,31 +16,26 @@ def extract(content):
     // un identificator unic, predictibil (repetabil), pereferabil
     human-readable
     '''
-    #"type": "HG", // HG, OG, OUG, PROIECT
-    #contact
+    # "type": "HG", // HG, OG, OUG, PROIECT
+    # contact
     instituion = 'externe'
     description = ''
     title = t.select('tr')[0].select('td')[0].text.strip().replace('\n', ' ')
     documents = [
       dict(
-        type = 'Decizie - anexa',
-        url = t.select('tr')[0].select('td > p > a')[0].attrs['href']
+        type='Decizie - anexa',
+        url=t.select('tr')[0].select('td > p > a')[0].attrs['href']
       ),
       dict(
-        type = 'Nota de fundamentare - anexa',
-        url = t.select('tr')[1].select('td > p > a')[0].attrs['href']
+        type='Nota de fundamentare - anexa',
+        url=t.select('tr')[1].select('td > p > a')[0].attrs['href']
       )
     ]
-    published = t.select('tr')[2].select('td')[0].select('p')[1].text\
-      .split(' ')[1].replace('\xa0' , ' ')
-    print('title: %s \n url: %s \n published: %s \n\n' %(title, documents, published))
+    published = t.select('tr')[2].select('td')[0].select('p')[1].text \
+      .split(' ')[1].replace('\xa0', ' ')
+    print('title: %s \n url: %s \n published: %s \n\n' % (title, documents, published))
 
 
 def parse_page(page_url):
   content = fetch_page(page_url)
   extract(content)
-
-
-if __name__ == '__main__':
-  parse_page(settings.URLS.get('feed'))
-
