@@ -14,7 +14,6 @@ BOT_NAME = 'just'
 SPIDER_MODULES = ['just.spiders']
 NEWSPIDER_MODULE = 'just.spiders'
 
-
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'just (+http://www.yourdomain.com)'
 
@@ -67,7 +66,7 @@ LOG_ENABLED = True
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'just.pipelines.JustPipeline': 100,
+    'just.pipelines.JustPublicationsToApiPipeline': 100,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

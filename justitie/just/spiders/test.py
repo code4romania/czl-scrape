@@ -32,21 +32,20 @@ class TestSpider(scrapy.Spider):
             description = '\n'.join(paragraphs)
 
 
+
             links = li_item.css('a')
             documents = self.get_documents_from_links(links)
 
             item = JustPublication(
                 title=title,
                 type=self.get_type(title),
-                identifier=self.slugify("%s-%s" % (text_date, title) ),
+                identifier=self.slugify(title)[0:127],
                 date=date,
-                institution='justitie',
+                issuer='justitie',
                 description=description,
                 documents=documents,
                 contact=self.get_contacts(description)
             )
-
-            self.logger.info(item.items())
 
             yield item
         pass
@@ -68,6 +67,9 @@ class TestSpider(scrapy.Spider):
                 contact[key].push(value)
             else:
                 contact[key] = [value]
+
+        for k,v in contact.items():
+            contact[k] = ','.join(v)
 
         return contact
 
