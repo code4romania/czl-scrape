@@ -47,7 +47,7 @@ public class CzlApiV1 {
    * @param publicationRepresentation the representation of the publication to create.
    * @return a request builder.
    */
-  public CreatePublicationRequest.Builder createPubliation(PublicationRepresentation publicationRepresentation) {
+  public CreatePublicationRequest.Builder createPublication(PublicationRepresentation publicationRepresentation) {
     return CreatePublicationRequest.builder(publicationRepresentation, apiInvoker);
   }
 

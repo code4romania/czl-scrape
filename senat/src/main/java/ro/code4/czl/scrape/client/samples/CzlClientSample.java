@@ -26,10 +26,10 @@ public class CzlClientSample {
         .build();
 
     try (CzlClient czlClient = CzlClient.newClient(clientConfig)) {
-      czlClient.apiV1().createPubliation(PublicationRepresentationBuilder
+      czlClient.apiV1().createPublication(PublicationRepresentationBuilder
                                              .aPublicationRepresentation()
                                              .withIdentifier("1")
-                                             .withInstitution("finantepub")
+                                             .withIssuer("finantepub")
                                              .withType("HG")
                                              .withDate("2017-03-08")
                                              .build())

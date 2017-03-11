@@ -1,20 +1,25 @@
 package ro.code4.czl.scrape.client.representation;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Ionut-Maxim Margelatu (ionut.margelatu@gmail.com)
  */
+@JsonInclude(Include.NON_NULL)
 public class PublicationRepresentation {
 
   private String identifier;
   private String title;
   private String type;
-  private String institution;
+  private String issuer;
   private String date;
   private String description;
   private int feedback_days;
-  private ContactRepresentation contact;
+  private Map<String, String> contact;
   private List<DocumentRepresentation> documents;
 
   public String getIdentifier() {
@@ -41,12 +46,12 @@ public class PublicationRepresentation {
     this.type = type;
   }
 
-  public String getInstitution() {
-    return institution;
+  public String getIssuer() {
+    return issuer;
   }
 
-  public void setInstitution(String institution) {
-    this.institution = institution;
+  public void setIssuer(String issuer) {
+    this.issuer = issuer;
   }
 
   public String getDate() {
@@ -73,11 +78,11 @@ public class PublicationRepresentation {
     this.feedback_days = feedback_days;
   }
 
-  public ContactRepresentation getContact() {
+  public Map<String, String> getContact() {
     return contact;
   }
 
-  public void setContact(ContactRepresentation contact) {
+  public void setContact(Map<String, String> contact) {
     this.contact = contact;
   }
 
@@ -93,11 +98,11 @@ public class PublicationRepresentation {
     private String identifier;
     private String title;
     private String type;
-    private String institution;
+    private String issuer;
     private String date;
     private String description;
     private int feedback_days;
-    private ContactRepresentation contact;
+    private Map<String, String> contact;
     private List<DocumentRepresentation> documents;
 
     private PublicationRepresentationBuilder() {
@@ -122,8 +127,8 @@ public class PublicationRepresentation {
       return this;
     }
 
-    public PublicationRepresentationBuilder withInstitution(String institution) {
-      this.institution = institution;
+    public PublicationRepresentationBuilder withIssuer(String issuer) {
+      this.issuer = issuer;
       return this;
     }
 
@@ -142,7 +147,7 @@ public class PublicationRepresentation {
       return this;
     }
 
-    public PublicationRepresentationBuilder withContact(ContactRepresentation contact) {
+    public PublicationRepresentationBuilder withContact(Map<String, String> contact) {
       this.contact = contact;
       return this;
     }
@@ -157,7 +162,7 @@ public class PublicationRepresentation {
       publicationRepresentation.setIdentifier(identifier);
       publicationRepresentation.setTitle(title);
       publicationRepresentation.setType(type);
-      publicationRepresentation.setInstitution(institution);
+      publicationRepresentation.setIssuer(issuer);
       publicationRepresentation.setDate(date);
       publicationRepresentation.setDescription(description);
       publicationRepresentation.setFeedback_days(feedback_days);
