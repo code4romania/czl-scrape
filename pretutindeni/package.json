@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cheerio": "0.22.0",
     "nightmare": "2.10.0"
   }
 }
