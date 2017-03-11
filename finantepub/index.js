@@ -1,8 +1,11 @@
 const sha256 = require('sha256');
+const rp = require('request-promise');
 const Nightmare = require('nightmare');
 const nightmare = Nightmare({ show: false, typeInterval: 2, waitTimeout: 5000 });
 
 const YEAR_THRESHOLD = 2017;
+
+const API_TOKEN = process.env['API_TOKEN'];
 
 function guessType(text) {
   text = text.toLowerCase().trim();
@@ -75,10 +78,24 @@ function parsePage(page = 1) {
             val.description = '';
             val.type = guessType(val.label);
             delete val.label;
-
-            // TODO upload to API
-            console.log(val);
+            itemsList.push(val);
         }
+
+        function postAllItems(remaining) {
+            if(! remaining.length) return;
+            let val = remaining[0];
+            return rp.post({
+                url: 'http://czl-api.code4.ro/api/publications/',
+                headers: {Authorization: `Token ${API_TOKEN}`},
+                json: val
+            })
+            .then(() => {
+                console.log('posted item: ', val.identifier);
+                return postAllItems(remaining.slice(1));
+            });
+        }
+
+        return postAllItems(itemsList);
 
       })
       .then(() => {
