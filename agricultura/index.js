@@ -1,11 +1,13 @@
 const moment = require('moment');
 const sha256 = require('sha256');
+const rp = require('request-promise');
 const Nightmare = require('nightmare');
 const nightmare = Nightmare({ show: false, typeInterval: 2, waitTimeout: 5000 });
 
 const URL = 'http://www.madr.gov.ro/transparenta-decizionala/proiecte-de-acte-normative.html';
 const YEAR_THRESHOLD = 2017;
 
+const API_TOKEN = process.env['API_TOKEN'];
 
 function parsePage(firstFlag) {
     if (firstFlag) {
@@ -60,9 +62,23 @@ function parsePage(firstFlag) {
             val.date = date.toISOString();
             val.identifier = identifier;
             itemsList.push(val);
-            console.log("TODO: make a request!: ", val);
         }
 
+        function postAllItems(remaining) {
+            if(! remaining.length) return;
+            let val = remaining[0];
+            return rp.post({
+                url: 'http://czl-api.code4.ro/api/publications/',
+                headers: {Authorization: `Token ${API_TOKEN}`},
+                json: val
+            })
+            .then(() => postAllItems(remaining.slice(1)));
+        }
+
+        return postAllItems(itemsList);
+
+      })
+      .then((result) => {
         nightmare.evaluate(function () {
             let returnValue = document.querySelector('.pagination .next');
             return returnValue !== null;
@@ -80,8 +96,7 @@ function parsePage(firstFlag) {
       })
       .catch((error) => {
         console.error('error:', error);
-        console.error('closing the app in 5 seconds...');
-        nightmare.end();
+        nightmare.halt();
       });
 }
 
