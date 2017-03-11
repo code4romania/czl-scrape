@@ -11,6 +11,8 @@ http://www.mdrap.gov.ro/transparenta/consultari-publice/
 
 ```
 pip install -r requirements.txt
+
+scrapy crawl mdrap -a token=xxxx
 ```
 
 ## Exceptii
