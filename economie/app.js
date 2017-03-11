@@ -1,16 +1,12 @@
 var nightmareConfig = { show: false },
-    cheerio = require('cheerio');
+    cheerio = require('cheerio'),
+    parseFunction = require('./parseProject');
 
 var URL = 'http://economie.gov.ro/transparenta-decizionala/proiecte-in-dezbatere-publica',
     BASE = 'http://economie.gov.ro';
 
 function parseItem(item) {
-    "use strict";
-    var $ = cheerio.load(item);
-
-
-
-    console.log($);
+    parseFunction(item);
 }
 
 require('nightmare')(nightmareConfig)
