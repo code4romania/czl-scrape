@@ -97,7 +97,10 @@ function parsePage(firstFlag) {
                 headers: {Authorization: `Token ${API_TOKEN}`},
                 json: val
             })
-            .then(() => postAllItems(remaining.slice(1)));
+            .then(() => {
+                console.log('posted item: ', val.identifier);
+                return postAllItems(remaining.slice(1));
+            });
         }
 
         return postAllItems(itemsList);
