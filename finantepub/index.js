@@ -1,7 +1,18 @@
+const sha256 = require('sha256');
 const Nightmare = require('nightmare');
 const nightmare = Nightmare({ show: false, typeInterval: 2, waitTimeout: 5000 });
 
 const YEAR_THRESHOLD = 2017;
+
+function guessType(text) {
+  text = text.toLowerCase().trim();
+  text = text.replace(/^proiect\s*/, '');
+  if(text.match(/^ordonanță de urgență/)) return 'OUG';
+  if(text.match(/^lege/)) return 'LEGE';
+  if(text.match(/^ordin/)) return 'OG';
+  if(text.match(/^hotărâre/)) return 'HG';
+  throw new Error(`failz: ${text}`);
+}
 
 function parsePage(page = 1) {
     nightmare
@@ -22,7 +33,8 @@ function parsePage(page = 1) {
             }
 
             let documents = []
-            for (let doc of item.querySelectorAll('a.downlPDF')) {
+            let links = item.querySelectorAll('a.downlPDF');
+            for (let doc of links) {
               documents.push({
                 type: 'act',
                 url: doc.href
@@ -32,7 +44,8 @@ function parsePage(page = 1) {
             let returnObj = {
                 title: match[1],
                 date: `${match[4]}-${match[3]}-${match[2]}`,
-                documents: documents
+                documents: documents,
+                label: links[0].innerText
             };
 
             itemsList.push(returnObj);
@@ -56,6 +69,12 @@ function parsePage(page = 1) {
                 nightmare.halt();
                 return;
             }
+
+            val.identifier = sha256(val.documents[0].url);
+            val.issuer = 'finantepub';
+            val.description = '';
+            val.type = guessType(val.label);
+            delete val.label;
 
             // TODO upload to API
             console.log(val);
