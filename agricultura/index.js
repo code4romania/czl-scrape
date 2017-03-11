@@ -8,82 +8,81 @@ const YEAR_THRESHOLD = 2017;
 
 
 function parsePage(firstFlag) {
-	if (firstFlag) {
-		nightmare
-		  .goto(URL);
-	}else {
-		nightmare
-		  .click('.pagination .next');
-	}
+    if (firstFlag) {
+        nightmare
+          .goto(URL);
+    } else {
+        nightmare
+          .click('.pagination .next');
+    }
 
-	nightmare
-	  .wait("#itemListPrimary .itemContainer")
-	  .evaluate(()=> {
-	  	let itemsList = [], items = [... document.querySelectorAll('#itemListPrimary .itemContainer')];
-	  	for (let item of items) {
-	  		let introText = item.querySelector(".catItemIntroText");
-	  		let emHTML = introText.querySelector("em");
-	  		if (emHTML !== null) {
-	  			emHTML.remove();
-	  		}
+    nightmare
+      .wait("#itemListPrimary .itemContainer")
+      .evaluate(()=> {
+        let itemsList = [], items = [... document.querySelectorAll('#itemListPrimary .itemContainer')];
+        for (let item of items) {
+            let introText = item.querySelector(".catItemIntroText");
+            let emHTML = introText.querySelector("em");
+            if (emHTML !== null) {
+                emHTML.remove();
+            }
 
-	  		let returnObj = {
-	  			title: introText.innerText,
-	  			date: item.querySelector(".catItemDateCreated").innerText,
-	  			documents: [...item.querySelectorAll(".catItemAttachments a")].map((elem)=> {
-	  				return {
-		  				type: "act",//elem.title,
-		  				url: elem.href
-		  			}
+            let returnObj = {
+                title: introText.innerText,
+                date: item.querySelector(".catItemDateCreated").innerText,
+                documents: [...item.querySelectorAll(".catItemAttachments a")].map((elem)=> {
+                    return {
+                        type: "act",//elem.title,
+                        url: elem.href
+                    }
 
-	  			})
-	  		};
+                })
+            };
 
-	  		itemsList.push(returnObj);
-	  	}
-	  	return itemsList;
-	  })
-	  .then((result) => {
+            itemsList.push(returnObj);
+        }
+        return itemsList;
+      })
+      .then((result) => {
 
-	  	let itemsList = [];
+        let itemsList = [];
 
-	  	for(let val of result) {
-	  		let date = moment(val.date, 'ddd, DD MMMM YYYY HH:mm', 'ro');
-	  		let year = date.year();
-	  		if (year < YEAR_THRESHOLD) {
-	  			console.log("halt!");
-         		nightmare.halt();
-	  			return;
-	  		}
+        for(let val of result) {
+            let date = moment(val.date, 'ddd, DD MMMM YYYY HH:mm', 'ro');
+            let year = date.year();
+            if (year < YEAR_THRESHOLD) {
+                console.log("halt!");
+                nightmare.halt();
+                return;
+            }
 
-	  		let identifier = sha256(val.title);
-	  		val.date = date.toISOString();
-	  		val.identifier = identifier;
-	  		itemsList.push(val);
-	  		console.log("TODO: make a request!: ", val);
-	  	}
+            let identifier = sha256(val.title);
+            val.date = date.toISOString();
+            val.identifier = identifier;
+            itemsList.push(val);
+            console.log("TODO: make a request!: ", val);
+        }
 
-	  	nightmare.evaluate(function () {
-	  		let returnValue = document.querySelector('.pagination .next');
-			return returnValue !== null;
+        nightmare.evaluate(function () {
+            let returnValue = document.querySelector('.pagination .next');
+            return returnValue !== null;
         })
         .then(function(goNextFlag) {
-        	setTimeout(function() {
-	         	if (goNextFlag) {
-	          		parsePage(false);
-	         	}else {
-	         		console.log("halt!");
-	         		nightmare.halt();
-	         	}
-        	}, 0);
-          	
+            setTimeout(function() {
+                if (goNextFlag) {
+                    parsePage(false);
+                }else {
+                    console.log("halt!");
+                    nightmare.halt();
+                }
+            }, 0);
         });
-	  })
-	  .catch((error) => {
-	    console.error('error:', error);
-	    console.error('closing the app in 5 seconds...');
-	    nightmare.end();
-	  });
+      })
+      .catch((error) => {
+        console.error('error:', error);
+        console.error('closing the app in 5 seconds...');
+        nightmare.end();
+      });
 }
 
 parsePage(true);
