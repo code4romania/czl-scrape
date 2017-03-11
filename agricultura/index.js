@@ -27,7 +27,8 @@ function guessType(text) {
     if (text.match(/^ordonanta de urgenta /)) return 'OUG';
     if (text.match(/^ordonanta /)) return 'OG';
     if (text.match(/^hotarare /)) return 'HG';
-    return 'PROIECT';
+    if (text.match(/^ordin /)) return 'OM';
+    return 'LEGE';
 }
 
 function parsePage(firstFlag) {
