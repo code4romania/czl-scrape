@@ -1,6 +1,7 @@
 import re
 from datetime import date, timedelta
 import scraper.settings as settings
+import hashlib
 
 
 class Article:
@@ -33,6 +34,7 @@ class Article:
     # published_at should be
     self._extract_published_at(tr)
     self._extract_feedback_days(tr)
+    self._generate_id()
 
 
   # HG, OG, OUG, PROIECT
@@ -57,7 +59,7 @@ class Article:
         settings.INSTITUTION,
         self.article_type,
         self.published_at,
-        hashlib.md5(self.title).hexdigest()
+        hashlib.md5(self.title.encode()).hexdigest()
       )
     else:
       #TODO: Logging
@@ -123,7 +125,10 @@ class Article:
     """
     art_type = self._extract_article_type(row).lower().capitalize()
     desc_text = row[0].find_all('a')[1].text.rstrip('\n')
-    self.title = self.DESCRIPTION_FMT.format(art_type, desc_text)
+    self.title = self.DESCRIPTION_FMT\
+      .format(art_type, desc_text).replace('\n',' ')\
+      .replace('\t',' ')
+    self.title = re.sub(' +',' ',self.title).strip()
 
   def _extract_published_at(self, row):
     """

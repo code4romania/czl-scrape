@@ -22,9 +22,6 @@ class Extractor:
     tables = self.content.select_one('div.art').select('table')
     for table in tables:
       article = Article(table)
-      print('\n title: %s \n description: %s \n urls: %s \n published: %s \n feedback_days: %s \n'
-            % (article.article_type, article.title,
-               article.documents, article.published_at, article.feedback_days))
       if article.is_valid():
         yield article
       else:

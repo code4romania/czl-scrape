@@ -63,6 +63,6 @@ INSTITUTION = 'externe'
 
 MAE_BASE_URL = 'http://www.mae.ro'
 
-MANDATORY_FIELDS = ['identifier', 'title', 'date', 'article_type']
+MANDATORY_FIELDS = ['identifier', 'title', 'published_at', 'article_type']
 
 # POLITNESS = 1 #SECOUNDS
