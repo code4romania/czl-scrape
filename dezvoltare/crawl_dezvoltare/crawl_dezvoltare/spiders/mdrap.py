@@ -105,7 +105,7 @@ class MdrapSpider(scrapy.Spider):
         for doc in article_documents:
             item['documents'].append({
                 'type': doc.find('a').text, 
-                'url': doc.find('a')['href']
+                'url': 'http://www.mdrap.gov.ro' + doc.find('a')['href']
                 })
 
         return item
