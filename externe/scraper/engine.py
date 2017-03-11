@@ -4,35 +4,33 @@ from bs4 import BeautifulSoup as bs
 import scraper.settings as settings
 
 
-def fetch_page(page_url):
-  page = requests.get(page_url, headers=settings.HEADERS)
-  return bs(page.text, 'html.parser')
+class Extractor():
 
+  url = None
+  content = None
 
-def extract_all_entries(content):
-  for article in extract_entry(content):
-    pass
+  def __init__(self, url):
+    self.url = url
 
+  def fetch_page(self):
+    page = requests.get(self.url, headers=settings.HEADERS)
+    self.content = bs(page.text, 'html.parser')
 
-def parse_page(page_url):
-  content = fetch_page(page_url)
-  extract_all_entries(content)
+  def parse_page(self):
+    fetch_page()
+    extract_all_entries()
 
+  def extract_all_entries(self):
+    for article in extract_entry(self.content):
+      pass
 
-def extract_entry(content):
-  tables = content.select_one('div.art').select('table')
-  for table in tables:
-    '''
-    "identifier": "lawproposal-first-document-name-slug-or-something",
-    // un identificator unic, predictibil (repetabil), pereferabil
-    human-readable
-    '''
-    # contact
-
-    article = Article(table)
-    print('\n title: %s \n description: %s \n url: %s \n published: %s \n'
-          % (article.article_type, article.description, article.documents, article.published_at))
-    yield article
+  def extract_entry(self):
+    tables = self.content.select_one('div.art').select('table')
+    for table in tables:
+      article = Article(table)
+      print('title: %s \n urls: %s \n published: %s \n\n'
+            % (article.article_type, article.documents, article.published_at))
+      yield article
 
 
 class Article:
@@ -58,12 +56,12 @@ class Article:
     except Exception:
       print('Unable to build article from table')
 
-  # HG, OG, OUG, PROIECT
-  article_type = None
+  article_type = None # HG, OG, OUG, PROIECT
   description = None
   documents = None
   published_at = None
   contact = None
+  institution = settings.INSTITUTION
 
   def _build_contact(self, row):
     """

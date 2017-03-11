@@ -36,6 +36,8 @@ URLS = {
 TYPES = {
   'HOTĂRÂRE': 'HG',
   'ORDONANŢĂ': 'OG',
-  'OUG': 'OUG',
-  'PROIECT': 'PROIECT',
+  'ORDONANŢĂ DE URGENŢĂ': 'OUG',
+  'PROIECT DE LEGE': 'PROIECT',
 }
+
+INSTITUTION = 'externe'
