@@ -12,17 +12,14 @@ class Extractor:
 
   def __init__(self, url):
     self.url = url
+    self.content = self._fetch_page()
 
-  def fetch_page(self):
+  def _fetch_page(self):
     page = requests.get(self.url, headers=settings.HEADERS)
-    self.content = bs(page.text, 'html.parser')
-
-  def parse_page(self):
-    self.fetch_page()
-    self.extract_all_entries()
+    return bs(page.text, 'html.parser')
 
   def extract_all_entries(self):
-    for article in self.extract_entry():
+    for article in self.extract_entry(self.content):
       pass
 
   def extract_entry(self):
@@ -81,11 +78,11 @@ class Article:
     self.documents = [
       dict(
         type='Decizie - anexa',
-        url=row[0].select('td > p > a')[0].attrs['href']
+        url=row[0].select('td')[0].select('a')[0].attrs['href']
       ),
       dict(
         type='Nota de fundamentare - anexa',
-        url=row[1].select('td > p > a')[0].attrs['href']
+        url=row[1].select('td')[0].select('a')[0].attrs['href']
       )
     ]
 
