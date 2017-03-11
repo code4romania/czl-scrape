@@ -11,10 +11,10 @@ class Article:
   TIMEDELTA_REGX = '(timp\sde\s([0-9]+)\szile)'
   DESCRIPTION_FMT = '{0} {1}'
   CONTACT_REGX = dict(
-    email=r'\s(([a-zA-Z]|\.)*?@[a-zA-Z]*?\.[a-zA-Z]*?)(?:\s|\.|,)',
+    email=r'\s(([a-zA-Z\._]|\.)*?@[a-zA-Z]*?\.[a-zA-Z]*?)(?:\s|\.|,)',
     tel=r'telefon:?\s*((\d+\s?)*)(,|\s|\.)?',
     fax=r'fax:?\s*((\d+\s?)*)(,|\s|\.)?',
-    addr=r'adresa poştală a (.*? cod(:|\s)?\d+)',
+    addr=r'adresa poştală a\s*(.*?\scod(:|\s)?\d+)',
     # ADDRESS=r'adresa poştală a (.*)\.'
   )
 
@@ -47,6 +47,7 @@ class Article:
     :param table: the given table row
     :return: None
     """
+    print('--------------------------------------')
     contact_paragraph = row[-1].select('p')[0].text
     self.contact = dict()
     for field in self.CONTACT_REGX.keys():
@@ -58,6 +59,7 @@ class Article:
         print(
           'Unable to match %s for paragraph: %s' % (field, contact_paragraph)
         )
+    print('--------------------------------------')
 
   def _build_documents(self, row):
     """
