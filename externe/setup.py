@@ -6,7 +6,8 @@ from setuptools import setup
 install_requires = [
     'beautifulsoup4',
     'requests',
-    'simplejson'
+    'simplejson',
+    'argparse'
 ]
 
 version_regex = re.compile("VERSION\s*=\s*'(.*?)'$")
