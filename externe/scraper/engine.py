@@ -2,6 +2,7 @@ import requests
 import re
 from datetime import date, timedelta
 from bs4 import BeautifulSoup as bs
+
 import scraper.settings as settings
 
 
@@ -36,8 +37,8 @@ class Article:
   """
   Defines an article object as found on the MAE site.
   """
-  DATE_REGX = r'([0-9]+)(.*?)([0-9]{4})'
-  TIMEDELTA_REGX = '(timp\sde\s([0-9]{2})\szile)'
+  DATE_REGX = r'(\d+)\s([a-zA-Z]*)\s(\d{4})'
+  TIMEDELTA_REGX = '(timp\sde\s([0-9]+)\szile)'
   DESCRIPTION_FMT = '{0} {1}'
   CONTACT_REGX = dict(
     MAIL=r'e-mail:?(.*?@.*?\..*?)(?:\s|\.|,)',
@@ -59,6 +60,7 @@ class Article:
       self._build_documents(tr)
       self._extract_article_type(tr)
       self._extract_description(tr)
+      # Need published_at for debate_until
       self._extract_published_at(tr)
       self._extract_debate_until(tr)
     except Exception:
@@ -83,7 +85,7 @@ class Article:
     for field in ['MAIL', 'PHONE', 'FAX', 'ADDRESS']:
       aux = re.search(self.CONTACT_REGX[field], contact_paragraph)
       if aux:
-        self.contact[field.lower()]= aux.group(1).strip()
+        self.contact[field.lower()] = aux.group(1).strip()
       else:
         print('Unable to match %s for pargaraph: %s' % (field.lower(), contact_paragraph))
 
@@ -138,7 +140,7 @@ class Article:
     published_text = row[-1].find_all('p')[-1].text
     match = re.search(self.DATE_REGX, published_text)
     if match:
-      self.published_at = self._build_date_from_match(match, d=1, m=2, y=3)
+      self.published_at = self._build_date_from_match(match)
 
   def _extract_debate_until(self, row):
     """
@@ -146,20 +148,21 @@ class Article:
     :param row: the given table row
     :return: None
     """
-    desc_text = row[-1].find_all('p').text
+    desc_text = row[-1].find_all('p')[0].text
     match = re.search(self.DATE_REGX, desc_text)
     if match:
-      self.debate_until = self._build_date_from_match(match, d=2, m=3, y=4)
+      self.debate_until = self._build_date_from_match(match)
       # In case no direct date is provided, try timedelta.
     else:
       delta_match = re.search(self.TIMEDELTA_REGX, desc_text)
-      delta = delta_match.group(1)
+      delta = delta_match.group(2)
+      self.debate_until = self.published_at + timedelta(days=int(delta))
 
-  def _build_date_from_match(self, match, d, m, y):
-    month = settings.MONTHS.get(match.group(m).strip())
+  def _build_date_from_match(self, match):
+    month = settings.MONTHS.get(match.group(2).strip())
     if not month:
       print('Unable to match month for date string: %s' % match.group(0))
     else:
       return date(
-        year=int(match.group(y)), month=int(month), day=int(match.group(d))
+        year=int(match.group(3)), month=int(month), day=int(match.group(1))
       )
