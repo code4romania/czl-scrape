@@ -59,7 +59,7 @@ function parsePage(firstFlag) {
             }
 
             let identifier = sha256(val.title);
-            val.date = date.toISOString();
+            val.date = date.format('YYYY-MM-DD');
             val.identifier = identifier;
             itemsList.push(val);
         }
