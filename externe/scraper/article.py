@@ -94,7 +94,10 @@ class Article:
     article_type = self._sanitize(row[0].find_all('a')[0].text.strip())
     self.article_type = settings.TYPES.get(article_type)
     if not self.article_type:
-      self.article_type = settings.TYPES.get('OTHER')
+      article_type = self._do_magic(article_type)
+      self.article_type = settings.TYPES.get(article_type)
+      if not self.article_type:
+        self.article_type = settings.TYPES.get('OTHER')
     return self.article_type
 
   def _extract_title(self, row):
@@ -148,5 +151,23 @@ class Article:
       )
 
   def _sanitize(self, string):
+    """Sanitize a string.
+    Removes new lines and 0 width spaces, because fuck those.
+
+    :param string: The string to sanitize.
+    :return: A clean string.
+    """
     if string:
       return string.replace('\n', '').replace('\u200b', '')
+
+  def _do_magic(self, string):
+    """
+    Yes, really.
+
+    :param string: The string you want to apply magic on.
+    :return: The magic string.
+    """
+    if string:
+      return string.encode().replace(
+        b'\xc5\xa2\xc4\x82', b'\x54\x41'
+      ).decode('utf-8')
