@@ -5,6 +5,8 @@ const YEAR_THRESHOLD = 2017;
 
 function parsePage(page = 1) {
     nightmare
+      .cookies.clear()
+      .useragent(`Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.${Math.round(Math.random()*100)}`)
       .goto(`http://www.mfinante.gov.ro/transparent.html?method=transparenta&pagina=acasa&locale=ro&d-6834775-p=${page}`)
       .wait("#transparentaList")
       .evaluate(()=> {
