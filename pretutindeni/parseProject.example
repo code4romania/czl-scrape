@@ -1,5 +1,7 @@
-module.exports = function() {
+var cheerio = require('cheerio')
+
+module.exports = function(project) {
     "use strict";
 
-    return 'test';
+    console.log(project);
 };

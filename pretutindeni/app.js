@@ -21,9 +21,9 @@ function parseParagraph(paragraph) {
         }
     }
 
-    // console.log($.html());
-
-    console.log(parseFunction());
+    for(var i = 0; i < projects.length; i++) {
+        parseFunction(projects[i]);
+    }
 }
 
 // nightmare
