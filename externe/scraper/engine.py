@@ -1,4 +1,5 @@
 import requests
+import re
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup as bs
 import scraper.settings as settings
@@ -37,7 +38,7 @@ class Article:
   """
   Defines an article object as found on the MAE site.
   """
-
+  DATE_REGX = '[0-9]{2}(.*)[0-9]{4}'
   DESCRIPTION_FMT = '{0} {1}'
 
   def __init__(self, table):
@@ -112,7 +113,9 @@ class Article:
     :param row: the given table row
     :return: None
     """
-    published_at = self._extract_desc_paragraph(row).split(' ')[1].replace('\xa0', ' ')
+    desc_paragraph = self._extract_desc_paragraph(row)
+    match = re.search(self.DATE_REGX, desc_paragraph)
+    # self.published_at = .split(' ')[1].replace('\xa0', ' ')
 
   def _extract_desc_paragraph(self, row):
     return row[2].select('td')[0].select('p')[1].text

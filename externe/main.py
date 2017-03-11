@@ -14,6 +14,6 @@ def main():
   parsed_args = arg_parser.parse_args()
   scraper_type = parsed_args.scraper
   if scraper_type:
-    parse_page(settings.URLS.get(scraper_type))
+    Extractor(settings.URLS.get(scraper_type)).parse_page()
 
 main()
