@@ -16,4 +16,5 @@ def main():
   if scraper_type:
     Extractor(settings.URLS.get(scraper_type)).extract_all_entries()
 
-main()
+if __name__ == '__main__':
+  main()
