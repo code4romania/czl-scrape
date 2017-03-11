@@ -80,7 +80,7 @@ class Article:
       institution=self.institution,
       date=self.published_at.isoformat(),
       description='', # no description 
-      feedback_days=debate_until,
+      feedback_days=self.debate_until,
       contact=self.contact,
       documents=self.documents,
     )
