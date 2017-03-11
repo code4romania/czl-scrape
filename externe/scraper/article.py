@@ -30,14 +30,14 @@ class Article:
       self._build_documents(tr)
       self._extract_article_type(tr)
       self._extract_title(tr)
-      # Need published_at for debate_until
+      # published_at should be
       self._extract_published_at(tr)
       self._extract_feedback_days(tr)
     except Exception:
       print('Unable to build article from table')
 
   article_type = None # HG, OG, OUG, PROIECT
-  description = None
+  title = None
   documents = None
   published_at = None
   feedback_days = None
@@ -100,7 +100,7 @@ class Article:
     """
     art_type = self._extract_article_type(row).lower().capitalize()
     desc_text = row[0].find_all('a')[1].text.rstrip('\n')
-    self.description = self.DESCRIPTION_FMT.format(art_type, desc_text)
+    self.title = self.DESCRIPTION_FMT.format(art_type, desc_text)
 
   def _extract_published_at(self, row):
     """
