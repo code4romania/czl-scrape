@@ -28,9 +28,6 @@ class Extractor:
     tables = self.content.select_one('div.art').select('table')
     for table in tables:
       article = Article(table)
-      print('\n title: %s \n description: %s \n urls: %s \n published: %s \n debate_until: %s \n'
-            % (article.article_type, article.description,
-               article.documents, article.published_at, article.debate_until))
       yield article
 
 
@@ -60,7 +57,7 @@ class Article:
       self._build_contact(tr)
       self._build_documents(tr)
       self._extract_article_type(tr)
-      self._extract_description(tr)
+      self._extract_title(tr)
       # Need published_at for debate_until
       self._extract_published_at(tr)
       self._extract_debate_until(tr)
@@ -68,7 +65,7 @@ class Article:
       print('Unable to build article from table')
 
   article_type = None # HG, OG, OUG, PROIECT
-  description = None
+  title = None
   documents = None
   published_at = None
   debate_until = None
@@ -78,12 +75,12 @@ class Article:
   def __repr__(self):
     _ret = dict(
       identifier=None, # todo
-      title=self.description, # to refactorize this (my bad)
+      title=self.title,
       type=self.article_type,
       institution=self.institution,
       date=self.published_at.isoformat(),
       description='', # no description 
-      feedback_days=None, # in progress
+      feedback_days=debate_until,
       contact=self.contact,
       documents=self.documents,
     )
@@ -96,6 +93,7 @@ class Article:
     :param table: the given table row
     :return: None
     """
+
     contact_paragraph = row[2].select('p')[0].text
     self.contact = dict()
     for field in self.CONTACT_REGX.keys():
@@ -136,16 +134,16 @@ class Article:
       print("%s not defined as article type" % type)
     return type
 
-  def _extract_description(self, row):
+  def _extract_title(self, row):
     """
-    extracts and sets the description from a given HTML table row
+    extracts and sets the title from a given HTML table row
     :param table: the given table row
     :return: None
     """
     #TODO here
     art_type = self._extract_article_type(row).lower().capitalize()
     desc_text = row[0].find_all('a')[1].text.rstrip('\n')
-    self.description = self.DESCRIPTION_FMT.format(art_type, desc_text)
+    self.title = self.DESCRIPTION_FMT.format(art_type, desc_text)
 
   def _extract_published_at(self, row):
     """
