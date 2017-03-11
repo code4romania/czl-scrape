@@ -10,3 +10,5 @@
 ## Instructiuni
 
 ## Exceptii
+
+Oamenii care updateaza chestia asta sunt exceptii. Paragrafe fara structura aruncate pur si simplu acolo. Foarte dificil de parsat.
