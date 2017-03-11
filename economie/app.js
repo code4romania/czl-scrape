@@ -1,4 +1,4 @@
-let nightmareConfig = { show: false },
+let nightmareConfig = { show: true },
     cheerio = require('cheerio'),
     parseFunction = require('./parseProject');
 
@@ -6,7 +6,7 @@ let URL = 'http://economie.gov.ro/transparenta-decizionala/proiecte-in-dezbatere
     BASE = 'http://economie.gov.ro';
 
 function parseItem(item) {
-    parseFunction(item, BASE);
+    parseFunction(cheerio.load(item), BASE);
 }
 
 require('nightmare')(nightmareConfig)

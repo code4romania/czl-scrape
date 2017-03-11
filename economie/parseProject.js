@@ -21,15 +21,16 @@ module.exports = function parseFunction($, URL) {
     ]
   };
 
-  parsedResult.identifier = getIdentifier($);
+  parsedResult.identifier = getTitle($).toLowerCase().split(/\s+/).join('-').replace(/[`~!@#$%^&*()_|+=?;:'",.<>\{\}\[\]\\\/]/gi, '');
   parsedResult.title = getTitle($);
   parsedResult.type = getType($, parsedResult.title);
   parsedResult.date = getDate($);
   let proposalsSuggestionsOpinionsListItem = $('ul>li').last();
   parsedResult.feedback_days = getFeedbackDays($, proposalsSuggestionsOpinionsListItem);
   parsedResult.contact.email = getEmail($, proposalsSuggestionsOpinionsListItem);
-  parsedResult.contact.documents = getDocuments($, URL);
-  console.log(parsedResult.contact.documents);
+  parsedResult.documents = getDocuments($, URL);
+
+  console.log(JSON.stringify(parsedResult, null, 4));
 };
 
 function getIdentifier($) {
@@ -41,7 +42,7 @@ function getIdentifier($) {
 function getTitle($) {
   "use strict";
 
-  return $('.item.column-1>b').first().text();
+  return $('.item.column-1>b').first().text().trim();
 }
 
 let regexClassificators = {
@@ -141,9 +142,9 @@ function getDate($) {
 function getFeedbackDays($, $listItem) {
   "use strict";
 
-  return $listItem
+  return parseInt($listItem
     .text()
-    .match(/se primesc in termen de (\d{1,3}) zile de la data/i)[1];
+    .match(/se primesc in termen de (\d{1,3}) zile de la data/i)[1]);
 }
 
 function getEmail($, $listItem) {
@@ -160,10 +161,14 @@ function getDocuments($, URL) {
   let documents = $('li').find('a');
   let parsedDocs = [];
   documents.each(function(i, document) {
-    parsedDocs.push({
-      "type": $(document).text(),
-      "url": URL + $(document).attr('href')
-    });
+    let doc = $(document).attr('href');
+
+    if(doc.length) {
+        parsedDocs.push({
+            "type": $(document).text(),
+            "url": URL + doc
+        });
+    }
   });
 
   return parsedDocs;
