@@ -1,5 +1,4 @@
 import re
-import json
 from datetime import date, timedelta
 import scraper.settings as settings
 
@@ -30,7 +29,7 @@ class Article:
       self._build_contact(tr)
       self._build_documents(tr)
       self._extract_article_type(tr)
-      self._extract_description(tr)
+      self._extract_title(tr)
       # Need published_at for debate_until
       self._extract_published_at(tr)
       self._extract_feedback_days(tr)
@@ -43,21 +42,6 @@ class Article:
   published_at = None
   feedback_days = None
   contact = None
-
-  def __repr__(self):
-    _ret = dict(
-      identifier=None, # todo
-      title=self.description,
-      type=self.article_type,
-      institution=settings.INSTITUTION,
-      date=self.published_at.isoformat(),
-      description=self.description,
-      feedback_days=self.feedback_days,
-      contact=self.contact,
-      documents=self.documents,
-    )
-    return json.dumps(_ret)
-
 
   def _build_contact(self, row):
     """
@@ -74,7 +58,7 @@ class Article:
       else:
         # TODO: logger for these
         print(
-          'Unable to match %s for pargaraph: %s' % (field, contact_paragraph)
+          'Unable to match %s for paragraph: %s' % (field, contact_paragraph)
         )
 
   def _build_documents(self, row):
@@ -108,7 +92,7 @@ class Article:
       print("%s not defined as article type" % type)
     return type
 
-  def _extract_description(self, row):
+  def _extract_title(self, row):
     """
     extracts and sets the description from a given HTML table row
     :param table: the given table row
