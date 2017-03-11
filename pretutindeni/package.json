@@ -1,0 +1,14 @@
+{
+  "name": "pretutindeni",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "crawl": "node app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nightmare": "2.10.0"
+  }
+}
