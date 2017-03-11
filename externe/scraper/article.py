@@ -45,7 +45,7 @@ class Article:
   contact = None
 
   def is_valid(self):
-    for field in settings.MANDATORY_FIELD:
+    for field in settings.MANDATORY_FIELDS:
       if not getattr(self, field):
         return False
     return True
