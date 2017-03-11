@@ -119,7 +119,7 @@ class Article:
         self.title = self.DESCRIPTION_FMT \
             .format(art_type, desc_text).replace('\n', ' ') \
             .replace('\t', ' ')
-        self.title = re.sub(' +', ' ', self.title).strip()
+        self.title = LangHelper.sanitize(re.sub(' +', ' ', self.title).strip())
 
     def _extract_published_at(self, row):
         """Extracts and sets the published_at attribute.
