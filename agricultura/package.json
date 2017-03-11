@@ -1,0 +1,34 @@
+{
+  "name": "agricultura",
+  "version": "1.0.0",
+  "description": "scraper pentru agricultura",
+  "main": "index.js",
+  "scripts": {
+    "test": "todo: add tests",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ciprian-chichirita/czl-scrape.git"
+  },
+  "keywords": [
+    "code4romania",
+    "ce",
+    "zice",
+    "legea",
+    "agricultura"
+  ],
+  "author": "ciprian chichirita, alex morega",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ciprian-chichirita/czl-scrape/issues"
+  },
+  "homepage": "https://github.com/ciprian-chichirita/czl-scrape#readme",
+  "devDependencies": {
+    "moment": "^2.17.1",
+    "nightmare": "^2.10.0",
+    "request": "^2.81.0",
+    "request-promise": "^4.1.1",
+    "sha256": "^0.2.0"
+  }
+}
