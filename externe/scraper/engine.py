@@ -36,7 +36,14 @@ class Article:
   """
   Defines an article object as found on the MAE site.
   """
-  DATE_REGX = '([0-9]{2})(.*?)([0-9]{4})'
+  DATE_REGX = r'([0-9]{2})(.*?)([0-9]{4})'
+  CONTACT_REGX = dict(
+    MAIL=r'e-mail:?(.*?@.*?\..*?)(?:\s|\.|,)',
+    PHONE=r'telefon:?\s*((\d+\s?)*)(,|\s|\.)?',
+    FAX=r'fax:?\s*((\d+\s?)*)(,|\s|\.)?',
+    ADDRESS=r'adresa poştală a (.*? cod(:|\s)?\d+)',
+    # ADDRESS=r'adresa poştală a (.*)\.'
+  )
   DESCRIPTION_FMT = '{0} {1}'
 
   def __init__(self, table):
@@ -49,7 +56,7 @@ class Article:
       tr = table.select('tr')
       self._build_contact(tr)
       self._build_documents(tr)
-      self.article_type = self._extract_article_type(tr)
+      self._extract_article_type(tr)
       self._extract_description(tr)
       self._extract_published_at(tr)
     except Exception:
@@ -68,7 +75,19 @@ class Article:
     :param table: the given table row
     :return: None
     """
-    pass
+    contact_paragraph = row[2].select('p')[0].text
+    print(contact_paragraph)
+    self.contact = dict()
+    for field in ['MAIL', 'PHONE', 'FAX', 'ADDRESS']:
+      aux = re.search(self.CONTACT_REGX[field], contact_paragraph)
+      if aux:
+        self.contact[field.lower()]= aux.group(1).strip()
+      else:
+        print('Unable to match %s for pargaraph: %s' % (field.lower(), contact_paragraph))
+
+    print (self.contact)
+    print('\n\n')
+
 
   def _build_documents(self, row):
     """
@@ -93,7 +112,11 @@ class Article:
     :param row: the given table row
     :return: String
     """
-    return row[0].find_all('strong')[0].text
+    type = row[0].find_all('a')[0].text
+    if type in settings.TYPES:
+      self.article_type = settings.TYPES[type]
+    else:
+      print("%s not defined as article type" % type)
 
   def _extract_description(self, row):
     """
@@ -101,8 +124,9 @@ class Article:
     :param table: the given table row
     :return: None
     """
-    art_type = self._extract_article_type(row).lower().capitalize()
-    desc_text = row[0].find_all('strong')[1].text
+    #TODO here
+    #art_type = self._extract_article_type(row).lower().capitalize()
+    desc_text = row[0].find_all('a')[1].text
     self.description = self.DESCRIPTION_FMT.format(art_type, desc_text)
 
   def _extract_published_at(self, row):
