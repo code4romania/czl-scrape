@@ -13,4 +13,6 @@ pip install -r requirements.txt
 
 ## Altele
 
-[data structure scape page](https://etherpad.net/p/hackajust)
+Data understading & values
+* [online](https://etherpad.net/p/hackajust)
+* see doc folder
