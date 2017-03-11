@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup as bs
 import scraper.settings as settings
 
 
-class Extractor():
+class Extractor:
 
   url = None
   content = None
@@ -17,11 +17,11 @@ class Extractor():
     self.content = bs(page.text, 'html.parser')
 
   def parse_page(self):
-    fetch_page()
-    extract_all_entries()
+    self.fetch_page()
+    self.extract_all_entries()
 
   def extract_all_entries(self):
-    for article in extract_entry(self.content):
+    for article in self.extract_entry():
       pass
 
   def extract_entry(self):
