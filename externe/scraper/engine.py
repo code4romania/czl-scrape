@@ -7,24 +7,25 @@ import scraper.settings as settings
 class Extractor():
 
   url = None
+  content = None
   
-  def __init__(url):
+  def __init__(self, url):
     self.url = url
 
-  def fetch_page():
+  def fetch_page(self):
     page = requests.get(self.url, headers=settings.HEADERS)
-    return bs(page.text, 'html.parser')
+    self.content = bs(page.text, 'html.parser')
 
-  def parse_page():
-    content = fetch_page()
-    extract_all_entries(content)
+  def parse_page(self):
+    fetch_page()
+    extract_all_entries()
 
-  def extract_all_entries(content):
-    for article in extract_entry(content):
+  def extract_all_entries(self):
+    for article in extract_entry(self.content):
       pass
 
-  def extract_entry(content):
-    tables = content.select_one('div.art').select('table')
+  def extract_entry(self):
+    tables = self.content.select_one('div.art').select('table')
     for table in tables:
       article = Article(table)
       print('title: %s \n urls: %s \n published: %s \n\n'
