@@ -11,4 +11,6 @@ pip install -r requirements.txt
 
 ## Instructiuni
 
-## Exceptii
+## Altele
+
+[data structure scape page](https://etherpad.net/p/hackajust)
