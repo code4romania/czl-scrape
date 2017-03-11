@@ -27,7 +27,8 @@ function guessType(text) {
     if (text.match(/^ordonanta de urgenta /)) return 'OUG';
     if (text.match(/^ordonanta /)) return 'OG';
     if (text.match(/^hotarare /)) return 'HG';
-    return 'PROIECT';
+    if (text.match(/^ordin /)) return 'OM';
+    return 'LEGE';
 }
 
 function parsePage(firstFlag) {
@@ -96,7 +97,10 @@ function parsePage(firstFlag) {
                 headers: {Authorization: `Token ${API_TOKEN}`},
                 json: val
             })
-            .then(() => postAllItems(remaining.slice(1)));
+            .then(() => {
+                console.log('posted item: ', val.identifier);
+                return postAllItems(remaining.slice(1));
+            });
         }
 
         return postAllItems(itemsList);
