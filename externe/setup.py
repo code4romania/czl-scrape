@@ -23,4 +23,3 @@ setup(
     description='Scraper pentru site-ul Ministerului de afaceri externe',
     install_requires=install_requires,
 )
-\
