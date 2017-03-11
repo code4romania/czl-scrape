@@ -3,6 +3,7 @@ import re
 from datetime import date, timedelta
 from bs4 import BeautifulSoup as bs
 import scraper.settings as settings
+import json
 
 
 class Extractor:
@@ -40,10 +41,10 @@ class Article:
   TIMEDELTA_REGX = '(timp\sde\s([0-9]{2})\szile)'
   DESCRIPTION_FMT = '{0} {1}'
   CONTACT_REGX = dict(
-    MAIL=r'e-mail:?(.*?@.*?\..*?)(?:\s|\.|,)',
-    PHONE=r'telefon:?\s*((\d+\s?)*)(,|\s|\.)?',
-    FAX=r'fax:?\s*((\d+\s?)*)(,|\s|\.)?',
-    ADDRESS=r'adresa poştală a (.*? cod(:|\s)?\d+)',
+    email=r'\s(([a-zA-Z]|\.)*?@[a-zA-Z]*?\.[a-zA-Z]*?)(?:\s|\.|,)',
+    tel=r'telefon:?\s*((\d+\s?)*)(,|\s|\.)?',
+    fax=r'fax:?\s*((\d+\s?)*)(,|\s|\.)?',
+    addr=r'adresa poştală a (.*? cod(:|\s)?\d+)',
     # ADDRESS=r'adresa poştală a (.*)\.'
   )
 
@@ -53,16 +54,16 @@ class Article:
     :param table: the table.
     :return: the current object.
     """
-    try:
-      tr = table.select('tr')
-      self._build_contact(tr)
-      self._build_documents(tr)
-      self._extract_article_type(tr)
-      self._extract_description(tr)
-      self._extract_published_at(tr)
-      self._extract_debate_until(tr)
-    except Exception:
-      print('Unable to build article from table')
+
+    #try:
+    tr = table.select('tr')
+    self._build_contact(tr)
+    self._build_documents(tr)
+    self._extract_article_type(tr)
+    self._extract_description(tr)
+    self._extract_published_at(tr)
+    #except Exception:
+      #print('Unable to build article from table')
 
   article_type = None # HG, OG, OUG, PROIECT
   description = None
@@ -72,6 +73,21 @@ class Article:
   contact = None
   institution = settings.INSTITUTION
 
+  def __repr__(self):
+    _ret = dict(
+      identifier=None, # todo
+      title=self.description, # to refactorize this (my bad)
+      type=self.article_type,
+      institution=self.institution,
+      date=self.published_at.isoformat(),
+      description='', # no description 
+      feedback_days=None, # in progress
+      contact=self.contact,
+      documents=self.documents,
+    )
+    return json.dumps(_ret)
+
+
   def _build_contact(self, row):
     """
     Builds a contact dict from a given table.
@@ -80,12 +96,12 @@ class Article:
     """
     contact_paragraph = row[2].select('p')[0].text
     self.contact = dict()
-    for field in ['MAIL', 'PHONE', 'FAX', 'ADDRESS']:
+    for field in self.CONTACT_REGX.keys():
       aux = re.search(self.CONTACT_REGX[field], contact_paragraph)
       if aux:
-        self.contact[field.lower()]= aux.group(1).strip()
+        self.contact[field]= aux.group(1).strip()
       else:
-        print('Unable to match %s for pargaraph: %s' % (field.lower(), contact_paragraph))
+        print('Unable to match %s for pargaraph: %s' % (field, contact_paragraph))
 
 
   def _build_documents(self, row):
