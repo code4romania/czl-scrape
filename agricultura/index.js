@@ -9,6 +9,27 @@ const YEAR_THRESHOLD = 2017;
 
 const API_TOKEN = process.env['API_TOKEN'];
 
+function guessType(text) {
+    const replaceMap = [
+        [/ș/g, 's'],
+        [/ş/g, 's'],
+        [/ț/g, 't'],
+        [/ţ/g, 't'],
+        [/ă/g, 'a'],
+        [/î/g, 'i'],
+        [/â/g, 'a'],
+    ];
+    text = text.toLowerCase();
+    for(let [orig, repl] of replaceMap) {
+        text = text.replace(orig, repl);
+    }
+
+    if (text.match(/^ordonanta de urgenta /)) return 'OUG';
+    if (text.match(/^ordonanta /)) return 'OG';
+    if (text.match(/^hotarare /)) return 'HG';
+    return 'PROIECT';
+}
+
 function parsePage(firstFlag) {
     if (firstFlag) {
         nightmare
@@ -63,6 +84,7 @@ function parsePage(firstFlag) {
             val.identifier = identifier;
             val.issuer = 'agricultura';
             val.description = val.title;
+            val.type = guessType(val.title);
             itemsList.push(val);
         }
 
