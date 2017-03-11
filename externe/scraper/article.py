@@ -92,12 +92,10 @@ class Article:
     :return: String
     """
     article_type = self._sanitize(row[0].find_all('a')[0].text.strip())
-    if article_type in settings.TYPES:
-      self.article_type = settings.TYPES.get(article_type)
-    else:
-      # TODO: logger
-      print("%s not defined as article type" % article_type)
-    return article_type
+    self.article_type = settings.TYPES.get(article_type)
+    if not self.article_type:
+      self.article_type = settings.TYPES.get('OTHER')
+    return self.article_type
 
   def _extract_title(self, row):
     """
