@@ -11,11 +11,29 @@ def fecth_page(page_url):
 def extract(content):
   tables = content.select_one('div.art').select('table')
   for t in tables:
+    '''
+    "identifier": "lawproposal-first-document-name-slug-or-something", 
+    // un identificator unic, predictibil (repetabil), pereferabil 
+    human-readable
+    '''
+    #"type": "HG", // HG, OG, OUG, PROIECT
+    #contact
+    instituion = 'externe'
+    description = ''
     title = t.select('tr')[0].select('td')[0].text.strip().replace('\n', ' ')
-    url = t.select('tr')[0].select('td')[0].select('a')[0].attrs['href']
+    documents = [
+      dict(
+        type = 'Decizie - anexa',
+        url = t.select('tr')[0].select('td > p > a')[0].attrs['href']
+      ),
+      dict(
+        type = 'Nota de fundamentare - anexa',
+        url = t.select('tr')[1].select('td > p > a')[0].attrs['href']
+      )
+    ]
     published = t.select('tr')[2].select('td')[0].select('p')[1].text\
       .split(' ')[1].replace('\xa0' , ' ')
-    print('title: %s \n url: %s \n published: %s \n\n' %(title, url, published))
+    print('title: %s \n url: %s \n published: %s \n\n' %(title, documents, published))
 
 
 
