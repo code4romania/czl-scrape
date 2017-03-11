@@ -11,10 +11,10 @@ class Article:
   TIMEDELTA_REGX = '(timp\sde\s([0-9]+)\szile)'
   DESCRIPTION_FMT = '{0} {1}'
   CONTACT_REGX = dict(
-    email=r'\s(([a-zA-Z\._]|\.)*?@[a-zA-Z]*?\.[a-zA-Z]*?)(?:\s|\.|,)',
-    tel=r'telefon:?\s*((\d+\s?)*)(,|\s|\.)?',
-    fax=r'fax:?\s*((\d+\s?)*)(,|\s|\.)?',
-    addr=r'adresa poştală a\s*(.*?\scod(:|\s)?\d+)',
+    email=r'\s(([a-zA-Z0-9\._]|\.)*?@[a-zA-Z]*?\.[a-zA-Z]*?)(?:\s|\.|,)',
+    tel=r'(?:tel|telefon)\s?:?\s*((\d+(?:\s|-|\.)?)+)(,|\s|\.)?',
+    fax=r'fax\s?:?\s*((\d+(?:\s|-|\.)?)+)(,|\s|\.)?',
+    addr=r'adresa poştală\s?a?\s*(.*?\scod(:|\s)?\d+)',
     # ADDRESS=r'adresa poştală a (.*)\.'
   )
 
@@ -52,14 +52,17 @@ class Article:
     self.contact = dict()
     for field in self.CONTACT_REGX.keys():
       aux = re.search(self.CONTACT_REGX[field], contact_paragraph)
-      if aux:
+      if aux and aux.group(1).strip():
         self.contact[field.lower()] = aux.group(1).strip()
       else:
         # TODO: logger for these
         print(
           'Unable to match %s for paragraph: %s' % (field, contact_paragraph)
         )
-    print('--------------------------------------')
+    for k,v in self.contact.items():
+      print('%s - %s' % (k,v))
+    print ('--------------------------------------')
+
 
   def _build_documents(self, row):
     """
