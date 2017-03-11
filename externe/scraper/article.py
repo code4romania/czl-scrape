@@ -34,7 +34,9 @@ class Article:
     self._extract_published_at(tr)
     self._extract_feedback_days(tr)
 
+
   # HG, OG, OUG, PROIECT
+  identifier = None
   article_type = None
   title = None
   documents = None
@@ -42,13 +44,31 @@ class Article:
   feedback_days = None
   contact = None
 
+  def is_valid(self):
+    for field in settings.MANDATORY_FIELD:
+      if not getattr(self, field):
+        return False
+    return True
+
+  def _generate_id(self):
+    # externe-tip-data-hashTitlu
+    if self.article_type and self.published_at and self.title:
+      self.identifier = '%s-%s-%s-%s' % (
+        settings.INSTITUTION,
+        self.article_type,
+        self.published_at,
+        hashlib.md5(self.title).hexdigest()
+      )
+    else:
+      #TODO: Logging
+      print('Failed to generate id')
+
   def _build_contact(self, row):
     """
     Builds a contact dict from a given table.
     :param row: the given table row
     :return: None
     """
-    print('--------------------------------------')
     contact_paragraph = row[-1].select('p')[0].text
     self.contact = dict()
     for field in self.CONTACT_REGX.keys():
@@ -60,9 +80,7 @@ class Article:
         print(
           'Unable to match %s for paragraph: %s' % (field, contact_paragraph)
         )
-    for k, v in self.contact.items():
-      print('%s - %s' % (k, v))
-    print('--------------------------------------')
+
 
   def _build_documents(self, row):
     """
@@ -141,6 +159,7 @@ class Article:
   def _build_date_from_match(self, match):
     month = settings.MONTHS.get(match.group(2).strip())
     if not month:
+      #TODO: Logger
       print('Unable to match month for date string: %s' % match.group(0))
     else:
       return date(
