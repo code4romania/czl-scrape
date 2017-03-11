@@ -9,6 +9,15 @@ import scrapy
 
 
 class CrawlDezvoltareItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    identifier = scrapy.Field()
+    title = scrapy.Field()
+    type = scrapy.Field()
+    institution = scrapy.Field()
+    issuer = scrapy.Field()
+    date = scrapy.Field()
+    description = scrapy.Field()
+    feedback_days = scrapy.Field()
+    contact = scrapy.Field()
+    tel = scrapy.Field()
+    email = scrapy.Field()
+    documents = scrapy.Field()
