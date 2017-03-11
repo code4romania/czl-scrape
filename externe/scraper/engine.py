@@ -30,26 +30,33 @@ def extract_entry(content):
     # contact
 
     article = Article(table)
-    print('title: %s \n url: %s \n published: %s \n\n'
-          % (article.article_type, article.documents, article.published_at))
+    print('\n title: %s \n description: %s \n url: %s \n published: %s \n'
+          % (article.article_type, article.description, article.documents, article.published_at))
     yield article
 
 
 class Article:
   """
-  Defines an arctile object as found on the MAE site.
+  Defines an article object as found on the MAE site.
   """
+
+  DESCRIPTION_FMT = '{0} {1}'
+
   def __init__(self, table):
     """
     Builds an Article object from a given HTML table.
     :param table: the table.
     :return: the current object.
     """
-    self._build_contact(table)
-    self._build_documents(table)
-    self._extract_title(table)
-    self._extract_description(table)
-    self._extract_published_at(table)
+    try:
+      tr = table.select('tr')
+      self._build_contact(tr)
+      self._build_documents(tr)
+      self.article_type = self._extract_article_type(tr)
+      self._extract_description(tr)
+      self._extract_published_at(tr)
+    except Exception:
+      print('Unable to build article from table')
 
   # HG, OG, OUG, PROIECT
   article_type = None
@@ -58,52 +65,56 @@ class Article:
   published_at = None
   contact = None
 
-  def _build_contact(self, table):
+  def _build_contact(self, row):
     """
     Builds a contact dict from a given table.
-    :param table: the given table
+    :param table: the given table row
     :return: None
     """
     pass
 
-  def _build_documents(self, table):
+  def _build_documents(self, row):
     """
     Builds the documents dict from a given table.
-    :param table: the given table
+    :param row: the given table row
     :return: None
     """
     self.documents = [
       dict(
         type='Decizie - anexa',
-        url=table.select('tr')[0].select('td > p > a')[0].attrs['href']
+        url=row[0].select('td > p > a')[0].attrs['href']
       ),
       dict(
         type='Nota de fundamentare - anexa',
-        url=table.select('tr')[1].select('td > p > a')[0].attrs['href']
+        url=row[1].select('td > p > a')[0].attrs['href']
       )
     ]
 
-  def _extract_title(self, table):
+  def _extract_article_type(self, row):
     """
     extracts the title from a given HTML table.
-    :param table: the given table
-    :return: None
+    :param row: the given table row
+    :return: String
     """
-    self.article_type = table.select('tr')[0].select('td')[0].text.strip().replace('\n', ' ')
+    return row[0].find_all('strong')[0].text
 
-  def _extract_description(self, table):
+  def _extract_description(self, row):
     """
     extracts the description from a given HTML table.
-    :param table: the given table
+    :param table: the given table row
     :return: None
     """
-    self.description = None
+    art_type = self._extract_article_type(row).lower().capitalize()
+    desc_text = row[0].find_all('strong')[1].text
+    self.description = self.DESCRIPTION_FMT.format(art_type, desc_text)
 
-  def _extract_published_at(self, table):
+  def _extract_published_at(self, row):
     """
     extracts the published_at attribute from a given HTML table.
-    :param table: the given table
+    :param row: the given table row
     :return: None
     """
-    published_at = table.select('tr')[2].select('td')[0].select('p')[1].text\
-      .split(' ')[1].replace('\xa0', ' ')
+    published_at = self._extract_desc_paragraph(row).split(' ')[1].replace('\xa0', ' ')
+
+  def _extract_desc_paragraph(self, row):
+    return row[2].select('td')[0].select('p')[1].text
