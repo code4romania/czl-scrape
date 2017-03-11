@@ -11,7 +11,7 @@ class Serializer:
       type=article.article_type,
       institution=settings.INSTITUTION,
       date=article.published_at.isoformat(),
-      description='no desc',
+      description='',
       feedback_days=article.feedback_days,
       contact=article.contact,
       documents=article.documents,

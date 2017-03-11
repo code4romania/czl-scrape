@@ -54,11 +54,9 @@ class Article:
 
   def _generate_id(self):
     # externe-tip-data-hashTitlu
-    if self.article_type and self.published_at and self.title:
+    if self.article_type and self.title:
       self.identifier = '%s-%s-%s-%s' % (
-        settings.INSTITUTION,
         self.article_type,
-        self.published_at,
         hashlib.md5(self.title.encode()).hexdigest()
       )
     else:
