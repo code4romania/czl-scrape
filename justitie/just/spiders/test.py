@@ -17,7 +17,7 @@ class TestSpider(scrapy.Spider):
 
     def start_requests(self):
         yield scrapy.Request(
-            url="http://www.just.ro/transparenta-decizionala/acte-normative/proiecte-in-dezbatere/?lcp_page0=6",
+            url="http://www.just.ro/transparenta-decizionala/acte-normative/proiecte-in-dezbatere/?lcp_page0=2",
             callback=self.parse)
 
     def parse(self, response):
@@ -25,13 +25,17 @@ class TestSpider(scrapy.Spider):
             title = li_item.css('h3.lcp_post a::text').extract_first().strip()
             text_date = li_item.css('::text').extract_first().strip()
 
-            date = datetime.datetime.strptime(text_date, '%d %B %Y')
-            date = date.date().isoformat()
+            date_obj = datetime.datetime.strptime(text_date, '%d %B %Y')
+            date = date_obj.date().isoformat()
 
             paragraphs = li_item.xpath('p').xpath("string()").extract()
             description = '\n'.join(paragraphs)
 
-
+            feedback_days = None
+            feedback_date = self.get_feedback_date(description)
+            if feedback_date:
+                days_diff = feedback_date - date_obj
+                feedback_days = days_diff.days
 
             links = li_item.css('a')
             documents = self.get_documents_from_links(links)
@@ -44,12 +48,27 @@ class TestSpider(scrapy.Spider):
                 issuer='justitie',
                 description=description,
                 documents=documents,
-                contact=self.get_contacts(description)
+                contact=self.get_contacts(description),
+                feedback_days=feedback_days
             )
 
             yield item
         pass
 
+
+    def get_feedback_date(self, text):
+        text = unidecode(text.strip().lower())
+
+        regex = re.findall(r'pana la data de (.{3,20}20\d\d)', text)
+        formats = ['%d %B %Y', '%d.%m.%Y']
+        for result in regex:
+            for format in formats:
+                try:
+                    date = datetime.datetime.strptime(result, format)
+                    if date:
+                        return date
+                except ValueError:
+                    pass
 
     def get_contacts(self, text):
         text = unidecode(text.strip().lower())
@@ -108,10 +127,11 @@ class TestSpider(scrapy.Spider):
         for link in links:
             href = link.xpath('@href').extract_first()
             text = link.xpath('text()').extract_first()
-            if re.search(r'\.(doc|docx|csv|xml|html|txt|pdf|xls|xlsx|rar|zip)$', href, re.IGNORECASE):
-                valid_links.append({
-                    'url': href,
-                    'type': text
-                })
+            if href:
+                if re.search(r'\.(doc|docx|csv|xml|html|txt|pdf|xls|xlsx|rar|zip)$', href, re.IGNORECASE):
+                    valid_links.append({
+                        'url': href,
+                        'type': text
+                    })
 
         return valid_links
