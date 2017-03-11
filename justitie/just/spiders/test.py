@@ -17,7 +17,7 @@ class TestSpider(scrapy.Spider):
 
     def start_requests(self):
         yield scrapy.Request(
-            url="http://www.just.ro/transparenta-decizionala/acte-normative/proiecte-in-dezbatere/?lcp_page0=2",
+            url="http://www.just.ro/transparenta-decizionala/acte-normative/proiecte-in-dezbatere/?lcp_page0=6",
             callback=self.parse)
 
     def parse(self, response):
@@ -57,12 +57,13 @@ class TestSpider(scrapy.Spider):
 
         contact = {}
 
-        contact['email'] = re.findall(r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]{2,5})", text)
+        emails = re.findall(r"([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]{2,5})", text)
+        contact['email'] = list(set(emails))
 
         numbers = re.findall(r'((fax|telefon)[^\d]{1,10}(\d(\d| |\.){8,11}\d))', text)
         for number in numbers:
             key = number[1]
-            value = number[2]
+            value = number[2].replace(' ','').replace('.', '')
             if key in contact:
                 contact[key].push(value)
             else:
