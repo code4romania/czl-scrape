@@ -59,3 +59,5 @@ MONTHS = dict(
 )
 
 INSTITUTION = 'externe'
+
+MAE_BASE_URL = 'http://www.mae.ro'

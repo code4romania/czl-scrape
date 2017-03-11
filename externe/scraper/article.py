@@ -7,6 +7,7 @@ class Article:
   """
   Defines an article object as found on the MAE site.
   """
+  ANEXA = ' - ANEXA'
   DATE_REGX = r'(\d+)\s([a-zA-Z]*)\s(\d{4})'
   TIMEDELTA_REGX = '(timp\sde\s([0-9]+)\szile)'
   DESCRIPTION_FMT = '{0} {1}'
@@ -25,10 +26,10 @@ class Article:
     :return: the current object.
     """
     tr = table.select('tr')
-    self._build_contact(tr)
-    self._build_documents(tr)
     self._extract_article_type(tr)
     self._extract_title(tr)
+    self._build_contact(tr)
+    self._build_documents(tr)
     # published_at should be
     self._extract_published_at(tr)
     self._extract_feedback_days(tr)
@@ -44,7 +45,7 @@ class Article:
   def _build_contact(self, row):
     """
     Builds a contact dict from a given table.
-    :param table: the given table row
+    :param row: the given table row
     :return: None
     """
     print('--------------------------------------')
@@ -59,10 +60,9 @@ class Article:
         print(
           'Unable to match %s for paragraph: %s' % (field, contact_paragraph)
         )
-    for k,v in self.contact.items():
-      print('%s - %s' % (k,v))
-    print ('--------------------------------------')
-
+    for k, v in self.contact.items():
+      print('%s - %s' % (k, v))
+    print('--------------------------------------')
 
   def _build_documents(self, row):
     """
@@ -70,16 +70,20 @@ class Article:
     :param row: the given table row
     :return: None
     """
+    t1 = self.article_type + self.ANEXA if self.article_type else None
+    t2 = (self._sanitize(row[1].find('td').text) + self.ANEXA
+          if len(row) >= 2 else None)
+
+    t1_url = row[0].find('td').find('a').attrs['href']
+    t2_url = row[1].find('td').find('a').attrs['href']
+
     self.documents = [
-      dict(
-        type='Decizie - anexa',
-        url=row[0].select('td')[0].select('a')[0].attrs['href']
-      ),
-      dict(
-        type='Nota de fundamentare - anexa',
-        url=row[1].select('td')[0].select('a')[0].attrs['href']
-      )
+      dict(type=t1, url=settings.MAE_BASE_URL + t1_url)
     ]
+    if t2:
+      self.documents.append(
+        dict(type=t2, url=settings.MAE_BASE_URL + t2_url)
+      )
 
   def _extract_article_type(self, row):
     """
@@ -87,7 +91,7 @@ class Article:
     :param row: the given table row
     :return: String
     """
-    article_type = row[0].find_all('a')[0].text.strip()
+    article_type = self._sanitize(row[0].find_all('a')[0].text.strip())
     if article_type in settings.TYPES:
       self.article_type = settings.TYPES.get(article_type)
     else:
@@ -98,7 +102,7 @@ class Article:
   def _extract_title(self, row):
     """
     extracts and sets the description from a given HTML table row
-    :param table: the given table row
+    :param row: the given table row
     :return: None
     """
     art_type = self._extract_article_type(row).lower().capitalize()
@@ -144,3 +148,7 @@ class Article:
       return date(
         year=int(match.group(3)), month=int(month), day=int(match.group(1))
       )
+
+  def _sanitize(self, string):
+    if string:
+      return string.replace('\n', '').replace('\u200b', '')
