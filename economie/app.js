@@ -6,7 +6,7 @@ var URL = 'http://economie.gov.ro/transparenta-decizionala/proiecte-in-dezbatere
     BASE = 'http://economie.gov.ro';
 
 function parseItem(item) {
-    parseFunction(item);
+    parseFunction(item, BASE);
 }
 
 require('nightmare')(nightmareConfig)
