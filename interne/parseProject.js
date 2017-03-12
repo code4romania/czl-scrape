@@ -37,7 +37,7 @@ function parseProject($, URL) {
     //   <p>Anexa 2 [...]<br>
     //   <strong>Text integral</strong> <img src="images/arrow_red.png" vspace="2" align="bottom">&nbsp;&nbsp; <a href="documente/transparenta/Anexa OMAI permis conducere.pdf" target="_blank">( descarca fisier in format "pdf" )</a> </p>
     //
-    //   <p>Propunerile, sugestiile şi opiniile persoanelor interesate cu privire la aceste proiecte de acte normative sunt aşteptate pe adresa de e-mail: dj-internațional@mai.gov.ro, în termen de 20 de zile de la data afișării pe site-ul MAI.</p>
+    //   <p>Propunerile, sugestiile şi opiniile persoanelor interesate cu privire la aceste proiecte de acte normative sunt aşteptate pe adresa de e-mail dj-internațional@mai.gov.ro, în termen de 20 de zile de la data afișării pe site-ul MAI.</p>
     // `);
 
     let proposalsSuggestionsOpinionsListItem = $('p').last();
@@ -189,10 +189,10 @@ function getFeedbackDays($metaParagraph) {
 /** ====== email ====== */
 
 function getEmail($listItem) {
-    return $listItem.text()
-        .split('e-mail:')[1]
-        .split(',')[0]
-        .trim();
+    let matches = removeDiacritics($listItem.text())
+        .match(/([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})/i)[0];
+
+    return matches.trim();
 }
 
 
