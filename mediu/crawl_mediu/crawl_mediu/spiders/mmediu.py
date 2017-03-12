@@ -81,18 +81,19 @@ class MmediuSpider(scrapy.Spider):
         article_paragraphs = soup.find('div', class_='text').find_all('p')
 
         item['description'] = article_paragraphs[0].text
-        print '===='
-        print article_paragraphs[3].text
-        print '===='
-        email_regex = r"[eE]-*mail:* ([\w\.@]+)"
-        fax_regex = r"fax ([\w\.@]+)"
-        tel_regex = r"telefon ([\w\.@]+)"
-        addr_regex = r"Str. ([\w\.@\s,–]+),"
-        email_search = re.search(email_regex, article_paragraphs[3].text)
 
-        addr_search = re.search(addr_regex, article_paragraphs[3].text)
-        fax_search = re.search(fax_regex, article_paragraphs[3].text)
-        tel_search = re.search(tel_regex, article_paragraphs[3].text)
+        contact_paragraph = unidecode(article_paragraphs[3].text)
+
+        email_regex = r"[eE]-?mail:* ([\w\.@]+)"
+        fax_regex = r"fax:? ([\w\.@]+)"
+        tel_regex = r"[telefon/fax:]+ ([\d\.()]+)"
+        addr_regex = r"Str. ([\w\.@\s,–]+),"
+
+        email_search = re.search(email_regex, contact_paragraph)
+        addr_search = re.search(addr_regex, contact_paragraph)
+        fax_search = re.search(fax_regex, contact_paragraph)
+        tel_search = re.search(tel_regex, contact_paragraph)
+
         item['contact'] = {
             'email': email_search.groups()[0] if email_search else '',
             'addr': addr_search.groups()[0] if addr_search else '',
