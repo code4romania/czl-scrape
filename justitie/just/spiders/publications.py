@@ -4,7 +4,10 @@ from scrapy.linkextractors import LinkExtractor
 
 import datetime
 import locale
-locale.setlocale(locale.LC_ALL, "ro_RO.UTF-8")
+try:
+    locale.setlocale(locale.LC_ALL, "ro_RO.UTF-8")
+except:
+    locale.setlocale(locale.LC_ALL, "Romanian")
 
 from unidecode import unidecode
 import re
