@@ -27,6 +27,8 @@
   "devDependencies": {
     "moment": "^2.17.1",
     "nightmare": "^2.10.0",
+    "request": "^2.81.0",
+    "request-promise": "^4.1.1",
     "sha256": "^0.2.0"
   }
 }
