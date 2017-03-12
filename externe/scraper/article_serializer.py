@@ -15,10 +15,6 @@ class ArticleSerializer:
             feedback_days=article.feedback_days,
             contact=article.contact,
             documents=article.documents,
-<<<<<<< HEAD
-=======
-            institution=constants.INSTITUTION,
->>>>>>> upstream/master
         )
 
     @staticmethod
