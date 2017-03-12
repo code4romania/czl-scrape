@@ -7,6 +7,7 @@
 
 import requests
 import json
+import logging
 
 from just.items import JustPublication
 import logging
@@ -21,5 +22,12 @@ class JustPublicationsToApiPipeline(object):
             return item
 
         r = requests.post(API_PUBLICATIONS, json=dict(item), headers={'Authorization': 'Token %s' % (API_KEY,) } )
+
+        api_log = logging.getLogger('api-log.txt')
+        if r.status_code == 200 or r.status_code == '200':
+            api_log.log(r.status_code, level=logging.INFO)
+        else:
+            api_log.log(r.status_code, level=logging.ERROR)
+        api_log.log(r.content, level=logging.INFO)
 
         return item
