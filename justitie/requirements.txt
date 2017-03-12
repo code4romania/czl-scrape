@@ -33,3 +33,4 @@ umalqurra==0.2
 Unidecode==0.4.20
 w3lib==1.17.0
 zope.interface==4.3.3
+pypiwin32==220
