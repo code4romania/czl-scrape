@@ -38,15 +38,8 @@ class SanatatePipelineExtraMeta(object):
 
 class SanatatePipelineClean(object):
 
-    @staticmethod
-    def _rws(str):
-        if str:
-            return ' '.join(str.split())
-        else:
-            return None
-
     def process_item(self, item, spider):
-        item['title'] = SanatatePipelineClean._rws(item['title'])
+        item['title'] = helpers.TextHelper.rws(item['title'])
         return item
 
 class SanatatePipelineAPI(object):

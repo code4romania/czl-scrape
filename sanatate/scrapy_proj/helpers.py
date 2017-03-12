@@ -3,6 +3,14 @@
 import re
 import fuzzywuzzy.fuzz as fuzz
 
+class TextHelper(object):
+    @staticmethod
+    def rws(str):
+        if str:
+            return ' '.join(str.split())
+        else:
+            return None
+
 class RomanianHelper(object):
     @staticmethod
     def _englishize_romanian(string):

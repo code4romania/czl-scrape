@@ -23,11 +23,11 @@ class SanatateSpider(scrapy.Spider):
             documents = []
 
             for anchor in documents_anchors:
-                href = response.urljoin(anchor.xpath('.//@href').extract_first())
+                href = anchor.xpath('.//@href').extract_first()
                 name = anchor.xpath('.//text()').extract_first()
                 documents.append({
                     'type': name,
-                    'url': href
+                    'url': response.urljoin(href)
                 })
 
             title = item.css('a.panel-title::text').extract_first()
