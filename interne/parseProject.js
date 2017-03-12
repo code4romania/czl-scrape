@@ -1,16 +1,17 @@
-let removeDiacritics = require('diacritics').remove;
+let removeDiacritics = require('diacritics').remove,
+    cheerio = require('cheerio');
 
 /** ====== MAIN ====== */
 
-function parseProject($row, URL, $metaParagraph) {
+function parseProject($, URL) {
     let parsedResult = {
         identifier: null, // un identificator unic, predictibil (repetabil), pereferabil human-readable
         title: null, // titlul actului legislativ propus
         type: null, // HG, OG, OUG, PROIECT
-        institution: "cercetare", // ID-ul platformei din care provine actul legislativ
+        institution: "economie", // ID-ul platformei din care provine actul legislativ
         date: null, // ISO 8601
         feedback_days: null, // numarul zilelor disponibile pentru feedback
-        contact: {tel: null, email1: null, email2: null}, // dictionar cu datale de contact. chei sugerate: "tel", "email", "addr"
+        contact: {email: null}, // dictionar cu datale de contact. chei sugerate: "tel", "email", "addr"
         documents: [ // array de dictionare
             {
                 type: null, // free text momentan
@@ -19,15 +20,34 @@ function parseProject($row, URL, $metaParagraph) {
         ]
     };
 
-    parsedResult.identifier = getIdentifier($row);
-    parsedResult.title = getTitle($row);
-    parsedResult.type = getType($row, parsedResult.title);
-    parsedResult.date = getDate($row);
-    parsedResult.feedback_days = getFeedbackDays($row, $metaParagraph);
-    parsedResult.contact.email1 = getEmail1($row);
-    parsedResult.contact.email2 = getEmail2($metaParagraph);
-    parsedResult.contact.tel = getTel($metaParagraph);
-    parsedResult.documents = getDocuments($row, URL);
+    $ = cheerio.load(`
+        <div style="width:100%; padding-top:5px; padding-bottom:1px; margin-bottom:2px; background-color:#1495F0; ">
+                <p style="color:#FFFFFF"><!-- InstanceBeginEditable name="editare data transparenta" -->
+                <strong>
+                Publicat în data de - 21.11.2016                 </strong>
+				<!-- InstanceEndEditable --></p>
+              </div>
+              
+              <p>ORDINUL MINISTRULUI AFACERILOR INTERNE Nr. _____ din ____ . ____ 2016 pentru modificarea Ordinului ministrului administraţiei şi internelor nr.157/2012 privind forma şi conţinutul permisului de conducere [...]<br>
+              <strong>Text integral</strong> <img src="images/arrow_red.png" vspace="2" align="bottom">&nbsp;&nbsp; <a href="documente/transparenta/Ordin forma permis conducere.pdf" target="_blank">( descarca fisier in format "pdf" )</a> </p>
+
+              <p>Referat de aprobare [...]<br>
+              <strong>Text integral</strong> <img src="images/arrow_red.png" vspace="2" align="bottom">&nbsp;&nbsp; <a href="documente/transparenta/Referat de aprobare permis conducere.pdf" target="_blank">( descarca fisier in format "pdf" )</a> </p>
+              
+              <p>Anexa 2 [...]<br>
+              <strong>Text integral</strong> <img src="images/arrow_red.png" vspace="2" align="bottom">&nbsp;&nbsp; <a href="documente/transparenta/Anexa OMAI permis conducere.pdf" target="_blank">( descarca fisier in format "pdf" )</a> </p>
+              
+              <p>Propunerile, sugestiile şi opiniile persoanelor interesate cu privire la aceste proiecte de acte normative sunt aşteptate pe adresa de e-mail: dj-internațional@mai.gov.ro, în termen de 20 de zile de la data afișării pe site-ul MAI.</p>
+    `);
+
+    let proposalsSuggestionsOpinionsListItem = $('ul>li').last();
+    parsedResult.identifier = getIdentifier($).substring(0, 128);
+    parsedResult.title = getTitle($);
+    parsedResult.type = getType($, parsedResult.title);
+    parsedResult.date = getDate($);
+    parsedResult.feedback_days = getFeedbackDays($, proposalsSuggestionsOpinionsListItem);
+    parsedResult.contact.email = getEmail($, proposalsSuggestionsOpinionsListItem);
+    parsedResult.documents = getDocuments($, URL);
 
     return parsedResult;
 }
@@ -36,22 +56,19 @@ function parseProject($row, URL, $metaParagraph) {
 /** ====== identifier ====== */
 
 function getIdentifier($) {
-    return removeDiacritics(getTitle($)
+    return getTitle($)
         .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[`~!@#$%^&*()_|+=?;:'",.<>\{\}\[\]\\\/]/gi, '')
-        .substring(0, 128));
+        .replace(/\s+/, '-')
+        .replace(/[`~!@#$%^&*()_|+=?;:'",.<>\{\}\[\]\\\/]/gi, '');
 }
 
 
 /** ====== title ====== */
 
 function getTitle($) {
-    return $('td')
-        .eq(1)
+    return $('.item.column-1>b')
+        .first()
         .text()
-        .replace(/\t+/g,'')
-        .replace(/\n+/g,'')
         .trim();
 }
 
@@ -60,26 +77,46 @@ function getTitle($) {
 
 let regexClassificators = {
     OG: [
-        'OG si',
-        'OG şi',
-        'OG privind'
+        'Ordin al',
+        'ordonanta pentru',
+        'ORDONANȚĂ pentru',
+        'ordonanta privind',
+        'Ordonanţă privind'
     ],
     HG: [
-        'PHG şi',
-        'PHG si',
-        'PHG privind',
-        'HG privind',
-        'PHG pentru',
-        'Norme metodologice',
-        'HG nr.'
+        'hotarare a guvernului',
+        'Hotărâre a Guvernului',
+        'Hotarare a Guvernului',
+        'HG',
+        'hotarare pentru',
+        'Hotărâre pentru',
+        'Hotarare privind',
+        'HOTĂRÂRE privind',
+        'HOTĂRÂRE pentru',
+        'HOTARARE pentru',
+        'hotarare de guvern',
+        'Hotărâre de Guvern'
     ],
     OUG: [
-        'OUG si'
+        'OUG',
+        'ordonanta de urgenta a guvernului',
+        'Ordonanţă de urgenţă a Guvernului',
+        'ordonanta de urgenta pentru',
+        'ORDONANŢĂ DE URGENȚĂ pentru',
+        'Ordonanta de urgenta privind',
+        'ORDONANŢĂ DE URGENȚĂ privind',
+        'ordonanta pentru'
     ],
     LEGE: [
-        'L E G E de',
-        'LEGE de',
-        'Proiect de Lege pentru'
+        'Schema de ajutor de minimis',
+        'proiect hotarare a guvernului',
+        'proiect Hotărâre a Guvernului',
+        'proiect de hotarare a guvernului',
+        'proiect de Hotărâre a Guvernului',
+        'proiect ordonanta de urgenta',
+        'Proiect Ordonanţă de urgenţă',
+        /dezbaterea proiectului de Hotarare a Guvernului/,
+        'LEGE ratificarea'
     ]
 };
 function getType($, title) {
@@ -117,12 +154,32 @@ function getType($, title) {
 
 /** ====== month ====== */
 
+let months = {
+    'ianuarie': '01',
+    'februarie': '02',
+    'martie': '03',
+    'aprilie': '04',
+    'mai': '05',
+    'iunie': '06',
+    'iulie': '07',
+    'august': '08',
+    'septembrie': '09',
+    'octombrie': '10',
+    'noiembrie': '11',
+    'decembrie': '12'
+};
 function getDate($) {
-    return $('td')
-        .first()
+    let digitsArr = $('.item.column-1>b')
+        .eq(1)
         .text()
-        .trim()
-        .split('.')
+        .split(/\s/);
+
+    digitsArr[1] = months[digitsArr[1]
+        .toLowerCase()];
+    // var scrappedDate = encodeURIComponent($(bolded[1]).text()).split('%C2%A0');
+    // modelProject.date = scrappedDate[2] +'-'+ allMonths[scrappedDate[1]] +'-'+ scrappedDate[0];
+
+    return digitsArr
         .reverse()
         .join('-');
 }
@@ -130,53 +187,31 @@ function getDate($) {
 
 /** ====== feedback days no. ====== */
 
-function getFeedbackDays($, $metaParagraph) {
-    let feedbackDaysPatternMatchingResult = $metaParagraph
+function getFeedbackDays($, $listItem) {
+    let feedbackDaysPatternMatchingResult = $listItem
         .text()
-        .match(/în termen de (\d{1,3}) zile de la data/i);
+        .match(/se primesc in termen de (\d{1,3}) zile de la data/i);
 
     let daysString = feedbackDaysPatternMatchingResult
-                    && feedbackDaysPatternMatchingResult[1];
+        && feedbackDaysPatternMatchingResult[1];
 
     return parseInt(daysString) || null;
 }
 
 
-/** ====== email1 ====== */
+/** ====== email ====== */
 
-function getEmail1($) {
-
-    return $('tr>td>p')
-        .last()
-        .text()
-        .split(':')[1];
-}
-
-
-/** ====== email2 ====== */
-
-function getEmail2($feedbackDays) {
-
-    return $feedbackDays('p>a')
+function getEmail($, $listItem) {
+    return $listItem
+        .find('span')
         .text();
-}
-
-
-/** ====== tel ====== */
-
-function getTel($feedbackDays) {
-
-    return $feedbackDays('p>span')
-        .text()
-        .split(',')[1]
-        .split('+')[1];
 }
 
 
 /** ====== documents ====== */
 
 function getDocuments($, URL) {
-    let documents = $('td').find('a'),
+    let documents = $('li').find('a'),
         parsedDocs = [];
 
     documents.each(function (i, document) {
@@ -184,7 +219,7 @@ function getDocuments($, URL) {
 
         if ($doc.text()) {
             parsedDocs.push({
-                type: $doc.text().trim(),
+                type: $doc.text(),
                 url: URL + $doc.attr('href')
             });
         }
