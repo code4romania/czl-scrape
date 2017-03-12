@@ -38,7 +38,7 @@ class LegalHelper(object):
         engrol = RomanianHelper.englishize_romanian(title).lower()
 
         stop_pos = len(title)
-        magic_keyword_search_result = re.search(r'(pentru|privind)', title)
+        magic_keyword_search_result = re.search(r'(pentru|privind)', engrol)
         if magic_keyword_search_result != None:
             stop_pos = magic_keyword_search_result.start()
 
@@ -54,7 +54,7 @@ class LegalHelper(object):
 
         final_type = None
         max_ratio = 0
-
+        
         for key in type_to_keywords:
             ratio = fuzz.ratio(type_to_keywords[key], search_space)
             if ratio > max_ratio:
