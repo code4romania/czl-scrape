@@ -20,7 +20,7 @@ function parseProject($, URL) {
     };
 
     let proposalsSuggestionsOpinionsListItem = $('ul>li').last();
-    parsedResult.identifier = getIdentifier($).substring(0, 128);
+    parsedResult.identifier = getIdentifier($);
     parsedResult.title = getTitle($);
     parsedResult.type = getType($, parsedResult.title);
     parsedResult.date = getDate($);
@@ -37,8 +37,9 @@ function parseProject($, URL) {
 function getIdentifier($) {
     return getTitle($)
         .toLowerCase()
-        .replace(/\s+/, '-')
-        .replace(/[`~!@#$%^&*()_|+=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+        .replace(/\s+/g, '-')
+        .replace(/[`~!@#$%^&*()_|+=?;:'",.<>\{\}\[\]\\\/]/gi, '')
+        .substring(0, 128);
 }
 
 
