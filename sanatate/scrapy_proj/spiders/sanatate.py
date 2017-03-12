@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import scrapy_proj.items
+import re
 
 class SanatateSpider(scrapy.Spider):
     name = "sanatate"
