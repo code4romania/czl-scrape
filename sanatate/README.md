@@ -2,7 +2,7 @@
 Crawler simplu, de la țară, făcut cu scrapy. Nu știe bine românește, dar înțelege oricum (face fuzzy matching pe titluri ca să scoată tipul de act normativ).
 ## Tehnologie
 - python3, pip
-- scrapy, wuzzyfuzzy
+- scrapy, fuzzywuzzy, urllib3
 - python-Levenshtein [opțional]
 
 ## Instructiuni
