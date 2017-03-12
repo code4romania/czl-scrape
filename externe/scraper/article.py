@@ -2,8 +2,11 @@ import hashlib
 from urllib.parse import quote
 import re
 from datetime import date, timedelta
+
+import logging
+
 from utils.lang import LangHelper
-from utils.constants import *
+from utils.settings import *
 
 
 class Article:
@@ -21,22 +24,6 @@ class Article:
         addr=r'adresa poştală\s?a?\s*(.*?\scod(:|\s)?\d+)',
     )
 
-    def __init__(self, table):
-        """
-        Builds an Article object from a given HTML table row
-        :param table: the table.
-        :return: the current object.
-        """
-        tr = table.select('tr')
-        self._extract_article_type(tr)
-        self._extract_title(tr)
-        self._generate_id()
-        self._build_contact(tr)
-        self._build_documents(tr)
-        self._extract_published_at(tr)
-        self._extract_feedback_days(tr)
-
-    # HG, OG, OUG, PROIECT
     identifier = None
     article_type = None
     title = None
@@ -45,18 +32,40 @@ class Article:
     feedback_days = None
     contact = None
 
+    def __init__(self, table=None):
+        """
+        Builds an Article object from a given HTML table row
+        :param table: the table.
+        :return: the current object.
+        """
+        if table:
+            tr = table.select('tr')
+            self._extract_article_type(tr)
+            self._extract_title(tr)
+            self._extract_published_at(tr)
+            self._generate_id()
+            self._build_contact(tr)
+            self._build_documents(tr)
+            self._extract_feedback_days(tr)
+
+    def __str__(self):
+        return ('identifier: %s\ntitle: %s\npublished_at: %s\ndocuments: %s\ncontact:%s',
+                self.identifier, self.title, self.published_at, self.documents,
+                self.contact)
+
     def _generate_id(self):
         """Generates and sets the identifier.
         :return: None
         """
         if self.article_type and self.title:
             self.identifier = '%s-%s' % (
-                self.article_type,
-                hashlib.md5(self.title.encode()).hexdigest()
+                self.article_type, hashlib.md5(self.title.encode()).hexdigest()
             )
         else:
-            # TODO: Logging
-            print('Failed to generate id')
+            logging.error(
+                'Failed to generate id for type: %s, title: %s, published_at: %s',
+                self.article_type, self.title, self.published_at
+            )
 
     def _build_contact(self, row):
         """Builds and sets the contact dict.
@@ -68,13 +77,10 @@ class Article:
         for field in self.CONTACT_REGX.keys():
             aux = re.search(self.CONTACT_REGX[field], contact_paragraph)
             if aux and aux.group(1).strip():
-                self.contact[field.lower()] = LangHelper.sanitize(
-                    aux.group(1).strip()
-                )
+                self.contact[field.lower()] = LangHelper.sanitize(aux.group(1).strip())
             else:
-                # TODO: logger for these
-                print(
-                    'Unable to match %s for id: %s' % (field, self.identifier)
+                logging.warning(
+                    'Unable to match %s for identifier: %s', field, self.identifier
                 )
 
     def _build_documents(self, row):
@@ -89,13 +95,9 @@ class Article:
         t1_url = quote(row[0].find('td').find('a').attrs['href'])
         t2_url = quote(row[1].find('td').find('a').attrs['href'])
 
-        self.documents = [
-            dict(type=t1, url=MAE_BASE_URL + t1_url)
-        ]
+        self.documents = [dict(type=t1, url=URLS['mae_base'] + t1_url)]
         if t2:
-            self.documents.append(
-                dict(type=t2, url=MAE_BASE_URL + t2_url)
-            )
+            self.documents.append(dict(type=t2, url=URLS['mae_base'] + t2_url))
 
     def _extract_article_type(self, row):
         """Extracts and sets the title attribute.
@@ -115,10 +117,10 @@ class Article:
         :return: None
         """
         art_type = self._extract_article_type(row).lower().capitalize()
-        desc_text = row[0].find_all('a')[1].text.rstrip('\n')
-        self.title = self.DESCRIPTION_FMT \
-            .format(art_type, desc_text).replace('\n', ' ') \
-            .replace('\t', ' ')
+        desc_text = row[0].find_all('a')[1].text
+        self.title = LangHelper.sanitize(
+            self.DESCRIPTION_FMT.format(art_type, desc_text)
+        )
         self.title = LangHelper.sanitize(re.sub(' +', ' ', self.title).strip())
 
     def _extract_published_at(self, row):
@@ -150,7 +152,8 @@ class Article:
         if feedback_date:
             self.feedback_days = (feedback_date - self.published_at).days
 
-    def _build_date_from_match(self, match):
+    @staticmethod
+    def _build_date_from_match(match):
         month = MONTHS.get(match.group(2).strip())
         return date(
             year=int(match.group(3)), month=int(month),

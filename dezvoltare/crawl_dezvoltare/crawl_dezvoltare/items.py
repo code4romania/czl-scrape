@@ -13,7 +13,7 @@ class CrawlDezvoltareItem(scrapy.Item):
     title = scrapy.Field()
     type = scrapy.Field()
     institution = scrapy.Field()
-    issuer = scrapy.Field()
+    institution = scrapy.Field()
     date = scrapy.Field()
     description = scrapy.Field()
     feedback_days = scrapy.Field()

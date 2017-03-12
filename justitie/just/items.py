@@ -7,17 +7,18 @@
 
 import scrapy
 
-
-class CrawlMediuItem(scrapy.Item):
+class JustPublication(scrapy.Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
     identifier = scrapy.Field()
     title = scrapy.Field()
     type = scrapy.Field()
-    institution = scrapy.Field()
     institution = scrapy.Field()
     date = scrapy.Field()
     description = scrapy.Field()
     feedback_days = scrapy.Field()
     contact = scrapy.Field()
-    tel = scrapy.Field()
-    email = scrapy.Field()
     documents = scrapy.Field()
+
+    pass
+

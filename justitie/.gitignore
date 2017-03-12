@@ -1,0 +1,6 @@
+.idea
+.scrapy
+
+*.pyc
+__pycache__
+**/__pycache__

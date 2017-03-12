@@ -63,15 +63,15 @@ public class ComunicatiiBean {
  Contact contacts = new Contact();
     
    
-    public String getIssuer() {
-        return issuer;
+    public String getInstitution() {
+        return institution;
     }
 
-    public void setIssuer(String issuer) {
-        this.issuer = issuer;
+    public void setInstitution(String institution) {
+        this.institution = institution;
     }
 
-    String issuer = "comunicatii";
+    String institution = "comunicatii";
 
     List<Document> documents;
 

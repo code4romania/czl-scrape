@@ -15,7 +15,7 @@ public class PublicationRepresentation {
   private String identifier;
   private String title;
   private String type;
-  private String issuer;
+  private String institution;
   private String date;
   private String description;
   private int feedback_days;
@@ -46,12 +46,12 @@ public class PublicationRepresentation {
     this.type = type;
   }
 
-  public String getIssuer() {
-    return issuer;
+  public String getInstitution() {
+    return institution;
   }
 
-  public void setIssuer(String issuer) {
-    this.issuer = issuer;
+  public void setInstitution(String institution) {
+    this.institution = institution;
   }
 
   public String getDate() {
@@ -98,7 +98,7 @@ public class PublicationRepresentation {
     private String identifier;
     private String title;
     private String type;
-    private String issuer;
+    private String institution;
     private String date;
     private String description;
     private int feedback_days;
@@ -127,8 +127,8 @@ public class PublicationRepresentation {
       return this;
     }
 
-    public PublicationRepresentationBuilder withIssuer(String issuer) {
-      this.issuer = issuer;
+    public PublicationRepresentationBuilder withInstitution(String institution) {
+      this.institution = institution;
       return this;
     }
 
@@ -162,7 +162,7 @@ public class PublicationRepresentation {
       publicationRepresentation.setIdentifier(identifier);
       publicationRepresentation.setTitle(title);
       publicationRepresentation.setType(type);
-      publicationRepresentation.setIssuer(issuer);
+      publicationRepresentation.setInstitution(institution);
       publicationRepresentation.setDate(date);
       publicationRepresentation.setDescription(description);
       publicationRepresentation.setFeedback_days(feedback_days);
