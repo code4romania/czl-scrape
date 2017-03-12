@@ -30,8 +30,11 @@ class PublicationSpider(scrapy.Spider):
             title = li_item.css('h3.lcp_post a::text').extract_first().strip()
             text_date = li_item.css('::text').extract_first().strip()
 
-            date_obj = datetime.datetime.strptime(text_date, '%d %B %Y')
-            date = date_obj.date().isoformat()
+            try:
+                date_obj = datetime.datetime.strptime(text_date, '%d %B %Y')
+                date = date_obj.date().isoformat()
+            except ValueError:
+                date = None
 
             paragraphs = li_item.xpath('p').xpath("string()").extract()
             description = '\n'.join(paragraphs)
