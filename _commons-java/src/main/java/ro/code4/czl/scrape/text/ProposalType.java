@@ -9,7 +9,7 @@ public enum ProposalType {
 
   public static ProposalType fromLabel(String label) {
     switch (label.toLowerCase()) {
-      case "HG":
+      case "hg":
       case "hotarare": {
         return HG;
       }
