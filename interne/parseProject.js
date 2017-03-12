@@ -1,5 +1,5 @@
-let removeDiacritics = require('diacritics').remove,
-    cheerio = require('cheerio');
+let removeDiacritics = require('diacritics').remove;
+    // cheerio = require('cheerio');
 
 /** ====== MAIN ====== */
 
@@ -7,8 +7,8 @@ function parseProject($, URL) {
     let parsedResult = {
         identifier: null, // un identificator unic, predictibil (repetabil), pereferabil human-readable
         title: null, // titlul actului legislativ propus
-        type: null, // HG, OG, OUG, PROIECT
-        institution: "economie", // ID-ul platformei din care provine actul legislativ
+        type: null, // HG, OG, OUG, LEGE, ORDIN DE MINISTRU
+        institution: "interne", // ID-ul platformei din care provine actul legislativ
         date: null, // ISO 8601
         feedback_days: null, // numarul zilelor disponibile pentru feedback
         contact: {email: null}, // dictionar cu datale de contact. chei sugerate: "tel", "email", "addr"
@@ -20,34 +20,36 @@ function parseProject($, URL) {
         ]
     };
 
-    $ = cheerio.load(`
-        <div style="width:100%; padding-top:5px; padding-bottom:1px; margin-bottom:2px; background-color:#1495F0; ">
-                <p style="color:#FFFFFF"><!-- InstanceBeginEditable name="editare data transparenta" -->
-                <strong>
-                Publicat în data de - 21.11.2016                 </strong>
-				<!-- InstanceEndEditable --></p>
-              </div>
-              
-              <p>ORDINUL MINISTRULUI AFACERILOR INTERNE Nr. _____ din ____ . ____ 2016 pentru modificarea Ordinului ministrului administraţiei şi internelor nr.157/2012 privind forma şi conţinutul permisului de conducere [...]<br>
-              <strong>Text integral</strong> <img src="images/arrow_red.png" vspace="2" align="bottom">&nbsp;&nbsp; <a href="documente/transparenta/Ordin forma permis conducere.pdf" target="_blank">( descarca fisier in format "pdf" )</a> </p>
+    // $ = cheerio.load(`
+    //   <div style="width:100%; padding-top:5px; padding-bottom:1px; margin-bottom:2px; background-color:#1495F0; ">
+    //     <p style="color:#FFFFFF"><!-- InstanceBeginEditable name="editare data transparenta" -->
+    //     <strong>
+    //     Publicat în data de - 21.11.2016                 </strong>
+    //     <!-- InstanceEndEditable --></p>
+    //   </div>
+    //
+    //   <p>ORDINUL MINISTRULUI AFACERILOR INTERNE Nr. _____ din ____ . ____ 2016 pentru modificarea Ordinului ministrului administraţiei şi internelor nr.157/2012 privind forma şi conţinutul permisului de conducere [...]<br>
+    //   <strong>Text integral</strong> <img src="images/arrow_red.png" vspace="2" align="bottom">&nbsp;&nbsp; <a href="documente/transparenta/Ordin forma permis conducere.pdf" target="_blank">( descarca fisier in format "pdf" )</a> </p>
+    //
+    //   <p>Referat de aprobare [...]<br>
+    //   <strong>Text integral</strong> <img src="images/arrow_red.png" vspace="2" align="bottom">&nbsp;&nbsp; <a href="documente/transparenta/Referat de aprobare permis conducere.pdf" target="_blank">( descarca fisier in format "pdf" )</a> </p>
+    //
+    //   <p>Anexa 2 [...]<br>
+    //   <strong>Text integral</strong> <img src="images/arrow_red.png" vspace="2" align="bottom">&nbsp;&nbsp; <a href="documente/transparenta/Anexa OMAI permis conducere.pdf" target="_blank">( descarca fisier in format "pdf" )</a> </p>
+    //
+    //   <p>Propunerile, sugestiile şi opiniile persoanelor interesate cu privire la aceste proiecte de acte normative sunt aşteptate pe adresa de e-mail: dj-internațional@mai.gov.ro, în termen de 20 de zile de la data afișării pe site-ul MAI.</p>
+    // `);
 
-              <p>Referat de aprobare [...]<br>
-              <strong>Text integral</strong> <img src="images/arrow_red.png" vspace="2" align="bottom">&nbsp;&nbsp; <a href="documente/transparenta/Referat de aprobare permis conducere.pdf" target="_blank">( descarca fisier in format "pdf" )</a> </p>
-              
-              <p>Anexa 2 [...]<br>
-              <strong>Text integral</strong> <img src="images/arrow_red.png" vspace="2" align="bottom">&nbsp;&nbsp; <a href="documente/transparenta/Anexa OMAI permis conducere.pdf" target="_blank">( descarca fisier in format "pdf" )</a> </p>
-              
-              <p>Propunerile, sugestiile şi opiniile persoanelor interesate cu privire la aceste proiecte de acte normative sunt aşteptate pe adresa de e-mail: dj-internațional@mai.gov.ro, în termen de 20 de zile de la data afișării pe site-ul MAI.</p>
-    `);
-
-    let proposalsSuggestionsOpinionsListItem = $('ul>li').last();
-    parsedResult.identifier = getIdentifier($).substring(0, 128);
+    let proposalsSuggestionsOpinionsListItem = $('p').last();
+    parsedResult.identifier = getIdentifier($);
     parsedResult.title = getTitle($);
     parsedResult.type = getType($, parsedResult.title);
     parsedResult.date = getDate($);
-    parsedResult.feedback_days = getFeedbackDays($, proposalsSuggestionsOpinionsListItem);
-    parsedResult.contact.email = getEmail($, proposalsSuggestionsOpinionsListItem);
-    parsedResult.documents = getDocuments($, URL);
+    parsedResult.feedback_days = getFeedbackDays(proposalsSuggestionsOpinionsListItem);
+    parsedResult.contact.email = getEmail(proposalsSuggestionsOpinionsListItem);
+    parsedResult.documents = getDocuments($, URL, parsedResult.type);
+
+    console.log(parsedResult);
 
     return parsedResult;
 }
@@ -56,18 +58,21 @@ function parseProject($, URL) {
 /** ====== identifier ====== */
 
 function getIdentifier($) {
-    return getTitle($)
+    return removeDiacritics(getTitle($)
         .toLowerCase()
-        .replace(/\s+/, '-')
-        .replace(/[`~!@#$%^&*()_|+=?;:'",.<>\{\}\[\]\\\/]/gi, '');
+        .replace(/\s+/g, '-')
+        .replace(/[`~!@#$%^&*()_|+=?;:'",.<>\{\}\[\]\\\/]/gi, '')
+        .substring(0, 128));
 }
 
 
 /** ====== title ====== */
 
 function getTitle($) {
-    return $('.item.column-1>b')
-        .first()
+    return $('p')
+        .eq(1)
+        .contents()
+        .eq(0)
         .text()
         .trim();
 }
@@ -77,46 +82,45 @@ function getTitle($) {
 
 let regexClassificators = {
     OG: [
-        'Ordin al',
-        'ordonanta pentru',
-        'ORDONANȚĂ pentru',
-        'ordonanta privind',
-        'Ordonanţă privind'
+        'ORDONANŢĂ pentru',
+    ],
+    'ORDIN DE MINISTRU': [
+        'ORDINUL MINISTRULUI',
+        'ORDIN Nr.',
+        'INSTRUCŢIUNILE MINISTRULUI',
+        'OMAI pentru',
+        'Proiectul de Ordin al',
+        'Proiectul Ordinului ministrului',
+        'Proiectul instrucțiunilor ministrului',
+        'ORDIN AL MINISTRULUI',
+        'ORDIN privind',
+        'ORDIN pentru',
+        'O R D I N U L MINISTRULUI'
     ],
     HG: [
-        'hotarare a guvernului',
-        'Hotărâre a Guvernului',
-        'Hotarare a Guvernului',
-        'HG',
-        'hotarare pentru',
         'Hotărâre pentru',
-        'Hotarare privind',
-        'HOTĂRÂRE privind',
         'HOTĂRÂRE pentru',
-        'HOTARARE pentru',
-        'hotarare de guvern',
-        'Hotărâre de Guvern'
+        'Proiectul Hotărârii',
+        'HOTĂRÂRE privind',
+        'Proiect HOTARARE GUVERN',
+        'Proiect de Hotatare a',
+        'Proiectul de HOTĂRÂRE pentru',
+        'Proiectul de Hotarare a',
+        'HOTĂRÂREA GUVERNULUI',
+        'HOTĂRÂRE Nr.',
+        'HOTĂRÂREA nr.'
     ],
     OUG: [
-        'OUG',
-        'ordonanta de urgenta a guvernului',
-        'Ordonanţă de urgenţă a Guvernului',
-        'ordonanta de urgenta pentru',
-        'ORDONANŢĂ DE URGENȚĂ pentru',
-        'Ordonanta de urgenta privind',
-        'ORDONANŢĂ DE URGENȚĂ privind',
-        'ordonanta pentru'
+        ''
     ],
     LEGE: [
-        'Schema de ajutor de minimis',
-        'proiect hotarare a guvernului',
-        'proiect Hotărâre a Guvernului',
-        'proiect de hotarare a guvernului',
-        'proiect de Hotărâre a Guvernului',
-        'proiect ordonanta de urgenta',
-        'Proiect Ordonanţă de urgenţă',
-        /dezbaterea proiectului de Hotarare a Guvernului/,
-        'LEGE ratificarea'
+        'LEGE pentru',
+        'Lege pentru',
+        'LEGE privind',
+        'Proiectul OMAI privind',
+        'Proiectul de lege pentru',
+        'Lege privind',
+        'L E G E pentru'
     ]
 };
 function getType($, title) {
@@ -154,30 +158,16 @@ function getType($, title) {
 
 /** ====== month ====== */
 
-let months = {
-    'ianuarie': '01',
-    'februarie': '02',
-    'martie': '03',
-    'aprilie': '04',
-    'mai': '05',
-    'iunie': '06',
-    'iulie': '07',
-    'august': '08',
-    'septembrie': '09',
-    'octombrie': '10',
-    'noiembrie': '11',
-    'decembrie': '12'
-};
 function getDate($) {
-    let digitsArr = $('.item.column-1>b')
-        .eq(1)
+    let digitsArr = $('div')
         .text()
-        .split(/\s/);
+        .trim()
+        .split('-')[1]
+        .trim()
+        .split(' ')[0]
+        .trim()
+        .split('.');
 
-    digitsArr[1] = months[digitsArr[1]
-        .toLowerCase()];
-    // var scrappedDate = encodeURIComponent($(bolded[1]).text()).split('%C2%A0');
-    // modelProject.date = scrappedDate[2] +'-'+ allMonths[scrappedDate[1]] +'-'+ scrappedDate[0];
 
     return digitsArr
         .reverse()
@@ -187,13 +177,10 @@ function getDate($) {
 
 /** ====== feedback days no. ====== */
 
-function getFeedbackDays($, $listItem) {
-    let feedbackDaysPatternMatchingResult = $listItem
-        .text()
-        .match(/se primesc in termen de (\d{1,3}) zile de la data/i);
+function getFeedbackDays($metaParagraph) {
+    let feedbackDaysPatternMatchingResult = $metaParagraph.text().match(/în termen de (\d{1,3}) de zile de la data/i);
 
-    let daysString = feedbackDaysPatternMatchingResult
-        && feedbackDaysPatternMatchingResult[1];
+    let daysString = feedbackDaysPatternMatchingResult && feedbackDaysPatternMatchingResult[1];
 
     return parseInt(daysString) || null;
 }
@@ -201,17 +188,18 @@ function getFeedbackDays($, $listItem) {
 
 /** ====== email ====== */
 
-function getEmail($, $listItem) {
-    return $listItem
-        .find('span')
-        .text();
+function getEmail($listItem) {
+    return $listItem.text()
+        .split('e-mail:')[1]
+        .split(',')[0]
+        .trim();
 }
 
 
 /** ====== documents ====== */
 
-function getDocuments($, URL) {
-    let documents = $('li').find('a'),
+function getDocuments($, URL, type) {
+    let documents = $('p').find('a'),
         parsedDocs = [];
 
     documents.each(function (i, document) {
@@ -219,8 +207,10 @@ function getDocuments($, URL) {
 
         if ($doc.text()) {
             parsedDocs.push({
-                type: $doc.text(),
-                url: URL + $doc.attr('href')
+                type: i==0 ? type : $doc.parent().text().split('[...]')[0].trim(),
+                url: URL + ($doc.attr('href').indexOf('/') === 0
+                    ? $doc.attr('href')
+                    :'/'+$doc.attr('href'))
             });
         }
     });
