@@ -1,0 +1,47 @@
+# OS files
+.DS_Store
+
+# Java files
+*.class
+
+# Log files
+*.log
+logs
+
+# Maven
+target
+pom.xml.versionsBackup
+
+# Dropwizard
+dependency-reduced-pom.xml
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# IntelliJ IDEA
+*.iml
+.idea
+
+# Eclipse
+.project
+.settings
+.classpath
+test-output
+
+# Vim
+*.swp
+
+# Virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# Misc
+*git.properties
+
+# Asciidoc
+.asciidoctor
+diag-*.png

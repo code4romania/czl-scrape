@@ -1,4 +1,4 @@
-package ro.code4.czl.scrape.spider;
+package ro.code4.czl.scrape.spider.senat;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -22,9 +22,9 @@ import java.util.Map;
 /**
  * @author Ionut-Maxim Margelatu (ionut.margelatu@gmail.com)
  */
-public class CzlPageProcessor implements PageProcessor {
+public class SenatPageProcessor implements PageProcessor {
 
-  private static final Logger logger = LoggerFactory.getLogger(CzlPageProcessor.class);
+  private static final Logger logger = LoggerFactory.getLogger(SenatPageProcessor.class);
 
   private final SimpleDateFormat siteFormat = new SimpleDateFormat("dd-MM-yyyy");
   private final SimpleDateFormat expectedFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -42,7 +42,7 @@ public class CzlPageProcessor implements PageProcessor {
     if (page.getUrl().toString().equalsIgnoreCase("https://www.senat.ro/LegiProiect.aspx")) {
       // seed URL
       List<String> proposalLinks = page.getHtml().xpath("//*[@id='GridViewProiecte']/tbody/tr/td[@align='center']").links().all();
-      logger.info("Got proposalCount={} for url={}", proposalLinks.size());
+      logger.info("Got proposalCount={} for url={}", proposalLinks.size(), page.getUrl());
       page.addTargetRequests(proposalLinks);
       page.setSkip(true);
     } else {

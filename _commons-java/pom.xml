@@ -15,15 +15,22 @@
     <name>Ce Zice Legea :: Scraper :: Common Libraries</name>
 
     <dependencies>
+        <!-- Webmagic pipeline -->
+        <dependency>
+            <groupId>us.codecraft</groupId>
+            <artifactId>webmagic-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <scope>runtime</scope>
         </dependency>
 
         <!-- HTTP client dependencies -->

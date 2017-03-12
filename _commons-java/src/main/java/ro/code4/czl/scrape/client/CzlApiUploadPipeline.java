@@ -1,8 +1,7 @@
-package ro.code4.czl.scrape.spider;
+package ro.code4.czl.scrape.client;
 
 import static ro.code4.czl.scrape.client.representation.PublicationRepresentation.PublicationRepresentationBuilder.aPublicationRepresentation;
 
-import ro.code4.czl.scrape.client.CzlClient;
 import ro.code4.czl.scrape.client.representation.DocumentRepresentation;
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
@@ -14,11 +13,11 @@ import java.util.Map;
 /**
  * @author Ionut-Maxim Margelatu (ionut.margelatu@gmail.com)
  */
-public class CzlUploadPipeline implements Pipeline {
+public class CzlApiUploadPipeline implements Pipeline {
 
   private final CzlClient czlClient;
 
-  public CzlUploadPipeline(CzlClient czlClient) {
+  public CzlApiUploadPipeline(CzlClient czlClient) {
     this.czlClient = czlClient;
   }
 
@@ -36,6 +35,7 @@ public class CzlUploadPipeline implements Pipeline {
                                .withDocuments((List<DocumentRepresentation>) extractedFields.get("documents"))
                                .withTitle((String) extractedFields.get("title"))
                                .withType((String) extractedFields.get("type"))
+                               .withFeedback_days((int) extractedFields.get("feedbackDays"))
                                .withContact((Map<String, String>) extractedFields.get("contact"))
                                .build())
         .execute();

@@ -9,6 +9,7 @@
 
     <modules>
         <module>_commons-java</module>
+        <module>cultura</module>
         <module>munca</module>
         <module>senat</module>
     </modules>
