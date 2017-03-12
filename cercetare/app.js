@@ -49,7 +49,12 @@ function parseListItems(resultObject) {
         parseResults = [];
 
     items.each(function (i, item) {
-        parseResults.push(parseItem(resultObject.feedback_days_element, item));
+        let $ = cheerio.load(item),
+            content = $.text().replace(/\n/g, '').replace(/\t/g, '');
+
+        if(content && content.indexOf('Data publicarii') != 0) {
+            parseResults.push(parseItem(resultObject.feedback_days_element, item));
+        }
     });
 
     return parseResults;
