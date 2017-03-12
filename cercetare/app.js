@@ -4,11 +4,12 @@ let nightmareConfig = {show: false},
     parseProject = require('./parseProject'),
     jsonfile = require('jsonfile'),
     argv = require('yargs').argv,
+    removeDiacritics = require('diacritics').remove,
     secrets = require('./secrets.json') || {},
     parseResults = [];
 
-const URL = 'http://economie.gov.ro/transparenta-decizionala/proiecte-in-dezbatere-publica',
-    BASE = 'http://economie.gov.ro';
+const URL = 'http://www.research.gov.ro/ro/articol/1029/despre-ancs-legislatie-proiecte-de-acte-normative',
+    BASE = 'http://www.research.gov.ro';
 
 const FILE = 'data.json';
 
@@ -17,80 +18,45 @@ const FILE = 'data.json';
 getNightmareInstance()
     .goto(URL)
     .wait('body')
-    .evaluate(getPaginationHTMLContent)
+    .evaluate(getHTMLContent)
     .end()
-    .then(getPaginationURLArr)
-    .then(getAndParsePageListItems)
+    .then(processHTMLContent)
+    .then(parseListItems)
     .then(postParsedResults)
     .catch(handleErrors);
 
 
-/** ====== pagination ====== */
+/** ====== page ====== */
 
-function getPaginationHTMLContent() {
-    return document.querySelector('.pagination').innerHTML;
+function getHTMLContent() {
+    return document.querySelector('.icr_main .special_edit').innerHTML;
 }
 
-function getPaginationURLArr(result) {
-    console.log('processing pages...');
-    let pages = [URL];
+function processHTMLContent(result) {
+    console.log('processing html page...');
 
-    cheerio.load(result)('a')
-        .each(function (i, link) {
-            pages.push(BASE + link.attribs['href']);
-        });
-
-    return pages;
+    return {
+        feedback_days_element: cheerio.load(result)('p').children('a[href^=mailto]').parent()[0],
+        items: cheerio.load(result)('table tr')
+    };
 }
 
 
 /** ====== list items ====== */
 
-function getAndParsePageListItems(urlArr) {
-    console.log('processing items...');
-    let getAndParsePromiseArr = [];
-
-    urlArr.forEach(function (url, i) {
-        let promise = getNightmareInstance()
-            .wait(1000 * i)
-            .goto(url)
-            .wait('body')
-            .evaluate(getBlogHTMLContent)
-            .end()
-            .then(parseListItems);
-
-        getAndParsePromiseArr.push(promise);
-    });
-
-    return Promise.all(getAndParsePromiseArr).then(function (result) {
-        let itemsArray = [];
-        result.forEach(function (items) {
-            itemsArray = itemsArray.concat(items);
-        });
-
-        return itemsArray;
-    }).catch(function (err) {
-        throw new Error(err);
-    });
-}
-
-function getBlogHTMLContent() {
-    return document.querySelector('.blog').innerHTML;
-}
-
-function parseListItems(result) {
-    let items = cheerio.load(result)('.items-row'),
+function parseListItems(resultObject) {
+    let items = resultObject.items,
         parseResults = [];
 
     items.each(function (i, item) {
-        parseResults.push(parseItem(item));
+        parseResults.push(parseItem(resultObject.feedback_days_element, item));
     });
 
     return parseResults;
 }
 
-function parseItem(item) {
-    return parseProject(cheerio.load(item), BASE);
+function parseItem(feedback_days, item) {
+    return parseProject(cheerio.load(feedback_days), cheerio.load(item), BASE);
 }
 
 
@@ -112,7 +78,7 @@ function postParsedResults(parsedResultsArr) {
         let requestsArr = [];
 
         parsedResultsArr.forEach(function (result, i) {
-            let promise = new Promise(function(resolve, reject) {
+            let promise = new Promise(function (resolve, reject) {
                 request({
                     uri: secrets.API_URL,
                     method: 'POST',
@@ -133,7 +99,7 @@ function postParsedResults(parsedResultsArr) {
             requestsArr.push(promise);
         });
 
-        Promise.all(requestsArr).then(function(response) {
+        Promise.all(requestsArr).then(function (response) {
             console.log('done!');
             process.exit(0);
         }).catch(function (err) {
