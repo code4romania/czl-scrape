@@ -3,22 +3,23 @@ import scrapy
 
 import datetime
 import locale
-locale.setlocale(locale.LC_ALL, "ro_RO.UTF-8")
+# locale.setlocale(locale.LC_ALL, "ro_RO.UTF-8")
 
 from unidecode import unidecode
 import re
 
 from scrapy.loader import ItemLoader
 
-from items import JustPublication
+from just.items import JustPublication
 
 class TestSpider(scrapy.Spider):
     name = "test"
+    start_urls = ["http://www.just.ro/transparenta-decizionala/acte-normative/proiecte-in-dezbatere/?lcp_page0={}".format(str(i)) for i in range(1000)]
 
-    def start_requests(self):
-        yield scrapy.Request(
-            url="http://www.just.ro/transparenta-decizionala/acte-normative/proiecte-in-dezbatere/?lcp_page0=2",
-            callback=self.parse)
+    # def start_requests(self):
+    #     yield scrapy.Request(
+    #         url="http://www.just.ro/transparenta-decizionala/acte-normative/proiecte-in-dezbatere/?lcp_page0=1",
+    #         callback=self.parse)
 
     def parse(self, response):
         for li_item in response.css('#content div.entry-content ul.lcp_catlist li'):
