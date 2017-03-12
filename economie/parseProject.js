@@ -1,33 +1,32 @@
+let removeDiacritics = require('diacritics').remove;
+
 /** ====== MAIN ====== */
 
 function parseProject($, URL) {
     let parsedResult = {
-        identifier: "***lawproposal-first-document-name-slug-or-something", // un identificator unic, predictibil (repetabil), pereferabil human-readable
-        title: "***Proiectul de ordin al ministrului justiției pentru aprobarea Regulamentului privind organizarea și desfășurarea activităților și programelor educative, de asistență psihologică și asistență socială din locurile de deținere aflate în subordinea Aministrației Naționale a Penitenciarelor", // titlul actului legislativ propus
-        type: "***HG", // HG, OG, OUG, PROIECT
+        identifier: null, // un identificator unic, predictibil (repetabil), pereferabil human-readable
+        title: null, // titlul actului legislativ propus
+        type: null, // HG, OG, OUG, PROIECT
         institution: "economie", // ID-ul platformei din care provine actul legislativ
-        date: "***2017-03-08", // ISO 8601
-        description: null,
-        feedback_days: 0x10, // numarul zilelor disponibile pentru feedback
-        contact: {tel: null, email: "***feedback@example.org"}, // dictionar cu datale de contact. chei sugerate: "tel", "email", "addr"
+        date: null, // ISO 8601
+        feedback_days: null, // numarul zilelor disponibile pentru feedback
+        contact: {email: null}, // dictionar cu datale de contact. chei sugerate: "tel", "email", "addr"
         documents: [ // array de dictionare
             {
-                type: "***anexa", // free text momentan
-                url: "***http://www.just.ro/wp-content/uploads/2017/02/Proiect.docx" // da, este un link catre un document oficial de la MJ
+                type: null, // free text momentan
+                url: null // da, este un link catre un document oficial de la MJ
             }
         ]
     };
 
     let proposalsSuggestionsOpinionsListItem = $('ul>li').last();
-    parsedResult.identifier = getIdentifier($);
+    parsedResult.identifier = getIdentifier($).substring(0, 128);
     parsedResult.title = getTitle($);
     parsedResult.type = getType($, parsedResult.title);
     parsedResult.date = getDate($);
     parsedResult.feedback_days = getFeedbackDays($, proposalsSuggestionsOpinionsListItem);
     parsedResult.contact.email = getEmail($, proposalsSuggestionsOpinionsListItem);
     parsedResult.documents = getDocuments($, URL);
-
-    // console.log(JSON.stringify(parsedResult, null, 4));
 
     return parsedResult;
 }
@@ -56,33 +55,44 @@ function getTitle($) {
 /** ====== type ====== */
 
 let regexClassificators = {
+    OG: [
+        'Ordin al',
+        'ordonanta pentru',
+        'ORDONANȚĂ pentru',
+        'ordonanta privind',
+        'Ordonanţă privind'
+    ],
     HG: [
+        'hotarare a guvernului',
         'Hotărâre a Guvernului',
         'Hotarare a Guvernului',
         'HG',
+        'hotarare pentru',
         'Hotărâre pentru',
         'Hotarare privind',
         'HOTĂRÂRE privind',
         'HOTĂRÂRE pentru',
         'HOTARARE pentru',
+        'hotarare de guvern',
         'Hotărâre de Guvern'
-    ],
-    OG: [
-        'Ordin al',
-        'ORDONANȚĂ pentru',
-        'Ordonanţă privind'
     ],
     OUG: [
         'OUG',
+        'ordonanta de urgenta a guvernului',
         'Ordonanţă de urgenţă a Guvernului',
-        'Ordonanta de urgenta privind',
+        'ordonanta de urgenta pentru',
         'ORDONANŢĂ DE URGENȚĂ pentru',
-        'ORDONANŢĂ DE URGENȚĂ privind'
+        'Ordonanta de urgenta privind',
+        'ORDONANŢĂ DE URGENȚĂ privind',
+        'ordonanta pentru'
     ],
-    PROIECT: [
+    LEGE: [
         'Schema de ajutor de minimis',
+        'proiect hotarare a guvernului',
         'proiect Hotărâre a Guvernului',
+        'proiect de hotarare a guvernului',
         'proiect de Hotărâre a Guvernului',
+        'proiect ordonanta de urgenta',
         'Proiect Ordonanţă de urgenţă',
         /dezbaterea proiectului de Hotarare a Guvernului/,
         'LEGE ratificarea'
@@ -102,7 +112,7 @@ function getType($, title) {
                     }
 
                     if (typeof pattern === 'string') {
-                        result = title
+                        result = removeDiacritics(title)
                                 .toLowerCase()
                                 .indexOf(pattern.toLowerCase()) === 0
                     } else if (typeof pattern === 'object') {
@@ -163,10 +173,6 @@ function getFeedbackDays($, $listItem) {
 
     let daysString = feedbackDaysPatternMatchingResult
                     && feedbackDaysPatternMatchingResult[1];
-
-    if (!daysString) {
-        return null; //TODO log helpful warn
-    }
 
     return parseInt(daysString) || null;
 }

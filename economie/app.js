@@ -62,13 +62,15 @@ function getAndParsePageListItems(urlArr) {
         getAndParsePromiseArr.push(promise);
     });
 
-    return Promise.all(getAndParsePromiseArr).then(function(result) {
+    return Promise.all(getAndParsePromiseArr).then(function (result) {
         let itemsArray = [];
-        result.forEach(function(items) {
+        result.forEach(function (items) {
             itemsArray = itemsArray.concat(items);
         });
 
         return itemsArray;
+    }).catch(function (err) {
+        throw new Error(err);
     });
 }
 
@@ -100,31 +102,47 @@ function postParsedResults(parsedResultsArr) {
 
     jsonfile.writeFileSync(FILE, parsedResultsArr, {spaces: 4});
 
-    if(argv.post) {
+    if (argv.post) {
         if (!(secrets.API_URL && secrets.TOKEN)) {
             throw new Error('Share your secrets with me. Pretty please :)');
         }
 
         console.log('posting data to api...');
 
-        let options = {
-            uri: secrets.API_URL,
-            method: 'POST',
-            headers: {
-                Authorization: 'Token ' + secrets.TOKEN
-            },
-            json: JSON.stringify(parsedResultsArr)
-        };
+        let requestsArr = [];
 
-        // request(options, function (error, response, body) {
-        //     if (error || response.statusCode !== 200) {
-        //         throw new Error('POST failed :(', error);
-        //     }
-        // });
+        parsedResultsArr.forEach(function (result, i) {
+            let promise = new Promise(function(resolve, reject) {
+                request({
+                    uri: secrets.API_URL,
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Token ' + secrets.TOKEN,
+                        'Content-Type': 'application/json'
+                    },
+                    json: result
+                }, function (error, response, body) {
+                    if (error || response.statusCode !== 200) {
+                        console.error('request failed: ', error)
+                    }
+
+                    resolve(body);
+                })
+            });
+
+            requestsArr.push(promise);
+        });
+
+        Promise.all(requestsArr).then(function(response) {
+            console.log('done!');
+            process.exit(0);
+        }).catch(function (err) {
+            throw new Error(err);
+        });
+    } else {
+        console.log('done!');
+        process.exit(0);
     }
-
-    console.log('done!');
-    process.exit(0);
 }
 
 
