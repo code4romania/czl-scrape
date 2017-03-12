@@ -66,8 +66,7 @@ ROBOTSTXT_OBEY = True
 ITEM_PIPELINES = {
     'scrapy_proj.pipelines.SanatatePipelineClean': 297,
     'scrapy_proj.pipelines.SanatatePipelineExtraMeta': 298,
-    'scrapy_proj.pipelines.SanatatePipelineAPI': 299,
-    'scrapy_proj.pipelines.SanatatePipelineJSON': 300
+    'scrapy_proj.pipelines.SanatatePipelineAPI': 299
 }
 
 LOG_LEVEL = 'INFO'
