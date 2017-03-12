@@ -40,7 +40,7 @@ class SanatateSpider(scrapy.Spider):
             contact_tel = tel_regex.search(body_text).group(0)
             contact_email = email_regex.search(body_text).group(0)
             start_date = date_regex.search(body_text).group(0)
-            feedback_days = deadline_regex.search(body_text.lower()).group(1)
+            feedback_days = int(deadline_regex.search(body_text.lower()).group(1))
 
             contact = {
                 'name': body.xpath('.//p[contains(text(), "Contact")]/text()').re_first(r'Contact:\s*(.*)'),
