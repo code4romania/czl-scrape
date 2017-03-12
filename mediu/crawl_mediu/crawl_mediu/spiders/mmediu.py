@@ -59,7 +59,7 @@ class MmediuSpider(scrapy.Spider):
         item['date'] = response.meta['date']
         item['identifier'] = response.meta['md5']
         item['institution'] = 'mediu'
-        item['issuer'] = 'mediu'
+        # item['issuer'] = 'mediu'
 
         type_mapping = {
             "Proiectul de OM": "OM",
