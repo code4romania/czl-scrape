@@ -1,0 +1,20 @@
+{
+  "name": "finantepub",
+  "version": "1.0.0",
+  "description": "## Tehnologie",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mgax/czl-scrape.git"
+  },
+  "author": "ciprian chichirita, alex morega",
+  "license": "MIT",
+  "devDependencies": {
+    "nightmare": "^2.10.0",
+    "request-promise": "^4.1.1",
+    "sha256": "^0.2.0"
+  }
+}
