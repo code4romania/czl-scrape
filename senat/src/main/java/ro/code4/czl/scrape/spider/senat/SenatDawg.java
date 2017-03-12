@@ -1,8 +1,9 @@
-package ro.code4.czl.scrape.spider;
+package ro.code4.czl.scrape.spider.senat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ro.code4.czl.scrape.client.CzlApiUploadPipeline;
 import ro.code4.czl.scrape.client.CzlClient;
 import ro.code4.czl.scrape.client.CzlClientConfig;
 import ro.code4.czl.scrape.client.authentication.TokenAuthenticationStrategy;
@@ -11,9 +12,9 @@ import us.codecraft.webmagic.Spider;
 /**
  * @author Ionut-Maxim Margelatu (ionut.margelatu@gmail.com)
  */
-public class CzlDawg {
+public class SenatDawg {
 
-  private static final Logger logger = LoggerFactory.getLogger(CzlDawg.class);
+  private static final Logger logger = LoggerFactory.getLogger(SenatDawg.class);
 
   public static void main(String[] args) {
     CzlClientConfig clientConfig = CzlClientConfig.builder()
@@ -25,10 +26,10 @@ public class CzlDawg {
         .build();
 
     try (CzlClient czlClient = CzlClient.newClient(clientConfig)) {
-      Spider.create(new CzlPageProcessor())
+      Spider.create(new SenatPageProcessor())
           .thread(3)
           .addUrl(args)
-          .addPipeline(new CzlUploadPipeline(czlClient))
+          .addPipeline(new CzlApiUploadPipeline(czlClient))
           .run();
     } catch (Exception e) {
       logger.error("Error caught while processing urls={}", args, e);
