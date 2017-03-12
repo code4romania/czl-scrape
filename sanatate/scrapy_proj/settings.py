@@ -70,7 +70,7 @@ ITEM_PIPELINES = {
     'scrapy_proj.pipelines.SanatatePipelineJSON': 300
 }
 
-LOG_LEVEL = 'WARNING'
+LOG_LEVEL = 'INFO'
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html

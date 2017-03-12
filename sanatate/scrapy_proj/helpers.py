@@ -46,7 +46,7 @@ class LegalHelper(object):
 
         type_to_keywords = {
             'HG': 'hotarare',
-            'ON': 'ordin',
+            'OM': 'ordin',
             'LEGE': 'lege',
             'OG': 'ordonanta',
             'OUG': 'ordonanta de urgenta'

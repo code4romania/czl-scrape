@@ -6,10 +6,11 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 import json
-import urllib
+import urllib3
 import datetime
-import scrapy_proj.helpers as helpers
 import hashlib
+import logging
+import scrapy_proj.helpers as helpers
 
 class SanatatePipelineJSON(object):
 
@@ -54,10 +55,23 @@ class SanatatePipelineClean(object):
 class SanatatePipelineAPI(object):
 
     def open_spider(self, spider):
-        pass
-
-    def close_spider(self, spider):
-        pass
+        self.total_items = 0
+        self.total_created = 0
 
     def process_item(self, item, spider):
+
+        encoded_body = json.dumps(dict(item))
+
+        http = urllib3.PoolManager()
+
+        r = http.request(
+            'POST',
+            'http://czl-api.code4.ro/api/publications/',
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': 'Token sanatate-very-secret-key'
+            },
+            body=encoded_body
+        )
+
         return item

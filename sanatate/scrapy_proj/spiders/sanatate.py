@@ -9,7 +9,7 @@ class SanatateSpider(scrapy.Spider):
 
     def start_requests(self):
         urls = [
-            'http://www.ms.ro/acte-normative-in-transparenta/?vpage=1',
+            'http://www.ms.ro/acte-normative-in-transparenta/?vpage=2',
         ]
 
         for url in urls:
