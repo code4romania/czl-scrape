@@ -1,0 +1,8 @@
+*.swp
+*.swo
+.DS_Store
+*.egg-info
+build
+*.pyc
+**/*.pyc
+dbs
