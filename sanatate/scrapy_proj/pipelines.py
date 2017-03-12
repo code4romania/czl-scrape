@@ -8,7 +8,7 @@
 import json
 import urllib
 import datetime
-import helpers
+import scrapy_proj.helpers as helpers
 import hashlib
 
 class SanatatePipelineJSON(object):
@@ -16,7 +16,7 @@ class SanatatePipelineJSON(object):
     items = []
 
     def open_spider(self, spider):
-        self.file = open('items.json', 'wb')
+        self.file = open('items.json', 'w')
         self.items = []
 
     def close_spider(self, spider):
@@ -54,7 +54,6 @@ class SanatatePipelineClean(object):
 class SanatatePipelineAPI(object):
 
     def open_spider(self, spider):
-        # conn = http.client.HTTPSConnection("localhost", 8080)
         pass
 
     def close_spider(self, spider):

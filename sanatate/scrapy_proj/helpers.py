@@ -5,8 +5,8 @@ import fuzzywuzzy.fuzz as fuzz
 
 class TextHelper(object):
     @staticmethod
-    def remove_non_ascii(str):
-        return re.sub(r'[^\x00-\x7F]+', ' ', str)
+    def remove_non_ascii(string):
+        return re.sub(r'[^\x00-\x7F]+', ' ', string)
 
     @staticmethod
     def rws(str):
