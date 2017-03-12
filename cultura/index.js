@@ -25,25 +25,7 @@ function getType(title) {
       }
     }
   });
-
-  // });
-  // if (title.match(/proiect(ul) (de lege|l e g e)/)) {
-  //   return 'LEGE';
-  // } else if (title.match(/proiect(ul)? de ordin/)) {
-  //   return 'OM';
-  // } else if (title.match(/proiect(ul)? de ordonanta de urgenta/)) {
-  //   return 'OUG';
-  // } else if (title.match(/proiect(ul)? de or?donanta/)) {
-  //   return 'OG';
-  // } else if (title.match(/proiect(ul)? de hotarare/)) {
-  //   return 'HG';
-  // } else if (title.match(/proiectul pentru modificarea/)) {
-  //   console.log(title, '- HG');
-  //   return 'HG';
-  // } else {
-  //   return 'NA';
-  // }
-  // throw 'not parsable: "' + title + '"';
+  throw 'not parsable: "' + title + '"';
 }
 
 function testTitles() {
