@@ -1,5 +1,4 @@
 let removeDiacritics = require('diacritics').remove;
-    // cheerio = require('cheerio');
 
 /** ====== MAIN ====== */
 
@@ -7,11 +6,11 @@ function parseProject($, URL) {
     let parsedResult = {
         identifier: null, // un identificator unic, predictibil (repetabil), pereferabil human-readable
         title: null, // titlul actului legislativ propus
-        type: null, // HG, OG, OUG, LEGE, ORDIN DE MINISTRU
-        institution: "interne", // ID-ul platformei din care provine actul legislativ
+        type: null, // HG, OG, OUG, LEGE, OM
+        institution: 'interne', // ID-ul platformei din care provine actul legislativ
         date: null, // ISO 8601
         feedback_days: null, // numarul zilelor disponibile pentru feedback
-        contact: {email: null}, // dictionar cu datale de contact. chei sugerate: "tel", "email", "addr"
+        contact: {email: null}, // dictionar cu datale de contact. chei sugerate: 'tel', 'email', 'addr'
         documents: [ // array de dictionare
             {
                 type: null, // free text momentan
@@ -20,33 +19,13 @@ function parseProject($, URL) {
         ]
     };
 
-    // $ = cheerio.load(`
-    //   <div style="width:100%; padding-top:5px; padding-bottom:1px; margin-bottom:2px; background-color:#1495F0; ">
-    //     <p style="color:#FFFFFF"><!-- InstanceBeginEditable name="editare data transparenta" -->
-    //     <strong>
-    //     Publicat în data de - 21.11.2016                 </strong>
-    //     <!-- InstanceEndEditable --></p>
-    //   </div>
-    //
-    //   <p>ORDINUL MINISTRULUI AFACERILOR INTERNE Nr. _____ din ____ . ____ 2016 pentru modificarea Ordinului ministrului administraţiei şi internelor nr.157/2012 privind forma şi conţinutul permisului de conducere [...]<br>
-    //   <strong>Text integral</strong> <img src="images/arrow_red.png" vspace="2" align="bottom">&nbsp;&nbsp; <a href="documente/transparenta/Ordin forma permis conducere.pdf" target="_blank">( descarca fisier in format "pdf" )</a> </p>
-    //
-    //   <p>Referat de aprobare [...]<br>
-    //   <strong>Text integral</strong> <img src="images/arrow_red.png" vspace="2" align="bottom">&nbsp;&nbsp; <a href="documente/transparenta/Referat de aprobare permis conducere.pdf" target="_blank">( descarca fisier in format "pdf" )</a> </p>
-    //
-    //   <p>Anexa 2 [...]<br>
-    //   <strong>Text integral</strong> <img src="images/arrow_red.png" vspace="2" align="bottom">&nbsp;&nbsp; <a href="documente/transparenta/Anexa OMAI permis conducere.pdf" target="_blank">( descarca fisier in format "pdf" )</a> </p>
-    //
-    //   <p>Propunerile, sugestiile şi opiniile persoanelor interesate cu privire la aceste proiecte de acte normative sunt aşteptate pe adresa de e-mail dj-internațional@mai.gov.ro, în termen de 20 de zile de la data afișării pe site-ul MAI.</p>
-    // `);
-
-    let proposalsSuggestionsOpinionsListItem = $('p').last();
+    let $proposalsSuggestionsOpinionsListItem = $('p').last();
     parsedResult.identifier = getIdentifier($);
     parsedResult.title = getTitle($);
     parsedResult.type = getType($, parsedResult.title);
     parsedResult.date = getDate($);
-    parsedResult.feedback_days = getFeedbackDays(proposalsSuggestionsOpinionsListItem);
-    parsedResult.contact.email = getEmail(proposalsSuggestionsOpinionsListItem);
+    parsedResult.feedback_days = getFeedbackDays($, $proposalsSuggestionsOpinionsListItem);
+    parsedResult.contact.email = getEmail($proposalsSuggestionsOpinionsListItem);
     parsedResult.documents = getDocuments($, URL, parsedResult.type);
 
     if(!parsedResult.contact.email) {
@@ -125,7 +104,8 @@ let regexClassificators = {
         'Proiectul OMAI privind',
         'Proiectul de lege pentru',
         'Lege privind',
-        'L E G E pentru'
+        'L E G E pentru',
+        'Proiectul Legii pentru'
     ]
 };
 function getType($, title) {
@@ -164,17 +144,14 @@ function getType($, title) {
 /** ====== month ====== */
 
 function getDate($) {
-    let digitsArr = $('div')
+    return $('div')
         .text()
         .trim()
         .split('-')[1]
         .trim()
         .split(' ')[0]
         .trim()
-        .split('.');
-
-
-    return digitsArr
+        .split('.')
         .reverse()
         .join('-');
 }
@@ -182,12 +159,27 @@ function getDate($) {
 
 /** ====== feedback days no. ====== */
 
-function getFeedbackDays($metaParagraph) {
-    let feedbackDaysPatternMatchingResult = $metaParagraph.text().match(/în termen de (\d{1,3}) de zile de la data/i);
+function getFeedbackDays($, $metaParagraph) {
+    let feedbackDaysPatternMatchingResult = searchParagraphForFeedbackDays($metaParagraph);
+
+    // treating edge case in which the feedback days paragraph gets pushed between the documents' paragraphs(e.g. improved doc versions added)
+    if (!feedbackDaysPatternMatchingResult) {
+        $('p').each(function(idx, paragraph) {
+            if (!feedbackDaysPatternMatchingResult) {
+                feedbackDaysPatternMatchingResult = searchParagraphForFeedbackDays($(paragraph));
+            }
+        });
+    }
 
     let daysString = feedbackDaysPatternMatchingResult && feedbackDaysPatternMatchingResult[1];
 
     return parseInt(daysString) || null;
+}
+
+function searchParagraphForFeedbackDays($paragraph) {
+    return removeDiacritics($paragraph
+        .text())
+        .match(/in termen de (\d{1,3}) /i);
 }
 
 
@@ -202,25 +194,51 @@ function getEmail($listItem) {
     } catch(e) {
         return null;
     }
-
 }
 
 
 /** ====== documents ====== */
 
 function getDocuments($, URL, type) {
-    let documents = $('p').find('a'),
+    let documents = $('p')
+            .not(function(i, el) {
+                return $(el).find('img').length === 0;
+            })
+            .find('a'),
         parsedDocs = [];
 
     documents.each(function (i, document) {
-        let $doc = $(document);
+        let $doc = $(document),
+            docType,
+            docURL = $doc.attr('href');
+
+        //set docType
+        if (i > 0) {
+            docType = $doc
+                .parent()
+                .text()
+                .split('[...]')[0]
+                .replace('( descarca fisier in format \"pdf\" )', '')
+                .trim();
+
+            if (docType.length > 20) {
+                docType = getType(null, docType);
+            }
+        } else if (i === 0) {
+            //first document's type
+            docType = type;
+        }
+
+        //set docURL
+        if (docURL.indexOf('/') !== 0) {
+            docURL = '/' + docURL;
+        }
+        docURL = URL + docURL;
 
         if ($doc.text()) {
             parsedDocs.push({
-                type: i==0 ? type : $doc.parent().text().split('[...]')[0].trim(),
-                url: URL + ($doc.attr('href').indexOf('/') === 0
-                    ? $doc.attr('href')
-                    :'/'+$doc.attr('href'))
+                type: docType,
+                url: docURL
             });
         }
     });
