@@ -47,7 +47,7 @@ class PublicationSpider(scrapy.Spider):
                 type=self.get_type(title),
                 identifier=self.slugify(title)[0:127],
                 date=date,
-                issuer='justitie',
+                institution='justitie',
                 description=description,
                 documents=documents,
                 contact=self.get_contacts(description),

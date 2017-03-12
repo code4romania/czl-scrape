@@ -13,7 +13,7 @@ class JustPublication(scrapy.Item):
     identifier = scrapy.Field()
     title = scrapy.Field()
     type = scrapy.Field()
-    issuer = scrapy.Field()
+    institution = scrapy.Field()
     date = scrapy.Field()
     description = scrapy.Field()
     feedback_days = scrapy.Field()
