@@ -18,7 +18,7 @@ class SanatateSpider(scrapy.Spider):
         date_regex = re.compile('\d{1,2}[-/]\d{2}[-/]\d{4}')
         email_regex = re.compile(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+')
         tel_regex = re.compile(r'(0?([0-9].?){9})')
-        deadline_regex = re.compile(r'termen.*limita.*[^[0-9]]*([0-9]{1,2}).*zi')
+        feedback_days_regex = re.compile(r'termen.*limita.*[^[0-9]]*([0-9]{1,2}).*zi')
 
         for item in response.css('.panel'):
             heading = item.css('div.panel-heading')
@@ -40,7 +40,7 @@ class SanatateSpider(scrapy.Spider):
             contact_tel = tel_regex.search(body_text).group(0)
             contact_email = email_regex.search(body_text).group(0)
             start_date = date_regex.search(body_text).group(0)
-            feedback_days = int(deadline_regex.search(body_text.lower()).group(1))
+            feedback_days = feedback_days_regex.search(body_text.lower()).group(1)
 
             contact = {
                 'name': body.xpath('.//p[contains(text(), "Contact")]/text()').re_first(r'Contact:\s*(.*)'),
@@ -60,6 +60,7 @@ class SanatateSpider(scrapy.Spider):
                 date = start_date,
                 feedback_days = feedback_days
             )
+            return
 
         next_pages = response.css('.pt-cv-pagination a::attr(href)').extract()
         next_pages.reverse()

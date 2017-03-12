@@ -7,7 +7,9 @@
 
 import json
 import urllib
+import datetime
 import helpers
+import hashlib
 
 class SanatatePipelineJSON(object):
 
@@ -34,12 +36,19 @@ class SanatatePipelineExtraMeta(object):
         if act_type == None:
             raise scrapy.exceptions.DropItem
         item['type'] = act_type
+
+        engrol = helpers.RomanianHelper.englishize_romanian(item['title']).lower()
+        engrolna = helpers.TextHelper.remove_non_ascii(engrol)
+        identifier_text = '{0} {1}'.format(engrolna, item['date'])
+        identifier_text_hashed = hashlib.md5(identifier_text.encode()).hexdigest()
+        item['identifier'] = '{0}-{1}-{2}'.format(item['institution'], item['type'], identifier_text_hashed)
         return item
 
 class SanatatePipelineClean(object):
-
     def process_item(self, item, spider):
         item['title'] = helpers.TextHelper.rws(item['title'])
+        item['feedback_days'] = int(item['feedback_days'])
+        item['date'] = datetime.datetime.strptime(item['date'], '%d-%m-%Y').strftime('%Y-%m-%d')
         return item
 
 class SanatatePipelineAPI(object):

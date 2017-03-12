@@ -14,6 +14,6 @@ class ActItem(scrapy.Item):
     institution = scrapy.Field()
     date = scrapy.Field()
     description = scrapy.Field()
-    feedback_days = scrapy.Field()
+    feedback_days = scrapy.Field(serializer=int)
     contact = scrapy.Field()
     documents = scrapy.Field()

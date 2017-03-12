@@ -5,6 +5,10 @@ import fuzzywuzzy.fuzz as fuzz
 
 class TextHelper(object):
     @staticmethod
+    def remove_non_ascii(str):
+        return re.sub(r'[^\x00-\x7F]+', ' ', str)
+
+    @staticmethod
     def rws(str):
         if str:
             return ' '.join(str.split())
@@ -13,24 +17,25 @@ class TextHelper(object):
 
 class RomanianHelper(object):
     @staticmethod
-    def _englishize_romanian(string):
-        symbols = (u"țţȚŢșşȘŞăĂîÎâÂ",
-                   u"ttTTssSSaAiIaA")
+    def englishize_romanian(string):
+        symbols = (u"țţȚŢșşȘŞăǎĂîÎâÂ",
+                   u"ttTTssSSaaAiIaA")
 
         tr = {ord(a):ord(b) for a, b in zip(*symbols)}
+
         return string.translate(tr)
 
     @staticmethod
-    def _beautify_romanian(string):
-        symbols = (u"ţşŢŞ",
-                   u"țșȚȘ")
+    def beautify_romanian(string):
+        symbols = (u"ǎţşŢŞ",
+                   u"ățșȚȘ")
         tr = {ord(a):ord(b) for a, b in zip(*symbols)}
         return string.translate(tr)
 
 class LegalHelper(object):
     @staticmethod
     def get_type_from_title(title):
-        engrol = RomanianHelper._englishize_romanian(title).lower()
+        engrol = RomanianHelper.englishize_romanian(title).lower()
 
         stop_pos = len(title)
         magic_keyword_search_result = re.search(r'(pentru|privind)', title)
