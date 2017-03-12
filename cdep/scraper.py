@@ -1,7 +1,20 @@
 import scrapy
 import re
+import requests
+import os
+
+API_URL = 'http://czl-api.code4.ro/api/publications/'
+API_TOKEN = os.environ['API_TOKEN']
 
 INDEX_URL = 'http://www.cdep.ro/pls/proiecte/upl_pck2015.lista?cam=2&anp=2017'
+
+def upload(doc):
+    headers = {'Authorization': 'Token ' + API_TOKEN}
+    resp = requests.post(API_URL, json=doc, headers=headers)
+    if resp.status_code == 400:
+        if re.search(r'Integrity Error: Key .* already exists', resp.text):
+            return
+    assert resp.status_code == 201
 
 class EducatieSpider(scrapy.Spider):
 
@@ -47,13 +60,14 @@ class EducatieSpider(scrapy.Spider):
 
         doc = {
             'identifier': plx_code,
-            'issuer': 'cdep',
+            'title': title,
+            'institution': 'cdep',
             'description': '',
             'type': 'LEGE',
             'date': date,
             'documents': documents,
         }
-        print(doc)
+        upload(doc)
 
 def main():
     from scrapy.crawler import CrawlerProcess, Crawler
