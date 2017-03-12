@@ -27,7 +27,7 @@ function parseProject($, URL) {
     parsedResult.contact.email = getEmail($, proposalsSuggestionsOpinionsListItem);
     parsedResult.documents = getDocuments($, URL);
 
-    console.log(JSON.stringify(parsedResult, null, 4));
+    // console.log(JSON.stringify(parsedResult, null, 4));
 
     return parsedResult;
 }

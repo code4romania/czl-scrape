@@ -10,9 +10,11 @@
   "license": "ISC",
   "dependencies": {
     "cheerio": "0.22.0",
+    "jsonfile": "2.4.0",
     "nightmare": "2.10.0",
     "nodemon": "1.11.0",
     "q": "1.4.1",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "yargs": "7.0.2"
   }
 }
