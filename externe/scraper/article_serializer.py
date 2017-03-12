@@ -11,11 +11,10 @@ class ArticleSerializer:
             type=article.article_type,
             institution=settings.INSTITUTION,
             date=article.published_at.isoformat(),
-            description='',
+            description='N\A',
             feedback_days=article.feedback_days,
             contact=article.contact,
             documents=article.documents,
-            issuer=settings.INSTITUTION,
         )
 
     @staticmethod
