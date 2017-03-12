@@ -35,7 +35,7 @@ public class CzlApiUploadPipeline implements Pipeline {
                                .withDocuments((List<DocumentRepresentation>) extractedFields.get("documents"))
                                .withTitle((String) extractedFields.get("title"))
                                .withType((String) extractedFields.get("type"))
-                               .withFeedback_days((int) extractedFields.get("feedbackDays"))
+                               //.withFeedback_days((int) extractedFields.get("feedbackDays"))
                                .withContact((Map<String, String>) extractedFields.get("contact"))
                                .build())
         .execute();
