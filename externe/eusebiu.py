@@ -86,6 +86,9 @@ def post_article(article):
     :param article: the object to POST.
     :return: True if successful, False otherwise.
     """
+    if not ArticleSerializer().is_valid(article):
+        logging.error('Invalid article: %s \n WILL NOT POST TO API', article)
+        return False
     data = ArticleSerializer().serialize(article)
     return post_data(data)
 

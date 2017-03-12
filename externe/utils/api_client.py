@@ -13,7 +13,6 @@ def post_data(data):
         attempts -= 1
         response = requests.post(URLS['api-publications'], data, headers=HEADERS)
 
-        # If it already exists, skip retrying
         if _already_exists(response):
             logging.warning(
                 'Object: %s \nalready exists, according to API. Skipping.', data
@@ -21,7 +20,8 @@ def post_data(data):
             break
 
         success = response.status_code == STATUS_CREATED
-        # wait 30 seconds before retrying
+        if success:
+            break
         time.sleep(30)
 
     if not success:
