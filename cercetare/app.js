@@ -56,7 +56,7 @@ function parseListItems(resultObject) {
 }
 
 function parseItem(feedback_days, item) {
-    return parseProject(cheerio.load(feedback_days), cheerio.load(item), BASE);
+    return parseProject(cheerio.load(item), BASE, cheerio.load(feedback_days));
 }
 
 
