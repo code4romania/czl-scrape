@@ -11,6 +11,8 @@ JavaScript EcmaScript2015 (ES6)
 
 ## Instructiuni
 
+1. install nodejs
+1. run `npm update`
 1. run `node app.js`, passing param `--post` will upload to api and also generate a file `data.json` to view data.
 
 ## Exceptii
