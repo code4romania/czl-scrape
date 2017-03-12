@@ -8,7 +8,7 @@
 import requests
 import json
 
-from items import JustPublication
+from just.items import JustPublication
 import logging
 
 API_KEY = 'justitie-very-secret-key'
