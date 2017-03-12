@@ -1,0 +1,4 @@
+fuzzywuzzy==0.15.0
+python-Levenshtein==0.12.0
+Scrapy==1.3.3
+urllib3==1.20
