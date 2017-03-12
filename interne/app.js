@@ -6,8 +6,8 @@ let nightmareConfig = {show: false},
     argv = require('yargs').argv,
     secrets = require('./secrets.json') || {};
 
-const URL = 'http://www.research.gov.ro/ro/articol/1029/despre-ancs-legislatie-proiecte-de-acte-normative',
-    BASE = 'http://www.research.gov.ro';
+const URL = 'http://www.mai.gov.ro/index05_1.html',
+    BASE = 'http://www.mai.gov.ro';
 
 const FILE = 'data.json';
 
@@ -27,16 +27,27 @@ getNightmareInstance()
 /** ====== page ====== */
 
 function getHTMLContent() {
-    return document.querySelector('.icr_main .special_edit').innerHTML;
+    return document.querySelector('.postBox').innerHTML;
 }
 
 function processHTMLContent(result) {
     console.log('processing html page...');
 
-    return {
-        feedback_days_element: cheerio.load(result)('p').children('a[href^=mailto]').parent()[0],
-        items: cheerio.load(result)('table tbody tr') //.not(function(item) {return cheerio.load(item).text() && cheerio.load(item).text().indexOf('Data publicarii') === -1})
-    };
+    let $ = cheerio.load(result, {normalizeWhitespace: true});
+
+    let items = [];
+    let counter = 0;
+    $('.textPreview').children().each(function(index, element) {
+        let $elem = cheerio.load(element);
+        if(element.name == 'div' && $elem.text().replace(/\s+/, '').indexOf('Publicat') == 0) {
+            counter++;
+        }
+
+        if(!items[counter]) items[counter] = "";
+        items[counter] += $elem.html();
+    });
+
+    return items.splice(0, 1);
 }
 
 
@@ -47,19 +58,14 @@ function parseListItems(resultObject) {
         parseResults = [];
 
     items.each(function (i, item) {
-        let $ = cheerio.load(item),
-            content = $.text().replace(/\n/g, '').replace(/\t/g, '');
-
-        if(content && content.indexOf('Data publicarii') != 0) {
-            parseResults.push(parseItem(resultObject.feedback_days_element, item));
-        }
+        parseResults.push(parseItem(item));
     });
 
     return parseResults;
 }
 
-function parseItem(feedback_days, item) {
-    return parseProject(cheerio.load(item), BASE, cheerio.load(feedback_days));
+function parseItem(item) {
+    return parseProject(cheerio.load(item), BASE);
 }
 
 
