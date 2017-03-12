@@ -51,7 +51,7 @@ public class CzlPageProcessor implements PageProcessor {
       String description = page.getHtml().xpath("//*[@id='ctl00_B_Center_ctl06_grdTitlu_ctl02_Label1']/text()").toString();
       String title = description;
       String type = "LEGE";
-      String issuer = "senat";
+      String institution = "senat";
       String extractedDate = null;
       Date date;
       try {
@@ -78,7 +78,7 @@ public class CzlPageProcessor implements PageProcessor {
       page.putField("description", description);
       page.putField("title", title);
       page.putField("type", type);
-      page.putField("issuer", issuer);
+      page.putField("institution", institution);
       page.putField("date", expectedDate);
       page.putField("documents", documents);
       page.putField("contact", contact);

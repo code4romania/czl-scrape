@@ -15,7 +15,7 @@ class ArticleSerializer:
             feedback_days=article.feedback_days,
             contact=article.contact,
             documents=article.documents,
-            issuer=constants.INSTITUTION,
+            institution=constants.INSTITUTION,
         )
 
     @staticmethod

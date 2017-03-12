@@ -216,7 +216,7 @@ class ThreadMinister implements Runnable {
           publicationRepresentation.setIdentifier(DigestUtils.md5Hex(lName));
           publicationRepresentation.setTitle(lName);
           publicationRepresentation.setType(type0);
-          publicationRepresentation.setIssuer("munca");
+          publicationRepresentation.setInstitution("munca");
 
           String[] splitDate = Optional.ofNullable(dateInit).orElse("11.03.2017").split("\\.");
           publicationRepresentation.setDate(splitDate[2] + "-" + splitDate[1] + "-" + splitDate[0]);

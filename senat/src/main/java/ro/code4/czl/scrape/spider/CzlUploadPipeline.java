@@ -30,7 +30,7 @@ public class CzlUploadPipeline implements Pipeline {
     czlClient.apiV1()
         .createPublication(aPublicationRepresentation()
                                .withDate((String) extractedFields.get("date"))
-                               .withIssuer((String) extractedFields.get("issuer"))
+                               .withInstitution((String) extractedFields.get("institution"))
                                .withIdentifier((String) extractedFields.get("identifier"))
                                .withDescription((String) extractedFields.get("description"))
                                .withDocuments((List<DocumentRepresentation>) extractedFields.get("documents"))
