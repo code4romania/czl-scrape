@@ -19,14 +19,31 @@ class SanatateSpider(scrapy.Spider):
             heading = item.css('div.panel-heading')
             body = item.css('div.panel-body')
 
+            documents_anchors = body.xpath('.//a[contains(@href, ".pdf")]')
+            documents = []
+
+            for anchor in documents_anchors:
+                href = response.urljoin(anchor.xpath('.//@href').extract_first())
+                name = anchor.xpath('.//text()').extract_first()
+                documents.append({
+                    'type': name,
+                    'url': href
+                })
+
             title = item.css('a.panel-title::text').extract_first()
             contact = {
-                'name': body.xpath('//p[contains(text(), "Contact")]/text()').re_first(r'Contact:\s*(.*)')
+                'name': body.xpath('.//p[contains(text(), "Contact")]/text()').re_first(r'Contact:\s*(.*)')
             }
+
+            anchors = body.css('a')
+
+            for anchor in anchors:
+                href = anchor.css('::attr(href)').extract()
 
             yield scrapy_proj.items.ActItem(
                 title = title,
-                contact = contact
+                contact = contact,
+                documents = documents
             )
 
         next_pages = response.css('.pt-cv-pagination a::attr(href)').extract()
