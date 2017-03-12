@@ -13,9 +13,9 @@ from scrapy.loader import ItemLoader
 
 from just.items import JustPublication
 
-class TestSpider(scrapy.Spider):
-    name = "test"
-    #start_urls = ["http://www.just.ro/transparenta-decizionala/acte-normative/proiecte-in-dezbatere/?lcp_page0={}".format(str(i)) for i in range(1000)]
+
+class PublicationSpider(scrapy.Spider):
+    name = "publication"
 
     def start_requests(self):
          yield scrapy.Request(
