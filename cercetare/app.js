@@ -4,9 +4,7 @@ let nightmareConfig = {show: false},
     parseProject = require('./parseProject'),
     jsonfile = require('jsonfile'),
     argv = require('yargs').argv,
-    removeDiacritics = require('diacritics').remove,
-    secrets = require('./secrets.json') || {},
-    parseResults = [];
+    secrets = require('./secrets.json') || {};
 
 const URL = 'http://www.research.gov.ro/ro/articol/1029/despre-ancs-legislatie-proiecte-de-acte-normative',
     BASE = 'http://www.research.gov.ro';
@@ -37,7 +35,7 @@ function processHTMLContent(result) {
 
     return {
         feedback_days_element: cheerio.load(result)('p').children('a[href^=mailto]').parent()[0],
-        items: cheerio.load(result)('table tr')
+        items: cheerio.load(result)('table tbody tr') //.not(function(item) {return cheerio.load(item).text() && cheerio.load(item).text().indexOf('Data publicarii') === -1})
     };
 }
 
