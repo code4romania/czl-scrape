@@ -47,17 +47,17 @@ function processHTMLContent(result) {
         items[counter] += $elem.html();
     });
 
-    return items.splice(0, 1);
+    items.shift();
+    return items;
 }
 
 
 /** ====== list items ====== */
 
-function parseListItems(resultObject) {
-    let items = resultObject.items,
-        parseResults = [];
+function parseListItems(items) {
+    let parseResults = [];
 
-    items.each(function (i, item) {
+    items.forEach(function (item) {
         parseResults.push(parseItem(item));
     });
 
@@ -98,7 +98,7 @@ function postParsedResults(parsedResultsArr) {
                     json: result
                 }, function (error, response, body) {
                     if (error || response.statusCode !== 200) {
-                        console.error('request failed: ', error)
+                        console.error('request failed: ', response.body)
                     }
 
                     resolve(body);

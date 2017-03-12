@@ -49,7 +49,12 @@ function parseProject($, URL) {
     parsedResult.contact.email = getEmail(proposalsSuggestionsOpinionsListItem);
     parsedResult.documents = getDocuments($, URL, parsedResult.type);
 
-    console.log(parsedResult);
+    if(!parsedResult.contact.email) {
+        delete parsedResult.contact.email;
+    }
+    if(!parsedResult.feedback_days) {
+        delete parsedResult.feedback_days;
+    }
 
     return parsedResult;
 }
@@ -84,7 +89,7 @@ let regexClassificators = {
     OG: [
         'ORDONANŢĂ pentru',
     ],
-    'ORDIN DE MINISTRU': [
+    OM: [
         'ORDINUL MINISTRULUI',
         'ORDIN Nr.',
         'INSTRUCŢIUNILE MINISTRULUI',
@@ -189,10 +194,15 @@ function getFeedbackDays($metaParagraph) {
 /** ====== email ====== */
 
 function getEmail($listItem) {
-    let matches = removeDiacritics($listItem.text())
-        .match(/([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})/i)[0];
+    try {
+        let matches = removeDiacritics($listItem.text())
+            .match(/([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})/i)[0];
 
-    return matches.trim();
+        return matches.trim();
+    } catch(e) {
+        return null;
+    }
+
 }
 
 
