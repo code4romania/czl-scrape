@@ -8,6 +8,7 @@ $arrPostDocuments = array();
 $strContent= _getURL($strSubMainURL);
 if($strContent)
 {
+    file_put_contents('test.txt', $strContent);
     if(preg_match_all('%<a class="lead_subcat" href="(?<url_article>.*?)" title="(?<title>.*?)"><strong>.*?<\/strong><\/a> - (?<date>\d{1,2}\.\d{1,2}\.\d{1,4}).*?<div class="files_container">(?<docs_raw>.*?)<\/div>%s', $strContent, $arrArticlesInfo))
     {
         $intCount = count($arrArticlesInfo[0]);
@@ -22,26 +23,29 @@ if($strContent)
                     'institution' => 'afaceri',
                     'date' => '',
                     'description' => '',
-                    'feedback_days' => '',
+                    'feedback_days' => null,
                     'contact' => array('email' => 'directia.imm@imm.gov.ro'),
                     'documents' => array()
                 );
                 $arrItem['title'] = $arrArticlesInfo['title'][$intI];
                 $arrItem['description'] = $arrItem['title'];
-                $arrItem['identifier'] = str_replace(' ', '-', strtolower(substr($arrItem['title'], 0, 40))) . time();
                 $date = DateTime::createFromFormat('d.m.Y', $arrArticlesInfo['date'][$intI]);
                 $output = $date->format('Y-m-d');
                 $arrItem['date'] = $output;
                 $type = _getCorrespondingType($arrItem['title']);
                 $arrItem['type'] = ($type) ? $type : '';
 
-                if(preg_match_all('%href="(.*?)"%s', $arrArticlesInfo['docs_raw'][$intI], $arrDocuments))
+                if(preg_match_all('%href="((.*?)\.\w{1,4})"%s', $arrArticlesInfo['docs_raw'][$intI], $arrDocuments))
                 {
+                    if(count($arrDocuments[1]) < 1)
+                        continue;
                     foreach($arrDocuments[1] as $key=>$document)
                     {
                         $arrItem['documents'][$key]['url'] = $document;
-                        $arrItem['documents'][$key]['type'] = 'oug';
+                        $arrItem['documents'][$key]['type'] = ($arrItem['type'] === '') ? 'oug' : $arrItem['type']  ;
                     }
+                    $arrRawIdentifier = explode('/', $arrDocuments[2][0]);
+                    $arrItem['identifier'] = $arrItem['institution'] . '-' . strtolower($arrRawIdentifier[count($arrRawIdentifier)-1]);
                     array_push($arrPostDocuments, $arrItem);
                     unset($arrItem);
                 }
@@ -51,13 +55,12 @@ if($strContent)
                 }
             }
             print_r($arrPostDocuments);
-            //api call
             foreach($arrPostDocuments as $document)
             {
                 $jsonEncoded = json_encode($document);
                 //API CALL
 //                $strResponse = _getURL($strPostURl, $jsonEncoded);
-//                print_r($strResponse);
+                print_r($strResponse . PHP_EOL);
             }
             return true;
         }
@@ -100,7 +103,7 @@ function _getURL($strURL, $mxdPost = false){
     if($mxdPost !== false)
     {
         array_push($header, "Content-type: application/json");
-        array_push($header, "Authorization: afaceri-very-secret-key");
+        array_push($header, "Authorization: Token afaceri-very-secret-key");
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $mxdPost);
@@ -117,6 +120,7 @@ function _getURL($strURL, $mxdPost = false){
     if(!$strResponse)
         return false;
     curl_close($ch);
+    print_r("Request finished with status code: $responseCode \n");
     return $strResponse;
 }
 

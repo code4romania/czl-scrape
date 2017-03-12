@@ -30,7 +30,7 @@ if($strContent)
                         'institution' => 'aparare',
                         'date' => '',
                         'description' => '',
-                        'feedback_days' => '',
+                        'feedback_days' => null,
                         'contact' => array(),
                         'documents' => array()
                     );
@@ -48,7 +48,10 @@ if($strContent)
                             $arrItem['documents'][$key]['url'] = $strDocumentLink;
                             $arrItem['documents'][$key]['type'] = 'proiect_act_normativ';
                         }
-                        $arrItem['identifier'] = str_replace('_', '-', strtolower($arrDocuments[2][0]));
+                        if(isset($arrDocuments[2][1]))
+                            $arrItem['identifier'] = $arrItem['institution'] . '-' . str_replace('_', '-', strtolower($arrDocuments[2][1]));
+                        else
+                            $arrItem['identifier'] = $arrItem['institution'] . '-' . str_replace('_', '-', strtolower($arrDocuments[2][0]));
                     } else {
                         print_r('!!NOTICE!! Nu am gasit documente pentru ' . $arrTitles[1][$keyRaw] . PHP_EOL);
                     }
@@ -57,7 +60,7 @@ if($strContent)
                     } else {
                         print_r('!!NOTICE!! Nu am gasit documente pentru ' . $arrTitles[1][$keyRaw] . PHP_EOL);
                     }
-                    if (count($arrItem) > 0) {
+                    if (count($arrItem['documents']) > 0) {
                         array_push($arrPostDocuments, $arrItem);
                     }
                     unset($arrItem);
@@ -65,13 +68,13 @@ if($strContent)
             }
             else
             {
-                print_r('!!ERROR!! Datele de feedback nu au putut fi luate');
+                print_r('!!ERROR!! Datele de feedback nu au putut fi luate' . PHP_EOL);
                 return false;
             }
         }
         else
         {
-            print_r('!!ERROR!! Documentele nu au putut fi luate');
+            print_r('!!ERROR!! Documentele nu au putut fi luate' . PHP_EOL);
             return false;
         }
         print_r($arrPostDocuments);
@@ -79,14 +82,14 @@ if($strContent)
         {
             $jsonEncoded = json_encode($document);
             //API CALL
-            $strResponse = _getURL($strPostURl, $jsonEncoded);
-            print_r($strResponse);
+//            $strResponse = _getURL($strPostURl, $jsonEncoded);
+            print_r($strResponse . PHP_EOL);
         }
         return true;
     }
     else
     {
-        print_r('!!ERROR!! Informatiile nu au putut fi luate');
+        print_r('!!ERROR!! Informatiile nu au putut fi luate, pagina a fost schimbata, verifica ' . $strMainURL . PHP_EOL);
         return false;
     }
 }
@@ -144,9 +147,9 @@ function _getURL($strURL, $mxdPost = false){
     if($mxdPost !== false)
     {
         array_push($header, "Content-type: application/json");
-        array_push($header, "Authorization: aparare-very-secret-key");
+        array_push($header, "Authorization: Token aparare-very-secret-key");
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($ch, CURLOPT_POST, true);c
+        curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $mxdPost);
 
     }
@@ -161,6 +164,7 @@ function _getURL($strURL, $mxdPost = false){
     if(!$strResponse)
         return false;
     curl_close($ch);
+    print_r("Request finished with status code: $responseCode \n");
     return $strResponse;
 }
 
