@@ -24,6 +24,14 @@ class Article:
         addr=r'adresa poştală\s?a?\s*(.*?\scod(:|\s)?\d+)',
     )
 
+    identifier = None
+    article_type = None
+    title = None
+    documents = None
+    published_at = None
+    feedback_days = None
+    contact = None
+
     def __init__(self, table=None):
         """
         Builds an Article object from a given HTML table row
@@ -40,26 +48,18 @@ class Article:
             self._build_documents(tr)
             self._extract_feedback_days(tr)
 
-    # HG, OG, OUG, PROIECT
-    identifier = None
-    article_type = None
-    title = None
-    documents = None
-    published_at = None
-    feedback_days = None
-    contact = None
+    def __str__(self):
+        return ('identifier: %s\ntitle: %s\npublished_at: %s\ndocuments: %s\ncontact:%s',
+                self.identifier, self.title, self.published_at, self.documents,
+                self.contact)
 
     def _generate_id(self):
         """Generates and sets the identifier.
         :return: None
         """
         if self.article_type and self.title:
-            digest = (
-                self.title + self.published_at.strftime(DATE_FMT)
-            ).encode() if self.published_at else self.title.encode()
-
             self.identifier = '%s-%s' % (
-                self.article_type, hashlib.md5(digest).hexdigest()
+                self.article_type, hashlib.md5(self.title.encode()).hexdigest()
             )
         else:
             logging.error(

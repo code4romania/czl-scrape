@@ -1,8 +1,10 @@
 import time
 import click
+import logging
 
-from scraper.article_serializer import *
+from scraper.article_serializer import ArticleSerializer
 from scraper.extractor import *
+from utils.api_client import post_data
 from utils.settings import *
 
 
@@ -17,7 +19,8 @@ def get_to_work(page, delay, observer, log_level):
     if log_level not in LOG_LEVELS:
         logging.warning('Unrecognized log_level: %s. Defaulting to INFO')
         log_level = 'INFO'
-    logging.basicConfig(filename=LOG_FILE, level=LOG_LEVELS[log_level])
+    logging.basicConfig(filename=LOG_FILE, level=LOG_LEVELS[log_level],
+                        format='%(asctime)s %(levelname)s %(message)s')
 
     # if observer flag is set, ignore everything else and start eavesdropping
     if observer:
@@ -47,22 +50,19 @@ def shut_up_and_listen(delay):
         logging.debug('latest_entries: %s', latest_entries)
 
         if not current_latest:
-            current_latest = latest_entries
+            logging.info('Assuming current state of feed is the latest ...')
+            current_latest = latest_entries[:]
 
         diff = set(current_latest) - set(latest_entries)
-        while diff:
+        for identifier in diff:
             # be polite to the MAE website
             time.sleep(0.5)
-            logging.info('Found new articles: %s', ', '.join(diff))
-            article = feed_extractor.extract_entry()
-            if article.identifier in diff:
-                diff.remove(article.identifier)
-                post_article(article)
+            logging.info('Found new article: %s', identifier)
+            article = feed_extractor.get_article_by_id(identifier)
+            diff.remove(article.identifier)
+            post_article(article)
 
-        logging.info(
-            'Assuming the current state of the feed is the latest.' +
-            'ETA until next scrape: %s hour(s)', delay
-        )
+        logging.info('ETA until next scrape: %s hour(s)', delay)
         time.sleep(hours_to_sec(delay))
 
 
@@ -87,7 +87,7 @@ def post_article(article):
     :return: True if successful, False otherwise.
     """
     data = ArticleSerializer().serialize(article)
-    requests.post(URLS['api-publications'], data, headers=HEADERS)
+    return post_data(data)
 
 
 if __name__ == '__main__':

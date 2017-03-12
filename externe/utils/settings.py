@@ -3,12 +3,6 @@ WAIT = {
     '0.5_sec': 0.5
 }
 
-SCRAPER_PAGES = [
-    'arhiva-1415',
-    'arhiva-2016',
-    'feed'
-]
-
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) '
                   'AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -16,6 +10,13 @@ HEADERS = {
     'Authorization': 'Token externe-very-secret-key'
 }
 
+SCRAPER_PAGES = [
+    'arhiva-1415',
+    'arhiva-2016',
+    'feed'
+]
+
+# The keys linking to MAE pages need to match the items in SCRAPER_PAGES
 URLS = {
     'mae_base': 'http://www.mae.ro',
     'feed': 'https://www.mae.ro/node/2011#null',
@@ -23,6 +24,10 @@ URLS = {
     'arhiva-1415': 'http://www.mae.ro/node/35609',
     'api-publications': 'http://czl-api.code4.ro/api/publications/'
 }
+
+STATUS_CREATED = 201
+STATUS_BAD_REQUEST = 400
+ALREADY_EXISTS = 'already exists'
 
 TYPES = {
     'HOTARARE': 'HG',
