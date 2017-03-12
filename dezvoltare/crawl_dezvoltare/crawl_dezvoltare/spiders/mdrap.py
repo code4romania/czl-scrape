@@ -63,7 +63,7 @@ class MdrapSpider(scrapy.Spider):
         item['date'] = response.meta['article_date']
         item['identifier'] = response.meta['article_slug']
         item['institution'] = 'dezvoltare'
-        item['issuer'] = 'dezvoltare'
+        item['institution'] = 'dezvoltare'
 
         type_mapping = {
             'hg': 'HG',

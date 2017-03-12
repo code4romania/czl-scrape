@@ -83,7 +83,7 @@ function parsePage(firstFlag) {
             let identifier = sha256(val.title);
             val.date = date.format('YYYY-MM-DD');
             val.identifier = identifier;
-            val.issuer = 'agricultura';
+            val.institution = 'agricultura';
             val.description = val.title;
             val.type = guessType(val.title);
             itemsList.push(val);

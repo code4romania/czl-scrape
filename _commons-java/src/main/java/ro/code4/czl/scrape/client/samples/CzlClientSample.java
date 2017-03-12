@@ -29,7 +29,7 @@ public class CzlClientSample {
       czlClient.apiV1().createPublication(PublicationRepresentationBuilder
                                              .aPublicationRepresentation()
                                              .withIdentifier("1")
-                                             .withIssuer("finantepub")
+                                             .withInstitution("finantepub")
                                              .withType("HG")
                                              .withDate("2017-03-08")
                                              .build())
