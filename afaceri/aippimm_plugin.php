@@ -2,9 +2,9 @@
 
 $strMainURL = 'http://www.aippimm.ro/categorie/propuneri_lg/';
 $strSubMainURL = 'http://www.aippimm.ro/categorie/transparenta-decizionala---modificare-hg-96-2011/';
-$strPostURl = 'http://czl-api.code4.ro/api/publications/';
-$arrPostDocuments = array();
+$strOtherDocuments = 'http://www.aippimm.ro/categorie/info_util/legislatie/';
 
+print_r("Starting to parse $strSubMainURL \n");
 $strContent= _getURL($strSubMainURL);
 if(!$strContent)
 {
@@ -12,77 +12,103 @@ if(!$strContent)
     return false;
 
 }
-/* regex that gets about all the info we need about the documents */
-if(preg_match_all('%<a class="lead_subcat" href="(?<url_article>.*?)" title="(?<title>.*?)"><strong>.*?<\/strong><\/a> - (?<date>\d{1,2}\.\d{1,2}\.\d{1,4}).*?<div class="files_container">(?<docs_raw>.*?)<\/div>%s', $strContent, $arrArticlesInfo))
-{
-    $intCount = count($arrArticlesInfo[0]);
-    if($intCount === 0)
-    {
-        print_r('!!NOTICE!! ' . PHP_EOL);
-        return false;
-    }
-    for($intI = 0; $intI < $intCount; $intI++)
-    {
-        $arrItem = array(
-            'identifier' => '',
-            'title' => '',
-            'type' => '',
-            'institution' => 'afaceri',
-            'date' => '',
-            'description' => '',
-            'feedback_days' => null,
-            'contact' => array('email' => 'directia.imm@imm.gov.ro'),
-            'documents' => array()
-        );
-        $arrItem['title'] = $arrArticlesInfo['title'][$intI];
-        $arrItem['description'] = $arrItem['title'];
-        /* format the date into ISO 8601 */
-        $date = DateTime::createFromFormat('d.m.Y', $arrArticlesInfo['date'][$intI]);
-        $output = $date->format('Y-m-d');
-        $arrItem['date'] = $output;
-        /* gets the corresponding type of document */
-        $type = _getCorrespondingType($arrItem['title']);
-        $arrItem['type'] = ($type) ? $type : '';
+_parseContent($strContent);
 
-        /* gets the document links */
-        if(preg_match_all('%href="((.*?)\.\w{1,4})"%s', $arrArticlesInfo['docs_raw'][$intI], $arrDocuments))
+print_r("Starting to parse $strOtherDocuments \n");
+$strContent= _getURL($strOtherDocuments);
+if(!$strContent)
+{
+    print_r('!!ERROR!! Pagina de transparenta decizionala nu este functionala sau a fost schimbata, verifica ' . $strMainURL . PHP_EOL);
+    return false;
+
+}
+_parseContent($strContent);
+
+function _parseContent($strContent)
+{
+    $strPostURl = 'http://czl-api.code4.ro/api/publications/';
+    /* regex that gets about all the info we need about the documents */
+    if(preg_match_all('%<a class="lead_subcat" href="(?<url_article>.*?)" title="[\w\d \/-]+"><strong>(?<title>.*?)<\/strong><\/a> - (?<date>\d{1,2}\.\d{1,2}\.\d{1,4})[\w- <>\/]+?(<div class="files_container">(?<docs_raw>.*?))?<\/div>%s', $strContent, $arrArticlesInfo))
+    {
+        $arrPostDocuments = array();
+        $intCount = count($arrArticlesInfo[0]);
+        if($intCount === 0)
         {
-            if(count($arrDocuments[1]) < 1)
-                continue;
-            foreach($arrDocuments[1] as $key=>$document)
+            print_r('!!NOTICE!! ' . PHP_EOL);
+            return false;
+        }
+        for($intI = 0; $intI < $intCount; $intI++)
+        {
+            $arrItem = array(
+                'identifier' => '',
+                'title' => '',
+                'type' => '',
+                'institution' => 'afaceri',
+                'date' => '',
+                'description' => '',
+                'feedback_days' => null,
+                'contact' => array('email' => 'directia.imm@imm.gov.ro'),
+                'documents' => array()
+            );
+            $arrItem['title'] = $arrArticlesInfo['title'][$intI];
+            $arrItem['description'] = $arrItem['title'];
+            /* format the date into ISO 8601 */
+            $date = DateTime::createFromFormat('d.m.Y', $arrArticlesInfo['date'][$intI]);
+            $output = $date->format('Y-m-d');
+            $arrItem['date'] = $output;
+            /* gets the corresponding type of document */
+            $type = _getCorrespondingType($arrItem['title']);
+            $arrItem['type'] = ($type) ? $type : '';
+
+            /* gets the document links */
+
+                if(preg_match_all('%href="((.*?)\.\w{1,4})"%s', $arrArticlesInfo['docs_raw'][$intI], $arrDocuments))
             {
-                $arrItem['documents'][$key]['url'] = $document;
-                $mxdDocType = _getCorrespondingDocumentType($document);
-                $arrItem['documents'][$key]['type'] = ($mxdDocType) ? $mxdDocType : $type;
+                if(count($arrDocuments[1]) < 1)
+                    continue;
+                foreach($arrDocuments[1] as $key=>$document)
+                {
+                    $arrItem['documents'][$key]['url'] = $document;
+                    $mxdDocType = _getCorrespondingDocumentType($document);
+                    $arrItem['documents'][$key]['type'] = ($mxdDocType) ? $mxdDocType : $type;
+                }
+                /* the identifier is calculated using the name of the document */
+                $arrRawIdentifier = explode('/', $arrDocuments[2][0]);
+                $arrItem['identifier'] = $arrItem['institution'] . '-aippimm-' . strtolower($arrRawIdentifier[count($arrRawIdentifier)-1]);
             }
-            /* the identifier is calculated using the name of the document */
-            $arrRawIdentifier = explode('/', $arrDocuments[2][0]);
-            $arrItem['identifier'] = $arrItem['institution'] . '-' . strtolower($arrRawIdentifier[count($arrRawIdentifier)-1]);
+            else
+            {
+                if(isset($arrArticlesInfo['url_article'][$intI]))
+                {
+                    $arrItem['documents'][0]['url'] = $arrArticlesInfo['url_article'][$intI];
+                    $arrItem['documents'][0]['type'] = $type;
+                    $arrItem['identifier'] = $arrItem['institution'] . '-aippimm-' . strtolower(str_replace(' ', '-', trim($arrItem['title'])));
+                }
+                else
+                {
+                    print_r('!!NOTICE!! Articolul nu contine documente' . PHP_EOL);
+                    continue;
+                }
+            }
             array_push($arrPostDocuments, $arrItem);
             unset($arrItem);
         }
-        else
+        print_r($arrPostDocuments);
+        foreach($arrPostDocuments as $document)
         {
-            print_r('!!NOTICE!! Articolul nu are documente' . PHP_EOL);
-            continue;
+            $jsonEncoded = json_encode($document);
+            /*API CALL*/
+//            $strResponse = _getURL($strPostURl, $jsonEncoded);
+//            print_r($strResponse . PHP_EOL);
         }
+        return true;
     }
-    print_r($arrPostDocuments);
-    foreach($arrPostDocuments as $document)
+    else
     {
-        $jsonEncoded = json_encode($document);
-        /*API CALL*/
-        $strResponse = _getURL($strPostURl, $jsonEncoded);
-        print_r($strResponse . PHP_EOL);
+        print_r('!!ERROR!! Informatiile pentru articole nu au putut fi luate' . PHP_EOL);
+        return false;
     }
-    return true;
 }
-else
-{
-    print_r('!!ERROR!! Informatiile pentru articole nu au putut fi luate' . PHP_EOL);
-    return false;
-}
-
 
 /**
  * Function that translates the title into corresponding document types
@@ -91,10 +117,12 @@ else
  * @return string
  */
 function _getCorrespondingType($strTitle){
-    if(strpos($strTitle, 'OUG') !== false || strpos($strTitle, 'Ordonanta de Urgenta') !== false)
+    if(strpos($strTitle, 'OUG') !== false || strpos($strTitle, 'Ordonanta de Urgenta') !== false || strpos($strTitle, 'ORDONANTA DE URGENTA') !== false)
         return 'OUG';
-    else if(strpos($strTitle, 'HG') !== false)
+    else if(strpos($strTitle, 'HG') !== false || strpos($strTitle, 'Hotarare') !== false)
         return 'HG';
+    else if(strpos($strTitle, 'LEGE') !== false)
+        return 'LEGE';
     else
         return 'OTHER';
 }
