@@ -23,5 +23,7 @@
   "logoutSessionsOnSensitiveChanges": true,
   "userAgent": "jesus",
   "downloadsFolder": "downloads",
-  "titleRelevantNumberOfWords": 80
+  "firstParagraphMinWords": 8,
+  "firstParagraphMinLetters": 50,
+  "APIKey": "Token afaceri-very-secret-key"
 }
