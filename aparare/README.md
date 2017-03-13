@@ -4,7 +4,8 @@ Sursa documente: http://dlaj.mapn.ro/
 *PHP* - Script simplu old-school
 ## Instructiuni
 Nu are instructiuni speciale. 
-Tokenul va fi transmis ca argument
+
+Tokenul va fi transmis ca argument:
 ```bash
 $ php mapn_plugin.php TOKEN
 ```
