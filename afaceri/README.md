@@ -18,9 +18,10 @@ NodeJS
 *PHP* - Script simplu old-school
 #### Instructiuni
 Nu necesita instructiuni speciale
+Tokenul va fi transmis ca argument
 
 ```bash
-$ php aippimm_plugin.php
+$ php aippimm_plugin.php TOKEN
 ```
 #### Exceptii
 Scriptul s-ar putea sa nu functioneze daca se schimba linkul de 
