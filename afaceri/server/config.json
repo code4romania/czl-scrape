@@ -25,5 +25,6 @@
   "downloadsFolder": "downloads",
   "firstParagraphMinWords": 8,
   "firstParagraphMinLetters": 50,
-  "APIKey": "Token afaceri-very-secret-key"
+  "APIKey": "Token dummy",
+  "mainURL": "http://www.antreprenoriat.gov.ro/categorie/transparenta-decizionala/proiecte-in-dezbatere-publica/"
 }

@@ -34,7 +34,7 @@ function getBodyfromURL(url, callback) {
 
 function retrieveArticleLinks(callback) {
     var links = [];
-    getBodyfromURL('http://www.antreprenoriat.gov.ro/categorie/transparenta-decizionala/proiecte-in-dezbatere-publica/', function (err, response, body) {
+    getBodyfromURL(config.mainURL, function (err, response, body) {
         var $ = cheerio.load(body);
         var entry = $('.entry');
 
@@ -107,8 +107,9 @@ function processFiles(links, callback) {
                             console.log("Error sending scrapped info to API: " + err.message);
                             //do not return error in callback, otherwise next files will not be processed
                         } else {
-                            console.log("API response: " + response);
+                            console.log("API response: " + response.body);
                         }
+                        fs.unlink(fileLocation);
                         callback();
                     });
                 });
