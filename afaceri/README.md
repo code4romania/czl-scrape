@@ -1,14 +1,28 @@
 # Ministerul pentru Mediul de Afaceri, Comerț și Antreprenoriat
-Sursa documente: http://www.aippimm.ro/categorie/transparenta-decizionala---modificare-hg-96-2011/
-## Tehnologie
+Surse documente: 
+
+* afaceri(NodeJS) - http://www.antreprenoriat.gov.ro/
+* aippimm(PHP) - http://www.aippimm.ro/categorie/transparenta-decizionala---modificare-hg-96-2011/
+
+Exista doua scrapere in acest folder, vor fi tratate individual.
+### 1. afaceri(NodeJS)
+#### Tehnologie
+NodeJS
+#### Instructiuni
+
+#### Exceptii
+
+--------------------------------------------------
+### 2. aippimm_plugin(PHP)
+#### Tehnologie
 *PHP* - Script simplu old-school
-## Instructiuni
-Nu are instructiuni speciale. 
+#### Instructiuni
+Nu necesita instructiuni speciale
 
 ```bash
 $ php aippimm_plugin.php
 ```
-## Exceptii
+#### Exceptii
 Scriptul s-ar putea sa nu functioneze daca se schimba linkul de 
 'Transparenta decizionala' de pe linkul principal http://www.aippimm.ro/categorie/propuneri_lg/.
 Linkul sursa actual (http://www.aippimm.ro/categorie/transparenta-decizionala---modificare-hg-96-2011/) 
