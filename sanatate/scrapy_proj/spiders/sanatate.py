@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import scrapy
-import scrapy_proj.items
+import scrapy_proj.items as items
+import scrapy_proj.loaders as loaders
 import re
 import sys
 
@@ -29,10 +30,10 @@ class SanatateSpider(scrapy.Spider):
 
             title = item.css('a.panel-title::text').extract_first()
 
-            loader = scrapy_proj.items.ActLoader(scrapy_proj.items.ActItem())
+            loader = loaders.ActLoader(items.ActItem())
             loader.add_value('title', title)
 
-            contact_loader = scrapy_proj.items.ContactLoader(scrapy_proj.items.ContactItem())
+            contact_loader = loaders.ContactLoader(items.ContactItem())
             contact_loader.add_value('tel', tel_regex.findall(body_text))
             contact_loader.add_value('email', email_regex.findall(body_text))
             loader.add_value('contact', contact_loader.load_item())
