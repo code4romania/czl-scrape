@@ -65,7 +65,7 @@ ROBOTSTXT_OBEY = True
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'scrapy_proj.pipelines.SanatatePipelineExtraMeta': 298,
-    'scrapy_proj.pipelines.SanatatePipelineAPI': 299,
+    'scrapy_proj.pipelines.SanatatePipelinePost': 299,
 }
 
 LOG_LEVEL = 'WARNING'
