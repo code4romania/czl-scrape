@@ -2,8 +2,8 @@ package code4romania.czl.scrapers.comunicatii;
 
 public class Contact {
 
-	private String tel ="078955555";
-	private String email="awesome@code4.ro";
+	private String tel ="021 404 55 12";
+	private String email="propuneri@comunicatii.gov.ro";
 	
 	
 	public String getTelefon() {
