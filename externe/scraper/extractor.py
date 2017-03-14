@@ -1,9 +1,8 @@
 import requests
-from bs4 import BeautifulSoup as bs
+from bs4 import BeautifulSoup as beautiful_soup
 
-import utils.constants as settings
+import utils.settings as settings
 from scraper.article import Article
-from scraper.article_serializer import ArticleSerializer
 
 
 class Extractor:
@@ -11,31 +10,48 @@ class Extractor:
     """
     url = None
     content = None
+    articles = None
 
     def __init__(self, url):
         self.url = url
         self.content = self._fetch_page()
 
-    def extract_all_entries(self):
-        """Generates a list of all Articles objects fetches from MAE.
+    def get_all_articles(self):
+        """Generates a list of all Article objects fetched from MAE.
         :return: the list of Articles
         """
-        return [article for article in self.extract_entry()]
+        self.articles = [Article(table) for table in self._get_tables()]
+        return self.articles
 
-    def extract_entry(self):
-        """Generates Article objects from the MAE table.
-        :return: the next Article
+    def get_article_by_id(self, identifier):
+        """Returns the article matching the given identifier.
+        :param identifier: the id
+        :return: the matching Article, or None
         """
-        tables = self.content.select_one('div.art').select('table')
-        for table in tables:
-            article = Article(table)
-            if ArticleSerializer.is_valid(article):
-                print(article.__dict__)
-                yield article
-            else:
-                # TODO: Logging
-                print("Invalid article: %s" % article)
+        if not self.articles:
+            self.get_all_articles()
+
+        for a in self.articles:
+            if a.identifier == identifier:
+                return a
+
+    def get_identifier_list(self):
+        """Extracts a list of identifiers of the latest articles.
+        :return: list
+        """
+        latest = []
+        for table in self._get_tables():
+            tr = table.select('tr')
+            article = Article()
+            article._extract_article_type(tr)
+            article._extract_title(tr)
+            article._generate_id()
+            latest.append(article.identifier)
+        return latest
 
     def _fetch_page(self):
         page = requests.get(self.url, headers=settings.HEADERS)
-        return bs(page.text, 'html.parser')
+        return beautiful_soup(page.text, 'html.parser')
+
+    def _get_tables(self):
+        return self.content.select_one('div.art').select('table')

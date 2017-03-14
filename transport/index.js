@@ -166,7 +166,7 @@ function scrapeContent() {
         var href = page.href;
         res.description = page.title;
         res.identifier = 'mt-' + href.substr(href.lastIndexOf('/') + 1);
-        res.issuer = 'transport';
+        res.institution = 'transport';
         res.feedback_days = moment(res.end_date).diff(moment(res.date), 'days') - 1;
         res.title = page.title;
         res.type = getType(page.title);

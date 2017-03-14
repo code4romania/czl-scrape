@@ -14,7 +14,7 @@ http://czl-api.code4.ro/api/publications/
   "identifier": "lawproposal-first-document-name-slug-or-something", // un identificator unic, predictibil (repetabil), pereferabil human-readable
   "title": "Proiectul de ordin al ministrului justiției pentru aprobarea Regulamentului privind organizarea și desfășurarea activităților și programelor educative, de asistență psihologică și asistență socială din locurile de deținere aflate în subordinea Aministrației Naționale a Penitenciarelor", // titlul actului legislativ propus
   "type": "HG", // HG, OUG, LEGE, OG, OM
-  "issuer": "justitie", // ID-ul platformei din care provine actul legislativ
+  "institution": "justitie", // ID-ul platformei din care provine actul legislativ
   "date": "2017-03-08", // ISO 8601
   "description": "Cookie jelly-o sesame snaps donut sesame snaps sweet roll chocolate. Tootsie roll pie bonbon tart chocolate cake. Gummi bears gummies chupa chups ice cream croissant donut marzipan. Macaroon bear claw halvah carrot cake liquorice powder.",
   "feedback_days": 12, // numarul zilelor disponibile pentru feedback

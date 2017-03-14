@@ -12,6 +12,6 @@ Install `Python3` and `virtualenv`
     source venv/bin/activate
     pip install -r requirements.txt
     cd sgg 
-    scrapy crawl sgg_spider -o sgg.json
+    SGG_AUTH_TOKEN=sgg-very-secret-key python3 run.py
 
 ## Exceptii

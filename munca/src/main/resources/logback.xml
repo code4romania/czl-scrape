@@ -1,87 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration scan="true">
-
     <appender name="APPLICATION_LOGS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-
-        <file>scraper.log</file>
-
-
+        <file>scraper-munca.log</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-
-            <fileNamePattern>scraper.%i.log.zip</fileNamePattern>
-
+            <fileNamePattern>scraper-munca.%i.log.zip</fileNamePattern>
             <minIndex>1</minIndex>
-
             <maxIndex>3</maxIndex>
-
         </rollingPolicy>
 
-
-
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-
             <maxFileSize>500MB</maxFileSize>
-
         </triggeringPolicy>
 
-
-
         <encoder>
-
             <pattern>%date{"yyyy-MM-dd'T'HH:mm:ss,SSSXXX", UTC} [%t] %-5level %c{1.} %msg%n</pattern>
-
         </encoder>
-
     </appender>
 
-
-
     <appender name="ASYNC_APPLICATION_LOGS" class="ch.qos.logback.classic.AsyncAppender">
-
-        <appender-ref ref="APPLICATION_LOGS" />
+        <appender-ref ref="APPLICATION_LOGS"/>
 
         <!-- The maximum capacity of the blocking queue, the default value of this option 250. -->
-
         <!-- Set blocking queue maximum capacity to 2048 -->
-
         <queueSize>2048</queueSize>
 
         <!-- By default, when the blocking queue has 20% capacity remaining, it will drop events of level TRACE, DEBUG and INFO, keeping only events of level WARN and ERROR -->
-
         <!-- In order to keep all events must set discardingThreshold to 0 (zero) -->
-
         <discardingThreshold>0</discardingThreshold>
 
         <!-- Extracting caller data can be rather expensive, by default only thread name and the MDC are copied -->
-
         <!-- However should this be set to false your pattern will not work for method name and line number logging, basically for %M:%L you'd end up with ?:? -->
-
-        <includeCallerData>true</includeCallerData>
-
+        <includeCallerData>false</includeCallerData>
     </appender>
-
-
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-
         <encoder>
-
             <pattern>%date{"yyyy-MM-dd'T'HH:mm:ss,SSSXXX", UTC} [%t] %-5level %c{1.} %msg%n</pattern>
-
         </encoder>
-
     </appender>
 
-
-
     <root level="debug">
-
         <appender-ref ref="STDOUT"/>
-
         <appender-ref ref="ASYNC_APPLICATION_LOGS"/>
-
     </root>
 
 </configuration>

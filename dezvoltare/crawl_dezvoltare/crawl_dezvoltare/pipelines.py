@@ -6,10 +6,25 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import requests
 
-
 class CrawlDezvoltarePipeline(object):
     def process_item(self, item, spider):
-        response = requests.post('http://czl-api.code4.ro/api/publications/', headers={'Authorization': 'Token ' + spider.token }, data=item)
+        doc = {
+            'identifier': item['identifier'],
+            'title': item['title'],
+            'institution': item['institution'],
+            'description': item['description'],
+            'type': item['type'],
+            'date': item['date'],
+            'documents': item['documents'],
+            'contact':item['contact'],
+            'feedback_days': item['feedback_days'] 
+        }
+
+        response = requests.post('http://czl-api.code4.ro/api/publications/', headers={'Authorization': 'Token ' + spider.token }, json=doc)
+        # print '---------'
+        # print response
+        # print response.text
+        # print '---------'
         return item
 
 

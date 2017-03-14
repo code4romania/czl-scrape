@@ -1,0 +1,15 @@
+{
+  "LEGE": "/proiect(ul) (de lege|l e g e)/",
+  "OM":   "/proiect(ul)? de ordin/",
+  "OUG":  [
+    "/OUG/",
+    "/ordonanta de urgenta/"
+  ],
+  "OG":  "/proiect(ul)? de or?donanta/",
+  "HG":   [
+    "/hotarare/",
+    "/modificare/",
+    "/HG/"
+  ],
+  "NA": null
+}
