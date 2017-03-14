@@ -1,0 +1,30 @@
+{
+  "restApiRoot": "/api",
+  "host": "0.0.0.0",
+  "port": 3000,
+  "remoting": {
+    "context": false,
+    "rest": {
+      "handleErrors": false,
+      "normalizeHttpPath": false,
+      "xml": false
+    },
+    "json": {
+      "strict": false,
+      "limit": "100kb"
+    },
+    "urlencoded": {
+      "extended": true,
+      "limit": "100kb"
+    },
+    "cors": false
+  },
+  "legacyExplorer": false,
+  "logoutSessionsOnSensitiveChanges": true,
+  "userAgent": "jesus",
+  "downloadsFolder": "downloads",
+  "firstParagraphMinWords": 8,
+  "firstParagraphMinLetters": 50,
+  "APIKey": "Token dummy",
+  "mainURL": "http://www.antreprenoriat.gov.ro/categorie/transparenta-decizionala/proiecte-in-dezbatere-publica/"
+}
