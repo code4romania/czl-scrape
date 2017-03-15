@@ -7,10 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import ro.code4.czl.scrape.client.CzlClient;
 import ro.code4.czl.scrape.client.CzlClientConfig;
+import ro.code4.czl.scrape.client.CzlClientSample;
 import ro.code4.czl.scrape.client.authentication.TokenAuthenticationStrategy;
+import ro.code4.czl.scrape.client.representation.ContactRepresentation;
 import ro.code4.czl.scrape.client.representation.DocumentRepresentation;
 import ro.code4.czl.scrape.client.representation.PublicationRepresentation;
-import ro.code4.czl.scrape.client.samples.CzlClientSample;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -162,14 +163,14 @@ class ThreadMinister implements Runnable {
           end(2, adr);
         }
 
-        File dir = new File(System.getProperty("user.dir") + "\\muncii\\" + title);
+        /*File dir = new File(System.getProperty("user.dir") + "\\muncii\\" + title);
         if (!dir.exists())
           //noinspection ResultOfMethodCallIgnored
         {
           dir.mkdir();
         }
         File desc = new File(System.getProperty("user.dir") + "\\muncii\\" + title + "\\Info.txt");
-
+        */
         try {
           Document doc = Jsoup.parse(new URL(adr).openStream(), "UTF-8", adr);
           doc.outputSettings().charset();
@@ -222,9 +223,9 @@ class ThreadMinister implements Runnable {
           publicationRepresentation.setDate(splitDate[2] + "-" + splitDate[1] + "-" + splitDate[0]);
           publicationRepresentation.setDescription(descriere);
           publicationRepresentation.setFeedback_days(Optional.ofNullable(Integer.parseInt(dateFinal)).orElse(0));
-          Map<String, String> contactRepresentation = new HashMap<>();
-          contactRepresentation.put("email", "dezbateri@mmuncii.ro");
-          contactRepresentation.put("tel", "-");
+          ContactRepresentation contactRepresentation = new ContactRepresentation();
+          contactRepresentation.setEmail("dezbateri@mmuncii.ro");
+          contactRepresentation.setTel("-");
           publicationRepresentation.setContact(contactRepresentation);
           DocumentRepresentation documentRepresentation1 = null;
           DocumentRepresentation documentRepresentation2 = null;
@@ -249,12 +250,14 @@ class ThreadMinister implements Runnable {
             documentRepresentation2.setUrl(thePdf2);
           }
           List<DocumentRepresentation> representations = new ArrayList<DocumentRepresentation>(2);
-          representations.add(documentRepresentation1);
+          if(documentRepresentation1!=null)
+		  representations.add(documentRepresentation1);
+		  if(documentRepresentation2!=null)
           representations.add(documentRepresentation2);
           publicationRepresentation.setDocuments(representations);
           //send publication
 
-          czlClient.apiV1().createPublication(publicationRepresentation).execute();
+          czlClient.apiV1().createPubliation(publicationRepresentation).execute();
 
           //PrintWriter writerI = new PrintWriter(desc);
           //writerI.print(infoF);
@@ -334,12 +337,12 @@ class ThreadMinister implements Runnable {
 
   void start() {
     init(BEGIN);
-    File dir = new File(System.getProperty("user.dir") + "\\muncii");
+    /*File dir = new File(System.getProperty("user.dir") + "\\muncii");
     if (!dir.exists())
       //noinspection ResultOfMethodCallIgnored
     {
       dir.mkdir();
-    }
+    }*/
     surfWeb(BEGIN, 0);
     debug.setText(debug.getText() + "\nCrawling finished");
   }
