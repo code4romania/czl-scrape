@@ -19,6 +19,7 @@
     "loopback-datasource-juggler": "^2.39.0",
     "pdf2json": "^1.1.7",
     "serve-favicon": "^2.0.1",
+    "string": "^3.3.3",
     "strong-error-handler": "^1.0.1"
   },
   "devDependencies": {
