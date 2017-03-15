@@ -12,7 +12,7 @@ except:
 from unidecode import unidecode
 import re
 
-from just.items import JustPublication
+from tineret.items import Publication
 
 class TineretSpider(scrapy.Spider):
     name = "tineret"
@@ -54,7 +54,7 @@ class TineretSpider(scrapy.Spider):
         links = content_node.css('a')
         documents = self.get_documents_from_links(links)
 
-        item = JustPublication(
+        item = Publication(
             title=title,
             type=self.get_type(title),
             identifier=self.slugify(title)[0:127],
