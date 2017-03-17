@@ -9,9 +9,9 @@
         <relativePath>../</relativePath>
     </parent>
 
-    <artifactId>czl-scrape-munca</artifactId>
+    <artifactId>czl-scrape-energie</artifactId>
     <packaging>jar</packaging>
-    <name>Ce Zice Legea :: Scraper :: Munca</name>
+    <name>Ce Zice Legea :: Scraper :: Energie</name>
 
     <dependencies>
         <dependency>

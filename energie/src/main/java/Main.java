@@ -7,22 +7,19 @@ import org.slf4j.LoggerFactory;
 
 import ro.code4.czl.scrape.client.CzlClient;
 import ro.code4.czl.scrape.client.CzlClientConfig;
-import ro.code4.czl.scrape.client.CzlClientSample;
 import ro.code4.czl.scrape.client.authentication.TokenAuthenticationStrategy;
-import ro.code4.czl.scrape.client.representation.ContactRepresentation;
 import ro.code4.czl.scrape.client.representation.DocumentRepresentation;
 import ro.code4.czl.scrape.client.representation.PublicationRepresentation;
+import ro.code4.czl.scrape.client.samples.CzlClientSample;
 
 import java.awt.*;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -38,7 +35,6 @@ class ThreadMinister implements Runnable {
   private static final int DEPTH_LIMIT = 2;
   private static final int LINK_LIMIT = 50;
   private static final String BEGIN = "http://energie.gov.ro/transparenta-si-integritate/transparenta-decizionala-2/";
-  private static final String SENAT = "energie.gov.ro";
 
   private static JFrame main_frame;
   private static TextArea debug;
@@ -122,7 +118,7 @@ class ThreadMinister implements Runnable {
         //suntem pe pg proiectului
         try {
           //Document docI = Jsoup.connect(adr).get();
-          Document docI = Jsoup.parse(info,adr);
+          Document docI = Jsoup.parse(info, adr);
           docI.outputSettings().charset();
           Charset.forName("UTF-8");
           Elements nextLinksI = docI.select("strong");
@@ -130,8 +126,9 @@ class ThreadMinister implements Runnable {
           org.jsoup.nodes.Element elementI = itI.next();
           int first = 0;
           //initializam citirea
-          while (!elementI.text().contains("2017") && itI.hasNext())
+          while (!elementI.text().contains("2017") && itI.hasNext()) {
             itI.next();
+          }
 
           while (itI.hasNext()) {
             type = new String[10];
@@ -144,96 +141,100 @@ class ThreadMinister implements Runnable {
               elementI = itI.next();
               lName = elementI.text();
               descriere = lName;
-              if(descriere.contains("HG")||descriere.contains("Hotărâre"))
-                type0="HG";
-              else
-              if(descriere.contains("Proiect"))
-                type0="LEGE";
-              else
-                type0="OUG";
+              if (descriere.contains("HG") || descriere.contains("Hotărâre")) {
+                type0 = "HG";
+              } else if (descriere.contains("Proiect")) {
+                type0 = "LEGE";
+              } else {
+                type0 = "OUG";
+              }
               // docs
               elementI = itI.next();
-              first=1;
-              while(!elementI.text().matches("([0-9]{2}).([0-9]{2}).([0-9]{4})") && countP<10 && itI.hasNext() && (!elementI.text().contains("OUG"))||elementI.text().contains("Not")) {
-              first=0;
+              first = 1;
+              while (
+                  !elementI.text().matches("([0-9]{2}).([0-9]{2}).([0-9]{4})") && countP < 10 && itI.hasNext() && (!elementI.text().contains("OUG"))
+                  || elementI.text().contains("Not")) {
+                first = 0;
 
-                  if (elementI.child(0).attr("abs:href")!= null) {
-                    thePdfL[countP] = elementI.child(0).attr("abs:href");
-                    String titleL = elementI.text();
-                    //type doc
-                    if (titleL.contains("Not"))
-                      type[countP] = "Nota";
-                    else
-                    if (titleL.contains("Expunere"))
-                      type[countP] = "Expunere motive";
-                    else
-                    if (titleL.contains("Partea"))
-                      type[countP] = "Partea dispozitiva";
-                    else
-                      type[countP] = "Anexa";
-                    countP++;
+                if (elementI.child(0).attr("abs:href") != null) {
+                  thePdfL[countP] = elementI.child(0).attr("abs:href");
+                  String titleL = elementI.text();
+                  //type doc
+                  if (titleL.contains("Not")) {
+                    type[countP] = "Nota";
+                  } else if (titleL.contains("Expunere")) {
+                    type[countP] = "Expunere motive";
+                  } else if (titleL.contains("Partea")) {
+                    type[countP] = "Partea dispozitiva";
+                  } else {
+                    type[countP] = "Anexa";
                   }
-                elementI = itI.next();
+                  countP++;
                 }
-            } else break;
-
-            if(dateInit!=null)
-            try {
-              if (descriere == null) {
-                descriere = "-";
+                elementI = itI.next();
               }
-              if (feedDays == null) {
-                feedDays = "0";
-              }
+            } else {
+              break;
+            }
 
-              publicationRepresentation.setIdentifier(DigestUtils.md5Hex(lName));
-              publicationRepresentation.setTitle(lName);
+            if (dateInit != null) {
+              try {
+                if (descriere == null) {
+                  descriere = "-";
+                }
+                if (feedDays == null) {
+                  feedDays = "0";
+                }
 
-              publicationRepresentation.setType(type0);
-              publicationRepresentation.setInstitution("energie");
+                publicationRepresentation.setIdentifier(DigestUtils.md5Hex(lName));
+                publicationRepresentation.setTitle(lName);
 
-              String[] splitDate = Optional.ofNullable(dateInit).orElse("11.03.2017").split("\\.");
-              publicationRepresentation.setDate(splitDate[2] + "-" + splitDate[1] + "-" + splitDate[0]);
-              publicationRepresentation.setDescription(descriere);
-              publicationRepresentation.setFeedback_days(Optional.ofNullable(Integer.parseInt(feedDays)).orElse(0));
-              ContactRepresentation contactRepresentation = new ContactRepresentation();
-              contactRepresentation.setEmail("comunicare@energie.gov.ro");
-              contactRepresentation.setTel("0214079921");
-              publicationRepresentation.setContact(contactRepresentation);
-              DocumentRepresentation[] documentRepresentation = new DocumentRepresentation[countP];
-              debug.setText(debug.getText() + "\nName " + lName);
-              debug.setText(debug.getText() + "\nType " + type0);
-              debug.setText(debug.getText() + "\nInstitution " + "energie");
-              debug.setText(debug.getText() + "\nDescriere " + descriere);
-              debug.setText(debug.getText() + "\nFeedback days " + Optional.ofNullable(Integer.parseInt(feedDays)).orElse(0));
-              if (dateInit == null) {
-                dateInit = "-";
-              }
-              i = 0;
-              while(i<countP) {
-                documentRepresentation[i] = new DocumentRepresentation();
-                documentRepresentation[i].setType(type[i]);
-                debug.setText(debug.getText() + "\nType " + type[i]+ "\nUrl "+thePdfL[i]);
-                documentRepresentation[i].setUrl(thePdfL[i]);
-                i++;
-              }
-              List<DocumentRepresentation> representations = new ArrayList<DocumentRepresentation>(countP);
-              i=0;
-              while(i<countP) {
-                representations.add(documentRepresentation[i]);
-                i++;
-              }
-              publicationRepresentation.setDocuments(representations);
-              //send publication
+                publicationRepresentation.setType(type0);
+                publicationRepresentation.setInstitution("energie");
 
-              //TODO
-              czlClient.apiV1().createPubliation(publicationRepresentation).execute();
-            } catch (Exception e) {
-              end(2, adr+" 1");
+                String[] splitDate = Optional.ofNullable(dateInit).orElse("11.03.2017").split("\\.");
+                publicationRepresentation.setDate(splitDate[2] + "-" + splitDate[1] + "-" + splitDate[0]);
+                publicationRepresentation.setDescription(descriere);
+                publicationRepresentation.setFeedback_days(Optional.ofNullable(Integer.parseInt(feedDays)).orElse(0));
+                Map<String, String> contactMap = new HashMap<>();
+                contactMap.put("email", "comunicare@energie.gov.ro");
+                contactMap.put("tel", "0214079921");
+                publicationRepresentation.setContact(contactMap);
+                DocumentRepresentation[] documentRepresentation = new DocumentRepresentation[countP];
+                debug.setText(debug.getText() + "\nName " + lName);
+                debug.setText(debug.getText() + "\nType " + type0);
+                debug.setText(debug.getText() + "\nInstitution " + "energie");
+                debug.setText(debug.getText() + "\nDescriere " + descriere);
+                debug.setText(debug.getText() + "\nFeedback days " + Optional.ofNullable(Integer.parseInt(feedDays)).orElse(0));
+                if (dateInit == null) {
+                  dateInit = "-";
+                }
+                i = 0;
+                while (i < countP) {
+                  documentRepresentation[i] = new DocumentRepresentation();
+                  documentRepresentation[i].setType(type[i]);
+                  debug.setText(debug.getText() + "\nType " + type[i] + "\nUrl " + thePdfL[i]);
+                  documentRepresentation[i].setUrl(thePdfL[i]);
+                  i++;
+                }
+                List<DocumentRepresentation> representations = new ArrayList<DocumentRepresentation>(countP);
+                i = 0;
+                while (i < countP) {
+                  representations.add(documentRepresentation[i]);
+                  i++;
+                }
+                publicationRepresentation.setDocuments(representations);
+                //send publication
+
+                //TODO
+                czlClient.apiV1().createPublication(publicationRepresentation).execute();
+              } catch (Exception e) {
+                end(2, adr + " 1");
+              }
             }
           }
-        } catch(Exception e){
-          end(2, adr+" 2");
+        } catch (Exception e) {
+          end(2, adr + " 2");
         }
       }
     }

@@ -2,10 +2,10 @@
 
 <configuration scan="true">
     <appender name="APPLICATION_LOGS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>scraper-munca.log</file>
+        <file>scraper-energie.log</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>scraper-munca.%i.log.zip</fileNamePattern>
+            <fileNamePattern>scraper-energie.%i.log.zip</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>3</maxIndex>
         </rollingPolicy>
