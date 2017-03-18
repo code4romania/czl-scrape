@@ -61,7 +61,7 @@ namespace Crawler_Dialog_Interpret
                 Match fullArt = GetMatches(FullArticle.InnerText, EndOfArticleMarker)[0];
                 if (fullArt.Success)
                 {
-                    postMsg.contact = new Contact { email = AppendEmails(fullArt.Value) };
+                    postMsg.contact = new Contact { email = AppendEmails(fullArt.Value), tel = GetPhoneNumber(fullArt.Value), addr = "" };                    
                 }
             }
             catch (Exception ex)
@@ -208,6 +208,10 @@ namespace Crawler_Dialog_Interpret
         }
 
         #region UTILS
+        private static string GetPhoneNumber(string value)
+        {
+            return "";
+        }
         private static Match GetUntilDateMatch(HtmlNode FullArticle)
         {
             try
