@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace Crawler_Dialog
 {
-    class Program
+    class Program 
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
