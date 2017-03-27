@@ -3,10 +3,13 @@ var moment = require('moment');
 var jsonfile = require('jsonfile');
 var diacritics = require('diacritics');
 var request = require('request-promise');
+var config = require('./config');
+
 var nightmare = Nightmare({ show: true });
 
 var pages = [];
 var results = [];
+var count = 0;
 
 function getType(title) {
   title = diacritics.remove(title).toLowerCase().replace(/ +/g, ' ');
@@ -27,19 +30,39 @@ function getType(title) {
   throw 'not parsable: "' + title + '"';
 }
 
-function testTitles() {
-  results = jsonfile.readFileSync('data.json');
+function post(data) {
+  if (data.date === null) {
+    delete data.date;
+  }
 
-  for (var i = 0; i < results.length; i++) {
-    var title = results[i].title;
-    //console.log(title, '-', getType(title));
-    getType(title);
+  if (data.type !== null) {
+    var token = process.env['API_TOKEN'] || config.api.token;
+    return request
+      .post({
+        url: config.api.url,
+        headers: {
+          Authorization: 'Token ' + token
+        },
+        json: data
+      })
+      .then(function() {
+        count++;
+      })
+      .catch(function (err) {
+        if (!err.message.match(/Integrity Error/)) {
+          console.error('post error:', err.message);
+          console.error('post data:', data);
+          throw err;
+        }
+      });
+  } else {
+    return Promise.resolve();
   }
 }
 
 function scrapePages() {
   return nightmare
-    .goto('http://mt.gov.ro/web14/transparenta-decizionala/consultare-publica/acte-normative-in-avizare')
+    .goto(config.scrape.baseUrl)
     .evaluate(function () {
       return Array.prototype.slice.call(document.querySelectorAll('td.list-title a'))
         .map(function (el) {
@@ -59,8 +82,8 @@ function scrapePages() {
       .evaluate(function () {
         return document.querySelector('ul.jsn-pagination > span').innerText;
       }).then(function (res) {
-        console.log('current page: ', res);
-        if (res < 1) {
+        console.log('scraping listing page', res);
+        if (res < config.scrape.pages) {
           return nightmare
             .evaluate(function () {
               var pag = document.querySelectorAll('ul.jsn-pagination li a');
@@ -95,7 +118,7 @@ function scrapePages() {
 function scrapeContent() {
   if (pages.length > 0) {
     var page = pages.shift();
-    console.log('scraping ' + page.href + '...');
+    console.log('scraping proposal page', page.href + '...');
     return nightmare
       .goto(page.href)
       .evaluate(function() {
@@ -170,113 +193,22 @@ function scrapeContent() {
         res.feedback_days = moment(res.end_date).diff(moment(res.date), 'days') - 1;
         res.title = page.title;
         res.type = getType(page.title);
+        res.url = href;
         results.push(res);
-        console.log('posting', res);
-        return request.post({
-          url: 'http://czl-api.code4.ro/api/publications/',
-          headers: {
-            Authorization: 'Token transport-very-secret-key'
-          },
-          json: res
-        });
-      })
-      .then(scrapeContent);
+        return post(res)
+          .then(scrapeContent);
+      });
   } else {
     return nightmare.end();
   }
 }
 
 scrapePages()
+  .then(scrapeContent)
   .then(function() {
-    //console.log(pages);
-    return scrapeContent();
+    console.log('done, imported', count, 'proposals');
   })
-  .then(function() {
-    //console.log(results);
-    //jsonfile.writeFileSync('results.json', results, { spaces: 2 });
-    console.log('done.');
+  .catch(function(err) {
+    console.error('done with error:', err.message);
+    return nightmare.end();
   });
-
-/*
-nightmare
-  .goto('http://mt.gov.ro/web14/transparenta-decizionala/consultare-publica/acte-normative-in-avizare')
-  .evaluate(function() {
-    return Array.prototype.slice.call(document.querySelectorAll('td.list-title a'))
-      .map(function(el) {
-        return {
-          href: el.href,
-          title: el.innerHTML.replace(/\n|\t/g, '')
-        };
-      });
-  })
-  .then(function(res) {
-    nightmare
-      .goto(res[0].href)
-      .evaluate(function(res) {
-        var data = {
-          contact: {},
-          description: res[0].title,
-          documents: [],
-          institution: 'transport',
-          title: res[0].title
-        };
-        var state = 'TEXT';
-        Array.prototype.forEach.call(document.querySelectorAll('p'),
-          function(el) {
-            if (state === 'TEXT') {
-              var text = el.innerText;
-
-              var match = /Data publicării: (\d+).(\d+).(\d+)/.exec(text);
-              if(match !== null) {
-                data.date = match[3] + '-' + match[2] + '-' + match[1];
-              }
-
-              match = /Data limită.*: (\d+).(\d+).(\d+)/.exec(text);
-              if(match !== null) {
-                data.end_date = match[3] + '-' + match[2] + '-' + match[1];
-              }
-
-              match = /Documente supuse consultării/.exec(text);
-              if (match !== null) {
-                state = 'DOCS';
-              }
-
-              match = /Prin poştă la adresa (.*)/.exec(text);
-              if (match !== null) {
-                data.contact.addr = match[1];
-              }
-
-              match = /Prin fax la numărul de telefon (.*)/.exec(text);
-              if (match !== null) {
-                data.contact.fax = match[1];
-              }
-
-              match = /Prin poşta electronică la adresa (.*)/.exec(text);
-              if (match !== null) {
-                data.contact.email = match[1];
-              }
-            } else if(state === 'DOCS') {
-              var a = el.querySelector('a');
-              if (a !== null) {
-                var type = a.innerText.trim();
-                if (type !== '') {
-                  data.documents.push({
-                    type: type,
-                    url: a.href
-                  });
-                }
-              } else {
-                state = 'TEXT';
-              }
-            }
-          }
-        );
-        return data;
-      }, res)
-      .end()
-      .then(function(res) {
-        res.feedback_days = moment(res.end_date).diff(moment(res.date), 'days');
-        console.log(res);
-      })
-  });
-*/
