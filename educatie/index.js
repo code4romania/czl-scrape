@@ -3,11 +3,13 @@ var moment = require('moment');
 var jsonfile = require('jsonfile');
 var diacritics = require('diacritics');
 var request = require('request-promise');
+var config = require('./config');
 
 var nightmare = Nightmare({ show: true });
 
 var pages = [];
 var results = [];
+var count = 0;
 
 function getType(title) {
   title = diacritics.remove(title)
@@ -74,18 +76,23 @@ function post(data) {
   }
 
   if (data.type !== null) {
+    var token = process.env['API_TOKEN'] || config.api.token;
     return request
       .post({
-        url: 'http://czl-api.code4.ro/api/publications/',
+        url: config.api.url,
         headers: {
-          Authorization: 'Token educatie-very-secret-key'
+          Authorization: 'Token ' + token
         },
         json: data
       })
+      .then(function () {
+        count++;
+      })
       .catch(function (err) {
         if (!err.message.match(/Integrity Error/)) {
-          console.log('post err:', err.message);
-          console.log('data:', data);
+          console.error('post error:', err.message);
+          console.error('post data:', data);
+          throw err;
         }
       });
   } else {
@@ -95,7 +102,7 @@ function post(data) {
 
 function scrapePages() {
   return nightmare
-    .goto('https://www.edu.ro/proiecte-acte-normative-0')
+    .goto(config.scrape.baseUrl)
     .evaluate(function () {
       return Array.prototype.slice.call(document.querySelectorAll('div.field-items ul li a'))
         .map(function (el) {
@@ -106,12 +113,12 @@ function scrapePages() {
         });
     })
     .then(function (res) {
-      pages = res.slice(0, 20);
+      pages = res.slice(0, config.scrape.proposals);
     });
 }
 
 function scrapeContent() {
-  console.log(pages.length, 'pages');
+  //console.log(pages.length, 'proposals');
 
   if (pages.length > 0) {
     var page = pages.shift();
@@ -127,7 +134,7 @@ function scrapeContent() {
       date: parsedTitle.date,
       feedback_days: 10,
       contact: {
-        email: 'dgis@edu.gov.ro'
+        email: config.scrape.defaultEmail
       }
     };
 
@@ -136,13 +143,14 @@ function scrapeContent() {
         type: getExtension(page.href),
         url: page.href
       }];
+      res.url = config.scrape.baseUrl;
 
       results.push(res);
 
       return post(res)
         .then(scrapeContent);
     } else {
-      console.log('scraping ' + page.href + '...');
+      console.log('scraping proposal page', page.href + '...');
 
       return nightmare
         .goto(page.href)
@@ -160,14 +168,18 @@ function scrapeContent() {
                 url: el.href
               });
             });
+          var date = document.querySelector('span.date-display-single').innerText.split('.');
           return {
             documents: documents,
-            text: text
+            text: text,
+            date: date[2] + '-' + date[1] + '-' + date[0]
           };
         })
         .then(function(data) {
           res.description = data.text;
           res.documents = data.documents;
+          res.date = data.date;
+          res.url = page.href;
 
           var emails = parseEmails(data.text);
           for (var i = 0; i < emails.length; i++) {
@@ -190,4 +202,11 @@ function scrapeContent() {
 }
 
 scrapePages()
-  .then(scrapeContent);
+  .then(scrapeContent)
+  .then(function() {
+    console.log('done, imported', count, 'proposals');
+  })
+  .catch(function(err) {
+    console.error('done with error:', err.message);
+    return nightmare.end();
+  });
