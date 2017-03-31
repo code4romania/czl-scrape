@@ -7,8 +7,15 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lbogdan/czl-scrape"
+  },
+  "author": {
+    "name": "Bogdan Luca",
+    "email": "luca.bogdan@gmail.com"
+  },
+  "license": "MIT",
   "dependencies": {
     "diacritics": "^1.3.0",
     "jsonfile": "^2.4.0",

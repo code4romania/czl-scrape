@@ -2,6 +2,18 @@
 
 ## Tehnologie
 
-## Instructiuni
+Node.js, [nightmare](http://www.nightmarejs.org/)
 
-## Exceptii
+## Instrucțiuni
+
+```
+npm install
+```
+
+edit config.js, change API token (can also be specified on the command line) and other config vars
+
+```
+[API_TOKEN=foobar] npm start
+```
+
+## Excepții

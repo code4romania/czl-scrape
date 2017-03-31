@@ -1,30 +1,37 @@
 <?php
 
-$strMainURL = 'http://www.aippimm.ro/categorie/propuneri_lg/';
-$strSubMainURL = 'http://www.aippimm.ro/categorie/transparenta-decizionala---modificare-hg-96-2011/';
-$strOtherDocuments = 'http://www.aippimm.ro/categorie/info_util/legislatie/';
+if ( isset( $argv[1] ) ) {
+    $strToken = $argv[1];
+    $strMainURL = 'http://www.aippimm.ro/categorie/propuneri_lg/';
+    $strSubMainURL = 'http://www.aippimm.ro/categorie/transparenta-decizionala---modificare-hg-96-2011/';
+    $strOtherDocuments = 'http://www.aippimm.ro/categorie/info_util/legislatie/';
 
-print_r("Starting to parse $strSubMainURL \n");
-$strContent= _getURL($strSubMainURL);
-if(!$strContent)
-{
-    print_r('!!ERROR!! Pagina de transparenta decizionala nu este functionala sau a fost schimbata, verifica ' . $strMainURL . PHP_EOL);
-    return false;
+    print_r("Starting to parse $strSubMainURL \n");
+    $strContent = _getURL($strSubMainURL);
+    if (!$strContent) {
+        print_r('!!ERROR!! Pagina de transparenta decizionala nu este functionala sau a fost schimbata, verifica ' . $strMainURL . PHP_EOL);
+        return false;
 
+    }
+    _parseContent($strContent,$strToken);
+
+    print_r("Starting to parse $strOtherDocuments \n");
+    $strContent = _getURL($strOtherDocuments);
+    if (!$strContent) {
+        print_r('!!ERROR!! Pagina de transparenta decizionala nu este functionala sau a fost schimbata, verifica ' . $strMainURL . PHP_EOL);
+        return false;
+
+    }
+    _parseContent($strContent,$strToken);
+    return true;
 }
-_parseContent($strContent);
-
-print_r("Starting to parse $strOtherDocuments \n");
-$strContent= _getURL($strOtherDocuments);
-if(!$strContent)
+else
 {
-    print_r('!!ERROR!! Pagina de transparenta decizionala nu este functionala sau a fost schimbata, verifica ' . $strMainURL . PHP_EOL);
+    print_r('!!ERROR!! No token inputed'. PHP_EOL);
     return false;
-
 }
-_parseContent($strContent);
 
-function _parseContent($strContent)
+function _parseContent($strContent,$strToken)
 {
     $strPostURl = 'http://czl-api.code4.ro/api/publications/';
     /* regex that gets about all the info we need about the documents */
@@ -98,8 +105,8 @@ function _parseContent($strContent)
         {
             $jsonEncoded = json_encode($document);
             /*API CALL*/
-//            $strResponse = _getURL($strPostURl, $jsonEncoded);
-//            print_r($strResponse . PHP_EOL);
+            $strResponse = _getURL($strPostURl, $strToken, $jsonEncoded);
+            print_r($strResponse . PHP_EOL);
         }
         return true;
     }
@@ -147,7 +154,7 @@ function _getCorrespondingDocumentType($strDocTitle){
  * @param bool $mxdPost
  * @return bool|mixed
  */
-function _getURL($strURL, $mxdPost = false){
+function _getURL($strURL, $strToken=false, $mxdPost = false){
     $intRetries = 5;
     $strResponse = false;
     $ch = curl_init();
@@ -160,7 +167,7 @@ function _getURL($strURL, $mxdPost = false){
     if($mxdPost !== false)
     {
         array_push($header, "Content-type: application/json");
-        array_push($header, "Authorization: Token afaceri-very-secret-key");
+        array_push($header, "Authorization: Token $strToken");
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $mxdPost);

@@ -7,9 +7,8 @@ let nightmareConfig = {show: false},
     secrets = require('./secrets.json') || {};
 
 const URL = 'http://www.mai.gov.ro/index05_1.html',
-    BASE = 'http://www.mai.gov.ro';
-
-const FILE = 'data.json';
+    BASE = 'http://www.mai.gov.ro',
+    FILE = 'data.json';
 
 /** ====== MAIN ====== */
 
@@ -39,11 +38,14 @@ function processHTMLContent(result) {
     let counter = 0;
     $('.textPreview').children().each(function(index, element) {
         let $elem = cheerio.load(element);
-        if(element.name == 'div' && $elem.text().replace(/\s+/, '').indexOf('Publicat') == 0) {
+        if(element.name == 'div' && $elem.text().replace(/\s+/, '').indexOf('Publicat') === 0) {
             counter++;
         }
 
-        if(!items[counter]) items[counter] = "";
+        if(!items[counter]) {
+            items[counter] = '';
+        }
+
         items[counter] += $elem.html();
     });
 
@@ -72,8 +74,9 @@ function parseItem(item) {
 /** ====== post ====== */
 
 function postParsedResults(parsedResultsArr) {
-
     console.log('saving data to file...');
+
+    // console.log(parsedResultsArr);
 
     jsonfile.writeFileSync(FILE, parsedResultsArr, {spaces: 4});
 
@@ -85,7 +88,6 @@ function postParsedResults(parsedResultsArr) {
         console.log('posting data to api...');
 
         let requestsArr = [];
-
         parsedResultsArr.forEach(function (result, i) {
             let promise = new Promise(function (resolve, reject) {
                 request({
@@ -99,6 +101,8 @@ function postParsedResults(parsedResultsArr) {
                 }, function (error, response, body) {
                     if (error || response.statusCode !== 200) {
                         console.error('request failed: ', response.body)
+                    } else if (response.statusCode === 201) {
+                        console.log('created: ', response.body)
                     }
 
                     resolve(body);
