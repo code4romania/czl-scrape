@@ -81,6 +81,7 @@ LOG_LEVELS = {
 }
 
 LOG_FILE = 'logs/scraper.log'
+LOGS_DIR = '/logs'
 
 INSTITUTION = 'externe'
 

@@ -1,6 +1,8 @@
 import time
 import click
+import inspect
 import logging
+import os
 
 from scraper.article_serializer import ArticleSerializer
 from scraper.extractor import *
@@ -19,6 +21,14 @@ def get_to_work(page, delay, observer, log_level):
     if log_level not in LOG_LEVELS:
         logging.warning('Unrecognized log_level: %s. Defaulting to INFO')
         log_level = 'INFO'
+
+    current_dir = os.path.dirname(
+        os.path.abspath(inspect.getfile(inspect.currentframe()))
+    )
+    logs_dir = current_dir + LOGS_DIR
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir)
+
     logging.basicConfig(filename=LOG_FILE, level=LOG_LEVELS[log_level],
                         format='%(asctime)s %(levelname)s %(message)s')
 
