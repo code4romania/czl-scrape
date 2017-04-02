@@ -12,6 +12,27 @@ DOC_EXTENSIONS = [
 def text_from(sel):
     return sel.xpath('string(.)').extract_first().strip()
 
+def guess_publication_type(text):
+    text = text.lower()
+    text = re.sub(r'[șş]', 's', text)
+    text = re.sub(r'[țţ]', 't', text)
+    text = re.sub(r'[ăâ]', 'a', text)
+    text = re.sub(r'[î]', 'i', text)
+    rules = [
+        ("lege", "LEGE"),
+        ("hotarare de guvern", "HG"),
+        ("hotarare a guvernului", "HG"),
+        ("ordonanta de guvern", "OG"),
+        ("ordonanta de urgenta", "OUG"),
+        ("ordin de ministru", "OM"),
+        ("ordinul", "OM"),
+    ]
+    for substr, publication_type in rules:
+        if substr in text:
+            return publication_type
+    else:
+        return "OTHER"
+
 class DialogSpider(scrapy.Spider):
 
     name = 'dialog'
@@ -23,6 +44,9 @@ class DialogSpider(scrapy.Spider):
             yield scrapy.Request(response.urljoin(href), self.parse_article)
 
     def parse_article(self, response):
+        title = text_from(response.css('h1'))
+        publication_type = guess_publication_type(title)
+
         article = response.css('#content article.post')[0]
 
         id_value = article.css('::attr(id)').extract_first()
@@ -51,10 +75,10 @@ class DialogSpider(scrapy.Spider):
 
         return Publication(
             identifier=identifier,
-            title=text_from(response.css('h1')),
+            title=title,
             institution='dialog',
             description=text_from(article),
-            type='',
+            type=publication_type,
             date=date,
             documents=documents,
         )
