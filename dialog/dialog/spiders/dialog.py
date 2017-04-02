@@ -2,6 +2,7 @@ import scrapy
 import re
 import requests
 import os
+from dialog.items import Publication
 
 API_URL = 'http://czl-api.code4.ro/api/publications/'
 API_TOKEN = os.environ['API_TOKEN']
@@ -61,15 +62,15 @@ class DialogSpider(scrapy.Spider):
             if any(href.endswith(ext) for ext in DOC_EXTENSIONS)
         ]
 
-        doc = {
-            'identifier': identifier,
-            'title': text_from(response.css('h1')),
-            'institution': 'dialog',
-            'description': text_from(article),
-            'type': '',
-            'date': date,
-            'documents': documents,
-        }
+        doc = Publication(
+            identifier=identifier,
+            title=text_from(response.css('h1')),
+            institution='dialog',
+            description=text_from(article),
+            type='',
+            date=date,
+            documents=documents,
+        )
         print('result:', doc)
         #upload(doc)
 

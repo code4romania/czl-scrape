@@ -8,7 +8,11 @@
 import scrapy
 
 
-class DialogItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class Publication(scrapy.Item):
+    institution = scrapy.Field()
+    identifier = scrapy.Field()
+    type = scrapy.Field()
+    date = scrapy.Field()
+    title = scrapy.Field()
+    description = scrapy.Field()
+    documents = scrapy.Field()
