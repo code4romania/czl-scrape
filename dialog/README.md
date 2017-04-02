@@ -6,7 +6,9 @@ python, scrapy
 ## Instructiuni
 ```
 pip install -r requirements.txt
-API_TOKEN='the secret token' scrapy crawl dialog
+export API_TOKEN='the secret token'
+export SENTRY_DSN='the sentry dsn' # opțional
+scrapy crawl dialog
 ```
 
 ## Exceptii
