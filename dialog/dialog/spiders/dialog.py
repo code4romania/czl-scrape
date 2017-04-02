@@ -1,11 +1,6 @@
 import scrapy
 import re
-import requests
-import os
 from dialog.items import Publication
-
-API_URL = 'http://czl-api.code4.ro/api/publications/'
-API_TOKEN = os.environ['API_TOKEN']
 
 INDEX_URL = 'http://dialogsocial.gov.ro/categorie/proiecte-de-acte-normative/'
 
@@ -13,14 +8,6 @@ DOC_EXTENSIONS = [
     ".docs", ".doc", ".txt", ".crt", ".xls",
     ".xml", ".pdf", ".docx", ".xlsx",
 ]
-
-def upload(doc):
-    headers = {'Authorization': 'Token ' + API_TOKEN}
-    resp = requests.post(API_URL, json=doc, headers=headers)
-    if resp.status_code == 400:
-        if re.search(r'Integrity Error: Key .* already exists', resp.text):
-            return
-    assert resp.status_code == 201
 
 def text_from(sel):
     return sel.xpath('string(.)').extract_first().strip()
@@ -62,7 +49,7 @@ class DialogSpider(scrapy.Spider):
             if any(href.endswith(ext) for ext in DOC_EXTENSIONS)
         ]
 
-        doc = Publication(
+        return Publication(
             identifier=identifier,
             title=text_from(response.css('h1')),
             institution='dialog',
@@ -71,8 +58,6 @@ class DialogSpider(scrapy.Spider):
             date=date,
             documents=documents,
         )
-        print('result:', doc)
-        #upload(doc)
 
 def main():
     from scrapy.crawler import CrawlerProcess, Crawler
