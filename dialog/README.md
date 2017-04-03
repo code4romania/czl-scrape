@@ -11,4 +11,9 @@ export SENTRY_DSN='the sentry dsn' # opțional
 scrapy crawl dialog
 ```
 
+Rulat teste:
+```
+pytest
+```
+
 ## Exceptii

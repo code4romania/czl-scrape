@@ -6,6 +6,7 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 import os
+from scrapy.exceptions import DropItem
 import requests
 
 API_URL = 'http://czl-api.code4.ro/api/publications/'
@@ -26,3 +27,21 @@ class DialogPipeline(object):
         if resp.status_code != 201:
             msg = "Failed to upload publication: {!r}".format(resp)
             raise RuntimeError(msg)
+
+
+class PublicationValidatorPipeline(object):
+
+    REQUIRED_FIELDS = [
+        'identifier',
+        'title',
+        'institution',
+        'description',
+        'type',
+        'date',
+    ]
+
+    def process_item(self, item, spider):
+        for field in self.REQUIRED_FIELDS:
+            if not item.get(field):
+                raise DropItem("Missing field {}".format(field))
+        return item

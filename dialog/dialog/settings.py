@@ -65,7 +65,8 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'dialog.pipelines.DialogPipeline': 300,
+    'dialog.pipelines.PublicationValidatorPipeline': 300,
+    'dialog.pipelines.DialogPipeline': 1000,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
