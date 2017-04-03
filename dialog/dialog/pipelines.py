@@ -6,11 +6,15 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 import os
+import logging
 from scrapy.exceptions import DropItem
 import requests
 
 API_URL = 'http://czl-api.code4.ro/api/publications/'
 API_TOKEN = os.environ['API_TOKEN']
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARN)
 
 class UploadPipeline(object):
 
@@ -43,5 +47,7 @@ class PublicationValidatorPipeline(object):
     def process_item(self, item, spider):
         for field in self.REQUIRED_FIELDS:
             if not item.get(field):
-                raise DropItem("Missing field {}".format(field))
+                message = "Missing field {}".format(field)
+                logger.warn(message)
+                raise DropItem(message)
         return item
