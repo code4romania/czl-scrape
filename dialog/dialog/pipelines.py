@@ -12,7 +12,7 @@ import requests
 API_URL = 'http://czl-api.code4.ro/api/publications/'
 API_TOKEN = os.environ['API_TOKEN']
 
-class DialogPipeline(object):
+class UploadPipeline(object):
 
     def process_item(self, item, spider):
         self.upload(item)
