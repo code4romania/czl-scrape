@@ -1,8 +1,8 @@
 # Scrapere scrise cu scrapy
 
 O colecție de scrapere implementate folosind [scrapy](https://scrapy.org).
-Fiecare instituție are un care descarcă publicații de pe site. Mai departe,
-publicațiile sunt validate într-un pipeline comun, și trimise la
+Fiecărei instituții îi corespunde un scraper care descarcă publicații de pe site.
+Mai departe, publicațiile sunt validate într-un pipeline comun, și trimise la
 [api](http://czl-api.code4.ro).
 
 ## Spidere implementate
