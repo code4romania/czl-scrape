@@ -89,3 +89,7 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+LOG_LEVEL = 'WARN'
+LOG_FORMAT = '%(asctime)s srv="czl-scrape" [%(thread)d] %(levelname)s %(name)s: %(message)s'
+LOG_DATEFORMAT = '%Y-%m-%dT%H:%M:%SZ'
