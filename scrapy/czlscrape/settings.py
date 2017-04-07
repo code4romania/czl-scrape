@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for dialog project
+# Scrapy settings for czlscrape project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -9,14 +9,14 @@
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'dialog'
+BOT_NAME = 'czlscrape'
 
-SPIDER_MODULES = ['dialog.spiders']
-NEWSPIDER_MODULE = 'dialog.spiders'
+SPIDER_MODULES = ['czlscrape.spiders']
+NEWSPIDER_MODULE = 'czlscrape.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'dialog (+http://www.yourdomain.com)'
+#USER_AGENT = 'czlscrape (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -47,13 +47,13 @@ ROBOTSTXT_OBEY = True
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'dialog.middlewares.DialogSpiderMiddleware': 543,
+#    'czlscrape.middlewares.CzlScrapeSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'dialog.middlewares.MyCustomDownloaderMiddleware': 543,
+#    'czlscrape.middlewares.MyCustomDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -65,8 +65,8 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'dialog.pipelines.PublicationValidatorPipeline': 300,
-    'dialog.pipelines.UploadPipeline': 1000,
+    'czlscrape.pipelines.PublicationValidatorPipeline': 300,
+    'czlscrape.pipelines.UploadPipeline': 1000,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -89,3 +89,7 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+LOG_LEVEL = 'DEBUG'
+LOG_FORMAT = '%(asctime)s srv="czl-scrape" [%(thread)d] %(levelname)s %(name)s %(funcName)s: %(message)s'
+LOG_DATEFORMAT = '%Y-%m-%dT%H:%M:%SZ'

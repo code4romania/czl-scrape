@@ -1,7 +1,7 @@
 import pytest
 from scrapy.exceptions import DropItem
-from dialog.items import Publication
-from dialog.pipelines import PublicationValidatorPipeline
+from czlscrape.items import Publication
+from czlscrape.pipelines import PublicationValidatorPipeline
 
 def create_publication():
     return Publication(

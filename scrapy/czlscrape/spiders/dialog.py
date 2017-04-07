@@ -1,6 +1,6 @@
 import scrapy
 import re
-from dialog.items import Publication
+from ..items import Publication
 
 INDEX_URL = 'http://dialogsocial.gov.ro/categorie/proiecte-de-acte-normative/'
 
