@@ -9,13 +9,13 @@
 pip install -r requirements.txt
 
 # on windows:
-pip install win32api 
+pip install win32api
 ```
 
 ## Instructiuni
 
 ```
-scrapy crawl just
+scrapy crawl publication
 ```
 
 ## Altele
