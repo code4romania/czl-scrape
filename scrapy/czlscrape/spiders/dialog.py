@@ -1,6 +1,7 @@
 import scrapy
+import re
 
-from czlscrape.utils import *
+from czlscrape.utils import guess_publication_type
 from ..items import Publication
 
 INDEX_URL = 'http://dialogsocial.gov.ro/categorie/proiecte-de-acte-normative/'
@@ -26,6 +27,7 @@ def text_from(sel):
 
 
 class DialogSpider(scrapy.Spider):
+
     name = 'dialog'
     start_urls = [INDEX_URL]
 
@@ -45,7 +47,7 @@ class DialogSpider(scrapy.Spider):
 
         date = (
             article.css('time.entry-date::attr(datetime)')
-                .extract_first()[:10]
+            .extract_first()[:10]
         )
 
         # remove <div class="fb-comments"> and everything below
@@ -80,7 +82,6 @@ def main():
     process = CrawlerProcess()
     process.crawl(DialogSpider)
     process.start()
-
 
 if __name__ == '__main__':
     main()
