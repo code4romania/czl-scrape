@@ -10,7 +10,7 @@
 ```
 pip install -r requirements.txt
 cd crawl_mediu
-scrapy crawl mdrap -a token=xxxx
+scrapy crawl mmediu -a token=xxxx
 ```
 
 
