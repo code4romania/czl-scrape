@@ -10,8 +10,6 @@ from czlscrape.utils import guess_publication_type
 from czlscrape.items import Publication
 
 INSTITUTION = 'comunicatii'
-API_URL = 'http://czl-api.code4.ro/api/publications/'
-API_TOKEN = os.environ['API_TOKEN']
 WRAPPER_XPATH = '//div/div[3]/div/div/div[2]/div/div/div/div/div'
 NO_TYPE = "OTHER"
 TYPE_RULES = [
@@ -48,11 +46,10 @@ def is_document(node):
     return False
 
 
-def check_and_post(current_item, processed_ids):
+def is_current_item_complete(current_item, processed_ids):
     if current_item and current_item['identifier'] not in processed_ids:
         processed_ids.append(current_item['identifier'])
-        # send to API
-        print(
+        logger.debug(
             '\ntitle: %s\ntype: %s\ndate: %s \ndocuments: %s '
             '\nidentifier: %s' % (
                 current_item['title'], current_item['type'],
@@ -60,6 +57,8 @@ def check_and_post(current_item, processed_ids):
                 current_item['identifier']
             )
         )
+        return True
+    return False
 
 
 def extract_documents(node, current_item):
@@ -96,7 +95,8 @@ class ComunicatiiSpider(Spider):
 
             if is_title(node):
                 # New title node means new article. Check and post the old one.
-                check_and_post(current_item, processed_ids)
+                if is_current_item_complete(current_item, processed_ids):
+                    yield current_item
 
                 title = extract_title(node)
                 article_type = guess_publication_type(title, TYPE_RULES)
