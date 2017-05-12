@@ -11,7 +11,7 @@ from scrapy.exceptions import DropItem
 import requests
 
 API_URL = 'http://czl-api.code4.ro/api/publications/'
-API_TOKEN = os.environ['API_TOKEN']
+API_TOKEN = os.environ.get('API_TOKEN')
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARN)
@@ -23,6 +23,10 @@ class UploadPipeline(object):
         return item
 
     def upload(self, item):
+        if not API_TOKEN:
+            print(item)
+            return
+
         headers = {'Authorization': 'Token ' + API_TOKEN}
         resp = requests.post(API_URL, json=dict(item), headers=headers)
         if resp.status_code == 400:
