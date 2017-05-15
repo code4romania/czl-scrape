@@ -16,3 +16,6 @@ class Publication(scrapy.Item):
     title = scrapy.Field()
     description = scrapy.Field()
     documents = scrapy.Field()
+    contact = scrapy.Field()
+    feedback_days = scrapy.Field()
+    max_feedback_date = scrapy.Field()

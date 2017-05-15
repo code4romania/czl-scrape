@@ -6,6 +6,7 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 import os
+import re
 import logging
 from scrapy.exceptions import DropItem
 import requests
@@ -16,8 +17,8 @@ API_TOKEN = os.environ.get('API_TOKEN')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARN)
 
-class UploadPipeline(object):
 
+class UploadPipeline(object):
     def process_item(self, item, spider):
         self.upload(item)
         return item
