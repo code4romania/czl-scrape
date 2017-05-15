@@ -82,7 +82,7 @@ logger.setLevel(logging.WARN)
 
 
 class ComunicatiiSpider(Spider):
-    name = "quotes"
+    name = "comunicatii"
     start_urls = [
         'http://www.comunicatii.gov.ro/?page_id=3517',
     ]
