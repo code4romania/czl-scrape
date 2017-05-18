@@ -8,13 +8,11 @@ from scrapy import Spider, Request
 from scrapy.selector import Selector
 
 from ..items import Publication
+from ..utils import extract_documents
 from ..utils import romanian_month_number
 from ..utils import strip_diacritics
 
 INDEX_URL = 'http://www.cultura.ro/proiecte-acte-normative'
-
-DOC_EXTENSIONS = [".docs", ".doc", ".txt", ".crt", ".xls", ".xml", ".pdf",
-                  ".docx", ".xlsx", ]
 
 PUBLISH_DATE_PATTERN = r'''
 ^                                           # beginning of string
@@ -137,16 +135,13 @@ class CulturaSpider(Spider):
         else:
             publish_date_string = today.isoformat()
 
-        links = [
+        documents = [
             {
-                'type': link.css('::text').extract_first(),
-                'url': response.urljoin(
-                    link.css('::attr(href)').extract_first()),
-            }
-            for link in initiative_text_selector.css('ul > li > a, a')
+                'type': doc['type'],
+                'url': response.urljoin(doc['url']),
+            } for doc in
+            extract_documents(initiative_text_selector.css('ul > li > a, a'))
         ]
-        documents = [link for link in links if any(link['url'].endswith(ext)
-                                                   for ext in DOC_EXTENSIONS)]
 
         description = cleanup_initiative_text(initiative_text_selector)
         description_without_diacritics = strip_diacritics(description)

@@ -6,7 +6,7 @@ import logging
 from scrapy import Spider
 from scrapy.crawler import CrawlerProcess
 
-from czlscrape.utils import guess_publication_type
+from czlscrape.utils import guess_initiative_type
 from czlscrape.items import Publication
 
 INSTITUTION = 'comunicatii'
@@ -35,7 +35,7 @@ def is_title(node):
     if not text_list:
         text_list = node.xpath('text()').extract()
     if text_list:
-        if guess_publication_type(text_list[0], TYPE_RULES) != NO_TYPE:
+        if guess_initiative_type(text_list[0], TYPE_RULES) != NO_TYPE:
             return True
     return False
 
@@ -99,7 +99,7 @@ class ComunicatiiSpider(Spider):
                     yield current_item
 
                 title = extract_title(node)
-                article_type = guess_publication_type(title, TYPE_RULES)
+                article_type = guess_initiative_type(title, TYPE_RULES)
                 current_item = Publication(
                     identifier=generate_id(node.extract()),
                     title=title,

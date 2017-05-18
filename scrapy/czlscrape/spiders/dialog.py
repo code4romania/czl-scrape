@@ -1,7 +1,7 @@
 import scrapy
 import re
 
-from czlscrape.utils import guess_publication_type
+from czlscrape.utils import guess_initiative_type
 from ..items import Publication
 
 INDEX_URL = 'http://dialogsocial.gov.ro/categorie/proiecte-de-acte-normative/'
@@ -38,7 +38,7 @@ class DialogSpider(scrapy.Spider):
 
     def parse_article(self, response):
         title = text_from(response.css('h1'))
-        publication_type = guess_publication_type(title, TYPE_RULES)
+        publication_type = guess_initiative_type(title, TYPE_RULES)
 
         article = response.css('#content article.post')[0]
 
