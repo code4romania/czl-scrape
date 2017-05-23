@@ -10,7 +10,6 @@
     <modules>
         <module>_commons-java</module>
         <module>energie</module>
-        <module>munca</module>
     </modules>
 
     <dependencyManagement>
