@@ -24,16 +24,24 @@ PUBLISH_DATE_PATTERN = r'''
 $                                           # end of string
 '''
 
-# This regex is not expressed in verbose mode because it simply doesn't work
-# that way
-FEEDBACK_DEADLINE_DATE_PATTERN = r'.*(?:pana la data de|pana la data) (?P<day>\d{1,2})\.(?P<month>\d{1,2})\.(?P<year>\d{4}).*'
+FEEDBACK_DEADLINE_DATE_PATTERN = r'''
+.*                                          # can start anywhere
+(?:pana\ la\ data(?:\ de)?)                 # the relevant prefix
+\                                           # space
+(?P<day>\d{1,2})                            # day is one or two digits
+\.                                          # separator is dot
+(?P<month>\d{1,2})                          # month is one or two digits
+\.                                          # separator is dot
+(?P<year>\d{4})                             # year is 4 digits
+.*                                          # anywhere in the string
+'''
 
 FEEDBACK_CONTACT_FAX_PATTERN = r'''
 .*                                          # can start anywhere
 fax                                         # the relevant prefix
 :?                                          # optional colon
 \s?                                         # optional whitespace
-(?:la numarul|la numar|la nr\.|la nr)?      # optional prefix
+(?:la\ (?:numar(?:ul)?|nr\.?))?             # optional prefix
 \s?                                         # optional whitespace
 (\S*)                                       # fax number
 .*                                          # anywhere in the string
