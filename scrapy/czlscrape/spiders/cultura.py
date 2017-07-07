@@ -14,7 +14,7 @@ from ..utils import strip_diacritics
 
 INDEX_URL = 'http://www.cultura.ro/proiecte-acte-normative'
 
-PUBLISH_DATE_PATTERN = r'''
+PUBLISH_DATE_PATTERN = re.compile(r'''
 ^                                           # beginning of string
 (?P<day>\d{1,2})                            # day is one or two digits
 \s                                          # whitespace
@@ -22,9 +22,9 @@ PUBLISH_DATE_PATTERN = r'''
 \s                                          # whitespace
 (?P<year>\d{4})                             # year is 4 digits
 $                                           # end of string
-'''
+''', flags=re.VERBOSE)
 
-FEEDBACK_DEADLINE_DATE_PATTERN = r'''
+FEEDBACK_DEADLINE_DATE_PATTERN = re.compile(r'''
 .*                                          # can start anywhere
 (?:pana\ la\ data(?:\ de)?)                 # the relevant prefix
 \                                           # space
@@ -34,9 +34,9 @@ FEEDBACK_DEADLINE_DATE_PATTERN = r'''
 \.                                          # separator is dot
 (?P<year>\d{4})                             # year is 4 digits
 .*                                          # anywhere in the string
-'''
+''', flags=re.DOTALL | re.VERBOSE)
 
-FEEDBACK_CONTACT_FAX_PATTERN = r'''
+FEEDBACK_CONTACT_FAX_PATTERN = re.compile(r'''
 .*                                          # can start anywhere
 fax                                         # the relevant prefix
 :?                                          # optional colon
@@ -45,15 +45,15 @@ fax                                         # the relevant prefix
 \s?                                         # optional whitespace
 (\S*)                                       # fax number
 .*                                          # anywhere in the string
-'''
+''', flags=re.DOTALL | re.VERBOSE)
 
-FEEDBACK_CONTACT_EMAIL_PATTERN = r'''
+FEEDBACK_CONTACT_EMAIL_PATTERN = re.compile(r'''
 .*                                          # can start anywhere
 e-mail:?                                    # the relevant prefix
 \s?                                         # optional whitespace
 (\S*)                                       # email address
 .*                                          # anywhere in the string
-'''
+''', flags=re.DOTALL | re.VERBOSE)
 
 FEEDBACK_CONTACT_RULES = [
     ('fax', FEEDBACK_CONTACT_FAX_PATTERN),
@@ -106,9 +106,8 @@ def cleanup_initiative_text(selector: Selector) -> str:
 
 
 def extract_publish_date(selector: Selector) -> datetime:
-    date_pattern_match = re.match(PUBLISH_DATE_PATTERN,
-                                  extract_text(selector),
-                                  re.VERBOSE)
+    date_pattern_match = PUBLISH_DATE_PATTERN.match(extract_text(selector))
+
     if date_pattern_match:
         return datetime.date(
             int(date_pattern_match.group('year')),
@@ -155,9 +154,7 @@ class CulturaSpider(Spider):
         description_without_diacritics = strip_diacritics(description)
 
         max_feedback_date_string = None
-        feedback_date_match = re.match(FEEDBACK_DEADLINE_DATE_PATTERN,
-                                       description_without_diacritics,
-                                       re.DOTALL)
+        feedback_date_match = FEEDBACK_DEADLINE_DATE_PATTERN.match(description_without_diacritics)
 
         if feedback_date_match:
             max_feedback_date_string = datetime.date(
@@ -168,9 +165,8 @@ class CulturaSpider(Spider):
 
         contact = {}
         for contact_type, contact_pattern in FEEDBACK_CONTACT_RULES:
-            contact_match = re.match(contact_pattern,
-                                     description_without_diacritics,
-                                     re.DOTALL | re.VERBOSE)
+            contact_match = contact_pattern.match(description_without_diacritics)
+
             if contact_match:
                 contact[contact_type] = contact_match.group(1).rstrip('.,')
 
