@@ -27,7 +27,7 @@ ruamel.yaml==0.13.14
 Scrapy==1.3.3
 service-identity==16.0.0
 six==1.10.0
-Twisted==17.1.0
+Twisted==19.7.0
 tzlocal==1.3
 umalqurra==0.2
 Unidecode==0.4.20
