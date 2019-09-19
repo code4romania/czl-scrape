@@ -7,12 +7,14 @@
 asn1crypto==0.21.1        # via cryptography
 attrs==19.1.0             # via automat, service-identity, twisted
 automat==0.5.0            # via twisted
+certifi==2019.9.11        # via requests
 cffi==1.9.1               # via cryptography
+chardet==3.0.4            # via requests
 constantly==15.1.0        # via twisted
 cryptography==2.7         # via pyopenssl
 cssselect==1.0.1          # via parsel, scrapy
 hyperlink==19.0.0         # via twisted
-idna==2.8                 # via hyperlink
+idna==2.7                 # via hyperlink, requests
 incremental==16.10.1      # via twisted
 lxml==3.7.3               # via parsel, scrapy
 parsel==1.1.0             # via scrapy
@@ -23,11 +25,12 @@ pydispatcher==2.0.5       # via scrapy
 pyhamcrest==1.9.0         # via twisted
 pyopenssl==17.5.0         # via scrapy, service-identity
 queuelib==1.4.2           # via scrapy
-requests==2.13.0
+requests==2.20.0
 scrapy==1.3.3
 service-identity==16.0.0  # via scrapy
 six==1.10.0               # via automat, cryptography, parsel, pyhamcrest, pyopenssl, scrapy, w3lib
 twisted==19.7.0           # via scrapy
+urllib3==1.24.3           # via requests
 w3lib==1.17.0             # via parsel, scrapy
 zope.interface==4.6.0     # via twisted
 
